@@ -7,13 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="{Binding ViewModel.ApplicationTitle, Mode=OneWay}"
-<<<<<<< HEAD
     Width="600"
     Height="750"
-=======
-    Width="1100"
-    Height="650"
->>>>>>> fb6e171b38d062c19f5f2603a4070e6af8c6f185
     d:DataContext="{d:DesignInstance local:MainWindow,
                                      IsDesignTimeCreatable=True}"
     d:DesignHeight="450"

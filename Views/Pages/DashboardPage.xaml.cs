@@ -1,5 +1,4 @@
 ﻿using DDNS_Cloudflare_API.ViewModels.Pages;
-<<<<<<< HEAD
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Text.Json;
@@ -9,8 +8,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System;
 using System.Windows.Threading;
-=======
->>>>>>> fb6e171b38d062c19f5f2603a4070e6af8c6f185
 using Wpf.Ui.Controls;
 
 namespace DDNS_Cloudflare_API.Views.Pages
@@ -19,11 +16,8 @@ namespace DDNS_Cloudflare_API.Views.Pages
     {
         public DashboardViewModel ViewModel { get; }
 
-<<<<<<< HEAD
         private DispatcherTimer timer; // Class-level variable
 
-=======
->>>>>>> fb6e171b38d062c19f5f2603a4070e6af8c6f185
         public DashboardPage(DashboardViewModel viewModel)
         {
             ViewModel = viewModel;
@@ -31,7 +25,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             InitializeComponent();
         }
-<<<<<<< HEAD
 
         private async void BtnStart_Click(object sender, RoutedEventArgs e)
         {
@@ -125,7 +118,5 @@ namespace DDNS_Cloudflare_API.Views.Pages
             using HttpClient client = new HttpClient();
             return await client.GetStringAsync("https://api.ipify.org");
         }
-=======
->>>>>>> fb6e171b38d062c19f5f2603a4070e6af8c6f185
     }
 }

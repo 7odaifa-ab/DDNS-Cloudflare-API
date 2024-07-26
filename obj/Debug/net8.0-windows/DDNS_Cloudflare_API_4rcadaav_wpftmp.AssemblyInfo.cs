@@ -15,13 +15,8 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0f0c02fe9fd86967847dbfc3820b15d21d409090")]
-<<<<<<<< HEAD:obj/Debug/net8.0-windows/DDNS_Cloudflare_API_4rcadaav_wpftmp.AssemblyInfo.cs
 [assembly: System.Reflection.AssemblyProductAttribute("DDNS_Cloudflare_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DDNS_Cloudflare_API")]
-========
-[assembly: System.Reflection.AssemblyProductAttribute("DDNS-Cloudflare-API")]
-[assembly: System.Reflection.AssemblyTitleAttribute("DDNS-Cloudflare-API")]
->>>>>>>> fb6e171b38d062c19f5f2603a4070e6af8c6f185:obj/Debug/net8.0-windows/DDNS-Cloudflare-API.AssemblyInfo.cs
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows7.0")]
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("Windows7.0")]
