@@ -49,9 +49,17 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "dependencies": {
+            "CommunityToolkit.Mvvm": {
+              "target": "Package",
+              "version": "[8.2.2, )"
+            },
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
             "WPF-UI": {
               "target": "Package",
-              "version": "[3.0.5, )"
+              "version": "[3.0.4, )"
             }
           },
           "imports": [
