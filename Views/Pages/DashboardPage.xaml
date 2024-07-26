@@ -19,7 +19,6 @@
     <Grid>
         <StackPanel Margin="10">
             <!-- Existing TextBoxes and ComboBoxes -->
-
             <ui:TextBox Name="txtApiKey"
                         PlaceholderText="API Key"
                         Margin="0,0,0,10" />
