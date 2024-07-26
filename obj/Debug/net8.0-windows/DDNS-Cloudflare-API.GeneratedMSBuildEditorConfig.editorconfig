@@ -1,0 +1,18 @@
+is_global = true
+build_property.TargetFramework = net8.0-windows
+build_property.TargetPlatformMinVersion = 7.0
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+<<<<<<<< HEAD:obj/Debug/net8.0-windows/DDNS_Cloudflare_API.GeneratedMSBuildEditorConfig.editorconfig
+build_property.RootNamespace = DDNS_Cloudflare_API
+build_property.ProjectDir = C:\Users\loffy\Documents\GitHub\DDNS_Cloudflare_API\DDNS_Cloudflare_API\
+========
+build_property.RootNamespace = DDNS-Cloudflare-API
+build_property.ProjectDir = C:\Users\loffy\Documents\GitHub\DDNS-Cloudflare-API\DDNS-Cloudflare-API\
+>>>>>>>> fb6e171b38d062c19f5f2603a4070e6af8c6f185:obj/Debug/net8.0-windows/DDNS-Cloudflare-API.GeneratedMSBuildEditorConfig.editorconfig
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 

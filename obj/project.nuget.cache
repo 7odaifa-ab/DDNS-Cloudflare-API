@@ -1,8 +1,14 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "xlkV9ndDZwo=",
   "success": true,
   "projectFilePath": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj",
+=======
+  "dgSpecHash": "/nubR7P/lsM=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS-Cloudflare-API\\DDNS-Cloudflare-API.csproj",
+>>>>>>> fb6e171b38d062c19f5f2603a4070e6af8c6f185
   "expectedPackageFiles": [
     "C:\\Users\\loffy\\.nuget\\packages\\communitytoolkit.mvvm\\8.2.2\\communitytoolkit.mvvm.8.2.2.nupkg.sha512",
     "C:\\Users\\loffy\\.nuget\\packages\\microsoft.extensions.configuration\\8.0.0\\microsoft.extensions.configuration.8.0.0.nupkg.sha512",

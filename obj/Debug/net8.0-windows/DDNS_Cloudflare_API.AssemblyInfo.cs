@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DDNS_Cloudflare_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b94d6480e725495859fb7d4a3988aa0289eb1668")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ae865d01453088ed7a53669ce0f8a65dbce3e3c")]
 [assembly: System.Reflection.AssemblyProductAttribute("DDNS_Cloudflare_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DDNS_Cloudflare_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
