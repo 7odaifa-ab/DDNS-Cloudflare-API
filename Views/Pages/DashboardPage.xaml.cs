@@ -110,7 +110,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
             string json = JsonSerializer.Serialize(record);
             using HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", EncryptionHelper.DecryptString(txtApiKey.Text)); // Decrypt API key
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", txtApiKey.Text); // Decrypt API key
 
             HttpResponseMessage response = await client.PutAsync(
                 $"https://api.cloudflare.com/client/v4/zones/{txtZoneId.Text}/dns_records/{txtDnsRecordId.Text}",

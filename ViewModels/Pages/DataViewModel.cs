@@ -29,7 +29,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
                     new DataColor
                     {
                         Color = new SolidColorBrush(
-                            Color.FromArgb(
+                            System.Windows.Media.Color.FromArgb(
                                 (byte)200,
                                 (byte)random.Next(0, 250),
                                 (byte)random.Next(0, 250),

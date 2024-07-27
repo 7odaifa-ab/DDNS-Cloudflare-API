@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -6,6 +6,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>wpfui-icon.ico</ApplicationIcon>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -13,7 +14,11 @@
   <ItemGroup>
     <Content Include="wpfui-icon.ico" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="WPF-UI" Version="3.0.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />

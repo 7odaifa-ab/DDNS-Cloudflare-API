@@ -3,6 +3,7 @@ using DDNS_Cloudflare_API.Views.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wpf.Ui;
+using Application = System.Windows.Application;
 
 namespace DDNS_Cloudflare_API.Services
 {
