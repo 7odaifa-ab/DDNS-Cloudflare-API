@@ -57,7 +57,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             switch (cmbInterval.SelectedIndex)
             {
-                case 0: return 1;
+                case 0: return 15;
                 case 1: return 30;
                 case 2: return 60;
                 case 3: return 360;
@@ -94,7 +94,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
             {
                 content = wanIp,
                 name = txtName.Text,
-                proxied = false, // Adjust if using a different control
+                proxied = (bool)cmbProxied.SelectedItem, // Adjust if using a different control
                 type = ((ComboBoxItem)cmbType.SelectedItem).Content.ToString(),
                 ttl = GetTtlInSeconds(),
                 comment = "DDNS updated from WPF" // You can customize this comment if needed
