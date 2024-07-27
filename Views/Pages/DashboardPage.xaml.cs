@@ -110,7 +110,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
             string json = JsonSerializer.Serialize(record);
             using HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", txtApiKey.Text); // Bearer token
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", EncryptionHelper.DecryptString(txtApiKey.Text)); // Decrypt API key
 
             HttpResponseMessage response = await client.PutAsync(
                 $"https://api.cloudflare.com/client/v4/zones/{txtZoneId.Text}/dns_records/{txtDnsRecordId.Text}",
@@ -133,7 +133,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             var profileData = new
             {
-                ApiKey = txtApiKey.Text,
+                ApiKey = EncryptionHelper.EncryptString(txtApiKey.Text), // Encrypt API key
                 ZoneId = txtZoneId.Text,
                 DnsRecordId = txtDnsRecordId.Text,
                 Name = txtName.Text,
@@ -196,7 +196,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                     var json = File.ReadAllText(filePath);
                     var profileData = JsonSerializer.Deserialize<ProfileData>(json);
 
-                    txtApiKey.Text = profileData.ApiKey;
+                    txtApiKey.Text = EncryptionHelper.DecryptString(profileData.ApiKey); // Decrypt API key
                     txtZoneId.Text = profileData.ZoneId;
                     txtDnsRecordId.Text = profileData.DnsRecordId;
                     txtName.Text = profileData.Name;
