@@ -61,5 +61,5 @@
                 <ui:ImageIcon Source="pack://application:,,,/Assets/wpfui-icon-256.png" />
             </ui:TitleBar.Icon>
         </ui:TitleBar>
-    </Grid>
+        </Grid>
 </ui:FluentWindow>

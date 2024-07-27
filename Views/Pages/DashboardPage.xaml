@@ -1,20 +1,19 @@
-﻿<Page
-    x:Class="DDNS_Cloudflare_API.Views.Pages.DashboardPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:DDNS_Cloudflare_API.Views.Pages"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    Title="DashboardPage"
-    d:DataContext="{d:DesignInstance local:DashboardPage,
+﻿<Page x:Class="DDNS_Cloudflare_API.Views.Pages.DashboardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:DDNS_Cloudflare_API.Views.Pages"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Title="DashboardPage"
+      d:DataContext="{d:DesignInstance local:DashboardPage,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="450"
-    d:DesignWidth="400"
-    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
-    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-    mc:Ignorable="d">
+      d:DesignHeight="450"
+      d:DesignWidth="400"
+      ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+      ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      mc:Ignorable="d">
 
     <Grid>
         <StackPanel Margin="10">
@@ -70,6 +69,22 @@
                 <ComboBoxItem Content="12 hours" />
                 <ComboBoxItem Content="24 hours" />
             </ComboBox>
+
+            <!-- New Controls for Profiles -->
+            <ComboBox Name="cmbProfiles"
+                      SelectionChanged="CmbProfiles_SelectionChanged"
+                      Margin="0,0,0,10"
+                      IsEnabled="False">
+                <!-- Profiles will be loaded here -->
+            </ComboBox>
+            <ui:Button Name="btnSaveProfile"
+                       Content="Save Profile"
+                       Click="BtnSaveProfile_Click"
+                       Margin="0,0,0,10" />
+            <ui:Button Name="btnDeleteProfile"
+                       Content="Delete Profile"
+                       Click="BtnDeleteProfile_Click"
+                       Margin="0,0,0,10" />
             <ui:Button Name="btnStart"
                        Content="Start"
                        Click="BtnStart_Click"
@@ -87,5 +102,4 @@
                        Margin="0,0,0,10" />
         </StackPanel>
     </Grid>
-
 </Page>
