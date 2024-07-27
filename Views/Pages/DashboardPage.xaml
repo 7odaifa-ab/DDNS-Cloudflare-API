@@ -8,7 +8,7 @@
       Title="DashboardPage"
       d:DataContext="{d:DesignInstance local:DashboardPage,
                                      IsDesignTimeCreatable=False}"
-      d:DesignHeight="450"
+      d:DesignHeight="800"
       d:DesignWidth="400"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -16,7 +16,34 @@
       mc:Ignorable="d">
 
     <Grid>
-        <StackPanel Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <!-- This Row takes up one part of the available space -->
+            <RowDefinition Height="2*" />
+            <!-- This Row takes up two parts of the available space -->
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"
+                    Margin="10">
+            <!-- New Controls for Profiles -->
+            <ComboBox Name="cmbProfiles"
+                      SelectionChanged="CmbProfiles_SelectionChanged"
+                      Margin="0,0,0,10"
+                      IsEnabled="False">
+                <!-- Profiles will be loaded here -->
+            </ComboBox>
+            <ui:Button Name="btnSaveProfile"
+                       Content="Save Profile"
+                       Click="BtnSaveProfile_Click"
+                       Margin="0,0,0,10" />
+            <ui:Button Name="btnDeleteProfile"
+                       Content="Delete Profile"
+                       Click="BtnDeleteProfile_Click"
+                       Margin="0,0,0,10" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1"
+                    Margin="10">
             <!-- Existing TextBoxes and ComboBoxes -->
             <ui:TextBox Name="txtApiKey"
                         PlaceholderText="API Key"
@@ -70,36 +97,27 @@
                 <ComboBoxItem Content="24 hours" />
             </ComboBox>
 
-            <!-- New Controls for Profiles -->
-            <ComboBox Name="cmbProfiles"
-                      SelectionChanged="CmbProfiles_SelectionChanged"
-                      Margin="0,0,0,10"
-                      IsEnabled="False">
-                <!-- Profiles will be loaded here -->
-            </ComboBox>
-            <ui:Button Name="btnSaveProfile"
-                       Content="Save Profile"
-                       Click="BtnSaveProfile_Click"
-                       Margin="0,0,0,10" />
-            <ui:Button Name="btnDeleteProfile"
-                       Content="Delete Profile"
-                       Click="BtnDeleteProfile_Click"
-                       Margin="0,0,0,10" />
-            <ui:Button Name="btnStart"
-                       Content="Start"
-                       Click="BtnStart_Click"
-                       Margin="0,0,0,10" />
-            <ui:Button Name="btnStop"
-                       Content="Stop"
-                       Click="BtnStop_Click"
-                       Margin="0,0,0,10" />
-            <ui:Button Name="btnOneTime"
-                       Content="One-Time Call"
-                       Click="BtnOneTime_Click"
-                       Margin="0,0,0,10" />
+            <!-- Align the buttons horizontally in a separate StackPanel -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0,10,0,10">
+                <ui:Button Name="btnStart"
+                           Content="Start"
+                           Click="BtnStart_Click"
+                           Margin="0,0,10,0" />
+                <ui:Button Name="btnStop"
+                           Content="Stop"
+                           Click="BtnStop_Click"
+                           Margin="0,0,10,0" />
+                <ui:Button Name="btnOneTime"
+                           Content="One-Time Call"
+                           Click="BtnOneTime_Click" />
+            </StackPanel>
+
             <TextBlock Name="txtStatus"
                        TextWrapping="Wrap"
                        Margin="0,0,0,10" />
         </StackPanel>
     </Grid>
+
 </Page>

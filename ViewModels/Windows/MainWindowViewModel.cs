@@ -6,21 +6,21 @@ namespace DDNS_Cloudflare_API.ViewModels.Windows
     public partial class MainWindowViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _applicationTitle = "WPF UI - DDNS_Cloudflare_API";
+        private string _applicationTitle = "DDNS - Cloudflare API Script";
 
         [ObservableProperty]
         private ObservableCollection<object> _menuItems = new()
         {
             new NavigationViewItem()
             {
-                Content = "Home",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
+                Content = "Setup",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.ContentSettings24},
                 TargetPageType = typeof(Views.Pages.DashboardPage)
             },
             new NavigationViewItem()
             {
-                Content = "Data",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
+                Content = "Log",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.DocumentTextClock24},
                 TargetPageType = typeof(Views.Pages.DataPage)
             }
         };
@@ -39,7 +39,8 @@ namespace DDNS_Cloudflare_API.ViewModels.Windows
         [ObservableProperty]
         private ObservableCollection<MenuItem> _trayMenuItems = new()
         {
-            new MenuItem { Header = "Home", Tag = "tray_home" }
+            new MenuItem { Header = "Show", Tag = "tray_home" }
         };
+
     }
 }
