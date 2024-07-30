@@ -1,1 +1,0 @@
-C:\Users\loffy\Documents\GitHub\DDNS-Cloudflare-API\DDNS-Cloudflare-API\obj\Debug\net8.0-windows\DDNS-Cloudflare-API.csproj.AssemblyReference.cache
