@@ -34,14 +34,20 @@ namespace DDNS_Cloudflare_API.Views.Windows
             SetPageService(pageService);
 
             navigationService.SetNavigationControl(RootNavigation);
+
+            // Get the full path to the icon file
+            string iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wpfui-icon.ico");
+
             // Initialize system tray icon
             trayIcon = new NotifyIcon
             {
-                Icon = new Icon("C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\wpfui-icon.ico"), // Provide a path to your icon file
-                Visible = true, // Initially hidden
+                Icon = new Icon(iconPath), // Use the full path to your icon file
+                Visible = true, // Initially visible
                 Text = "DDNS Cloudflare API"
             };
+
             trayIcon.DoubleClick += TrayIcon_DoubleClick;
+
 
             CreateContextMenu();
         }
