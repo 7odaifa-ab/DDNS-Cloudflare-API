@@ -6,8 +6,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       Title="DashboardPage"
-      d:DataContext="{d:DesignInstance local:DashboardPage,
-                                     IsDesignTimeCreatable=False}"
+      d:DataContext="{d:DesignInstance local:DashboardPage, IsDesignTimeCreatable=False}"
       d:DesignHeight="800"
       d:DesignWidth="400"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -18,14 +17,11 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
-            <!-- This Row takes up one part of the available space -->
             <RowDefinition Height="2*" />
-            <!-- This Row takes up two parts of the available space -->
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0"
-                    Margin="10">
-            <!-- New Controls for Profiles -->
+        <StackPanel Grid.Row="0" Margin="10">
+            <!-- Controls for Profiles -->
             <ComboBox Name="cmbProfiles"
                       SelectionChanged="CmbProfiles_SelectionChanged"
                       Margin="0,0,0,10"
@@ -42,8 +38,7 @@
                        Margin="0,0,0,10" />
         </StackPanel>
 
-        <StackPanel Grid.Row="1"
-                    Margin="10">
+        <StackPanel Grid.Row="1" Margin="10">
             <!-- Existing TextBoxes and ComboBoxes -->
             <ui:TextBox Name="txtApiKey"
                         PlaceholderText="API Key"
@@ -51,41 +46,17 @@
             <ui:TextBox Name="txtZoneId"
                         PlaceholderText="Zone ID"
                         Margin="0,0,0,10" />
-            <ui:TextBox Name="txtDnsRecordId"
-                        PlaceholderText="DNS Record ID"
-                        Margin="0,0,0,10" />
-            <ui:TextBox Name="txtName"
-                        PlaceholderText="Name"
-                        Margin="0,0,0,10" />
-            <ComboBox Name="cmbType"
-                      SelectedIndex="0"
-                      Margin="0,0,0,10">
-                <ComboBoxItem Content="A" />
-                <ComboBoxItem Content="AAAA" />
-                <ComboBoxItem Content="CNAME" />
-            </ComboBox>
-            <ComboBox Name="cmbProxied"
-                      SelectedIndex="0"
-                      Margin="0,0,0,10">
-                <ComboBoxItem Content="True" />
-                <ComboBoxItem Content="False" />
-            </ComboBox>
-            <ComboBox Name="cmbTtl"
-                      SelectedIndex="0"
-                      Margin="0,0,0,10">
-                <ComboBoxItem Content="Auto" />
-                <ComboBoxItem Content="1 min" />
-                <ComboBoxItem Content="2 min" />
-                <ComboBoxItem Content="5 min" />
-                <ComboBoxItem Content="10 min" />
-                <ComboBoxItem Content="15 min" />
-                <ComboBoxItem Content="30 min" />
-                <ComboBoxItem Content="1 hr" />
-                <ComboBoxItem Content="2 hr" />
-                <ComboBoxItem Content="5 hr" />
-                <ComboBoxItem Content="12 hr" />
-                <ComboBoxItem Content="1 day" />
-            </ComboBox>
+            <ItemsControl Name="itemsControlDnsRecords" Margin="0,0,0,10">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+            <ui:Button Name="btnAddDnsRecord"
+                       Content="Add DNS Record"
+                       Click="BtnAddDnsRecord_Click"
+                       Margin="0,0,0,10" />
             <ComboBox Name="cmbInterval"
                       SelectedIndex="0"
                       Margin="0,0,0,10">
