@@ -21,14 +21,14 @@ using MessageBox = Wpf.Ui.Controls.MessageBox;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
-    public partial class DashboardPage : INavigableView<DashboardViewModel>
+    public partial class SetupPage : INavigableView<DashboardViewModel>
     {
         public DashboardViewModel ViewModel { get; }
 
         private DispatcherTimer timer;
         private readonly string profilesFolderPath;
 
-        public DashboardPage(DashboardViewModel viewModel)
+        public SetupPage(DashboardViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

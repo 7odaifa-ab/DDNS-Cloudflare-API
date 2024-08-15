@@ -15,7 +15,13 @@ namespace DDNS_Cloudflare_API.ViewModels.Windows
             {
                 Content = "Setup",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.ContentSettings24},
-                TargetPageType = typeof(Views.Pages.DashboardPage)
+                TargetPageType = typeof(Views.Pages.SetupPage)
+            },
+            new NavigationViewItem()
+            {
+                Content = "Records",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.GroupList24},
+                TargetPageType = typeof(Views.Pages.Records)
             },
             new NavigationViewItem()
             {
@@ -25,14 +31,8 @@ namespace DDNS_Cloudflare_API.ViewModels.Windows
             },
             new NavigationViewItem()
             {
-                Content = "Records",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.ContentSettings24},
-                TargetPageType = typeof(Views.Pages.DashboardPage)
-            },
-            new NavigationViewItem()
-            {
                 Content = "Tutorial",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.DocumentTextClock24},
+                Icon = new SymbolIcon { Symbol = SymbolRegular.NotebookQuestionMark24},
                 TargetPageType = typeof(Views.Pages.Tutorial)
             }
         };
