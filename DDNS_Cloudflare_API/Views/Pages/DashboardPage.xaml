@@ -16,11 +16,11 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="181*" />
+            <RowDefinition Height="619*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="10">
+        <StackPanel Grid.Row="0" Margin="10,10,10,10">
             <!-- Controls for Profiles -->
             <ComboBox Name="cmbProfiles"
                       SelectionChanged="CmbProfiles_SelectionChanged"
@@ -38,7 +38,7 @@
                        Margin="0,0,0,10" />
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Margin="10">
+        <StackPanel Grid.Row="1" Margin="10,10,10,10">
             <!-- Existing TextBoxes and ComboBoxes -->
             <ui:TextBox Name="txtApiKey"
                         PlaceholderText="API Key"

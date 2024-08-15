@@ -7,12 +7,12 @@
       "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\dashboardpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\anaspc\\documents\\github\\ddns-cloudflare-api\\ddns_cloudflare_api\\views\\pages\\dashboardpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\dashboardpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\anaspc\\documents\\github\\ddns-cloudflare-api\\ddns_cloudflare_api\\views\\windows\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\windows\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\anaspc\\documents\\github\\ddns-cloudflare-api\\ddns_cloudflare_api\\views\\pages\\dashboardpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\dashboardpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\anaspc\\documents\\github\\ddns-cloudflare-api\\ddns_cloudflare_api\\views\\windows\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -46,14 +46,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml",
               "ToolTip": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml",
               "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-27T10:54:54.649Z"
+              "WhenOpened": "2024-07-27T10:54:54.649Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -63,21 +64,22 @@
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\DashboardPage.xaml.cs",
               "ToolTip": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\Views\\Pages\\DashboardPage.xaml.cs",
               "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Pages\\DashboardPage.xaml.cs",
-              "ViewState": "AQIAACgBAAAAAAAAAAAwwDkBAAAjAAAA",
+              "ViewState": "AQIAANcAAAAAAAAAAAAEwOIAAABHAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-27T09:25:19.185Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "DashboardPage.xaml",
               "DocumentMoniker": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\Views\\Pages\\DashboardPage.xaml",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\DashboardPage.xaml",
               "ToolTip": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\Views\\Pages\\DashboardPage.xaml",
               "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Pages\\DashboardPage.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-07-26T19:10:28.307Z"
+              "WhenOpened": "2024-07-26T19:10:28.307Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",

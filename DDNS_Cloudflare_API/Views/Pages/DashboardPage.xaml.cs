@@ -16,6 +16,7 @@ using Orientation = System.Windows.Controls.Orientation;
 using ComboBox = System.Windows.Controls.ComboBox;
 using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = Wpf.Ui.Controls.MessageBoxButton;
+using System.Collections;
 
 
 namespace DDNS_Cloudflare_API.Views.Pages
@@ -86,6 +87,25 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 11 => 86400,
                 _ => 3600
             };
+        private int GetTtlIndex(int ttlInSeconds)
+        {
+            return ttlInSeconds switch
+            {
+                1 => 0, // Auto
+                60 => 1, // 1 min
+                120 => 2, // 2 min
+                300 => 3, // 5 min
+                600 => 4, // 10 min
+                900 => 5, // 15 min
+                1800 => 6, // 30 min
+                3600 => 7, // 1 hr
+                7200 => 8, // 2 hr
+                18000 => 9, // 5 hr
+                43200 => 10, // 12 hr
+                86400 => 11, // 1 day
+                _ => 0 // Default to Auto
+            };
+        }
 
         private async Task UpdateDnsRecords()
         {
@@ -171,29 +191,40 @@ namespace DDNS_Cloudflare_API.Views.Pages
             itemsControlDnsRecords.Items.Add(dnsRecordPanel);
         }
 
-        private StackPanel CreateDnsRecordPanel()
+       private StackPanel CreateDnsRecordPanel()
         {
             var dnsRecordPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+            var dnsInputPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 10)
             };
-
-            dnsRecordPanel.Children.Add(CreateTextBox("txtDnsRecordId"));
-            dnsRecordPanel.Children.Add(CreateTextBox("txtName"));
-            dnsRecordPanel.Children.Add(CreateComboBox("content", new[] { "IPv4", "IPv6" }));
-            dnsRecordPanel.Children.Add(CreateComboBox("cmbType", new[] { "A", "AAAA", "CNAME" }));
-            dnsRecordPanel.Children.Add(CreateComboBox("cmbProxied", new[] { "True", "False" }));
-            dnsRecordPanel.Children.Add(CreateComboBox("cmbTtl", new[]
+            var dnsComboPanel = new StackPanel
             {
-                "Auto", "1 min", "2 min", "5 min", "10 min", "15 min", "30 min", "1 hr",
-                "2 hr", "5 hr", "12 hr", "1 day"
-            }));
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+            dnsInputPanel.Children.Add(CreateTextBox("txtDnsRecordId"));
+            dnsInputPanel.Children.Add(CreateTextBox("txtName"));
+            dnsComboPanel.Children.Add(CreateComboBox("content", new[] { "IPv4", "IPv6" }));
+            dnsComboPanel.Children.Add(CreateComboBox("cmbType", new[] { "A", "AAAA", "CNAME" }));
+            dnsComboPanel.Children.Add(CreateComboBox("cmbProxied", new[] { "True", "False" }));
+            dnsComboPanel.Children.Add(CreateComboBox("cmbTtl", new[]
+            {
+               "Auto", "1 min", "2 min", "5 min", "10 min", "15 min", "30 min", "1 hr",
+               "2 hr", "5 hr", "12 hr", "1 day"
+           }));
+            dnsRecordPanel.Children.Add(dnsInputPanel);
+            dnsRecordPanel.Children.Add(dnsComboPanel);
 
             return dnsRecordPanel;
         }
 
-        private TextBox CreateTextBox(string name, string text = "") =>
+        private TextBox CreateTextBox(string name, string text = "input") =>
             new TextBox
             {
                 Name = name,
@@ -260,29 +291,13 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 itemsControlDnsRecords.Items.Add(dnsRecordPanel);
             }
         }
-        private int GetTtlIndex(int ttlInSeconds)
-        {
-            return ttlInSeconds switch
-            {
-                1 => 0, // Auto
-                60 => 1, // 1 min
-                120 => 2, // 2 min
-                300 => 3, // 5 min
-                600 => 4, // 10 min
-                900 => 5, // 15 min
-                1800 => 6, // 30 min
-                3600 => 7, // 1 hr
-                7200 => 8, // 2 hr
-                18000 => 9, // 5 hr
-                43200 => 10, // 12 hr
-                86400 => 11, // 1 day
-                _ => 0 // Default to Auto
-            };
-        }
 
 
         private void UpdateDnsRecordPanel(StackPanel dnsRecordPanel, Dictionary<string, object> record)
         {
+            var dnsInputPanel = (StackPanel)dnsRecordPanel.Children[0];
+            var dnsComboPanel = (StackPanel)dnsRecordPanel.Children[1];
+
             var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
 
             dnsRecordId.Text = record["RecordID"]?.ToString();
@@ -293,17 +308,22 @@ namespace DDNS_Cloudflare_API.Views.Pages
             ttl.SelectedIndex = GetTtlIndex(int.Parse(record["TTL"]?.ToString()));
         }
 
+
         private (TextBox dnsRecordId, TextBox name, ComboBox content, ComboBox type, ComboBox proxied, ComboBox ttl) GetDnsRecordFields(StackPanel dnsRecordPanel)
         {
+            var dnsInputPanel = (StackPanel)dnsRecordPanel.Children[0];
+            var dnsComboPanel = (StackPanel)dnsRecordPanel.Children[1];
+
             return (
-                (TextBox)dnsRecordPanel.Children[0],
-                (TextBox)dnsRecordPanel.Children[1],
-                (ComboBox)dnsRecordPanel.Children[2],
-                (ComboBox)dnsRecordPanel.Children[3],
-                (ComboBox)dnsRecordPanel.Children[4],
-                (ComboBox)dnsRecordPanel.Children[5]
+                (TextBox)dnsInputPanel.Children[0],
+                (TextBox)dnsInputPanel.Children[1],
+                (ComboBox)dnsComboPanel.Children[0],
+                (ComboBox)dnsComboPanel.Children[1],
+                (ComboBox)dnsComboPanel.Children[2],
+                (ComboBox)dnsComboPanel.Children[3]
             );
         }
+
 
         private ComboBoxItem FindComboBoxItem(ComboBox comboBox, string content) =>
             comboBox.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Content.ToString() == content);
@@ -311,7 +331,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         private void BtnSaveProfile_Click(object sender, RoutedEventArgs e)
         {
 
-            var profileName = $"newProfile_{DateTime.Now:yyyyMMddHHmmss}";            
+            var profileName = $"newProfile_{DateTime.Now:yyyyMMddHHmmss}";
             var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
 
             var profile = new Dictionary<string, object>
