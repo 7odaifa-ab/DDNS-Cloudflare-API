@@ -36,7 +36,7 @@ namespace DDNS_Cloudflare_API.Views.Windows
             navigationService.SetNavigationControl(RootNavigation);
 
             // Get the full path to the icon file
-            string iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wpfui-icon.ico");
+            string iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DDNS.ico");
 
             // Initialize system tray icon
             trayIcon = new NotifyIcon

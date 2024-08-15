@@ -47,5 +47,13 @@
             FontWeight="Medium"
             Text="About DDNS_Cloudflare_API" />
         <TextBlock Margin="0,12,0,0" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
+        <TextBlock FontSize="20"
+                   Margin="0,20,0,0"
+                   Text="Crafted by Huimang Tech"
+                   FontWeight="Medium" />
+        <ui:Image CornerRadius="4"
+                  Height="60"
+                  Source="pack://application:,,,/Assets/HuimangTech.png"
+                  HorizontalAlignment="Left"/>
     </StackPanel>
 </Page>

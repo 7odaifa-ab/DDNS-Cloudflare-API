@@ -8,6 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("wpfui-icon.ico")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("ddns.ico")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/huimangtech.png")]
 
 
