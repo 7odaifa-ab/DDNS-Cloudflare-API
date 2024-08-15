@@ -1,0 +1,92 @@
+# DDNS Cloudflare API
+
+## Overview
+
+`DDNS Cloudflare API` is a WPF (Windows Presentation Foundation) application designed to interact with the Cloudflare API. The application serves as a Dynamic DNS (DDNS) client, allowing users to manage DNS records for a domain hosted on Cloudflare. It features functionality to fetch, update, and display DNS records, with support for different DNS record types and various user-configurable options.
+
+## Features
+
+- **Fetch DNS Records**: Retrieve and display DNS records for a specified zone.
+- **Update DNS Records**: Update existing DNS records with new values.
+- **Manage Profiles**: Save and manage different profiles for API keys and zone IDs.
+- **System Tray Integration**: Minimize to the system tray and manage application state.
+- **Log Management**: Keep a history of API responses in a log file.
+
+## Getting Started
+
+### Prerequisites
+
+- **.NET Framework 4.8** or later
+- **WPF UI Library**: Make sure to include the `Wpf.Ui` library in your project.
+- **Cloudflare API Access**: You need a valid API key and zone ID from Cloudflare.
+
+### Installation
+
+1. **Clone the Repository**:
+
+    ```bash
+    git clone https://github.com/7odaifa-ab/DDNS_Cloudflare_API.git
+    ```
+
+2. **Open the Project**:
+   
+   Open the solution file (`.sln`) in Visual Studio.
+
+3. **Install Dependencies**:
+
+   Ensure all necessary NuGet packages are installed by restoring the project’s packages.
+
+4. **Build the Project**:
+
+   Build the project to ensure all dependencies are correctly resolved.
+
+### Configuration
+
+1. **API Key and Zone ID**:
+
+   Enter your Cloudflare API key and zone ID in the respective text boxes on the `Records` page.
+
+2. **Image Assets**:
+
+   Place your image assets in the `Assets` folder. Ensure their Build Action is set to `Resource`.
+
+### Usage
+
+1. **Fetch DNS Records**:
+
+   - Navigate to the `Records` page.
+   - Enter your API Key and Zone ID.
+   - Click the `Get DNS Records` button to fetch and display DNS records.
+
+2. **Update DNS Records**:
+
+   - Use the `Update` button to send an update request with the new record details.
+
+3. **System Tray Integration**:
+
+   - The application minimizes to the system tray on window minimize.
+   - Right-click the tray icon to access options to show or exit the application.
+
+4. **View Logs**:
+
+   - Navigate to the `Logs` page to view the history of API responses.
+
+### Code Structure
+
+- **`MainWindow.xaml`**: The main application window, including system tray integration and navigation setup.
+- **`Records.xaml`**: Page for fetching and displaying DNS records.
+- **`DataPage.xaml`**: Page for viewing the history of API responses.
+- **`DataViewModel.cs`**: ViewModel for handling data operations.
+- **`App.xaml`**: Application-level configuration and startup.
+
+### Contributing
+
+Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure to follow the project's coding conventions and include relevant test cases.
+
+### License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+### Contact
+
+For questions or feedback, please contact [7odaifa@HuimangTech.com](mailto:7odaifa@HuimangTech.com).
