@@ -16,7 +16,7 @@ using Orientation = System.Windows.Controls.Orientation;
 using ComboBox = System.Windows.Controls.ComboBox;
 using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = Wpf.Ui.Controls.MessageBoxButton;
-using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
+
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
@@ -24,10 +24,8 @@ namespace DDNS_Cloudflare_API.Views.Pages
     {
         public DashboardViewModel ViewModel { get; }
 
-        private DispatcherTimer timer; // Class-level variable
-        private string profilesFolderPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "DDNS_Cloudflare_API", "Profiles");
+        private DispatcherTimer timer;
+        private readonly string profilesFolderPath;
 
         public DashboardPage(DashboardViewModel viewModel)
         {
@@ -35,158 +33,145 @@ namespace DDNS_Cloudflare_API.Views.Pages
             DataContext = this;
 
             InitializeComponent();
-            Directory.CreateDirectory(profilesFolderPath); // Ensure the profiles folder exists
+            profilesFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "Profiles");
+            Directory.CreateDirectory(profilesFolderPath);
+
             LoadProfiles();
         }
 
-        private async void BtnStart_Click(object sender, RoutedEventArgs e)
+        private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
             int interval = GetInterval();
-            timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMinutes(interval)
-            };
-            timer.Tick += async (s, args) => await UpdateDnsRecords();
-            timer.Start();
+            StartTimer(interval);
             txtStatus.Text = "Started";
-            await UpdateDnsRecords(); // Immediate update
+            _ = UpdateDnsRecords();
         }
 
         private void BtnStop_Click(object sender, RoutedEventArgs e)
         {
-            if (timer != null)
-            {
-                timer.Stop();
-                txtStatus.Text = "Stopped";
-            }
+            StopTimer();
         }
 
-        private async void BtnOneTime_Click(object sender, RoutedEventArgs e)
+        private void BtnOneTime_Click(object sender, RoutedEventArgs e)
         {
-            await UpdateDnsRecords(); // Perform a one-time update
+            _ = UpdateDnsRecords();
         }
 
-        private int GetInterval()
-        {
-            switch (cmbInterval.SelectedIndex)
+        private int GetInterval() =>
+            cmbInterval.SelectedIndex switch
             {
-                case 0: return 15;
-                case 1: return 30;
-                case 2: return 60;
-                case 3: return 360;
-                case 4: return 720;
-                case 5: return 1440;
-                default: return 60;
-            }
-        }
+                0 => 15,
+                1 => 30,
+                2 => 60,
+                3 => 360,
+                4 => 720,
+                5 => 1440,
+                _ => 60
+            };
 
-        private int GetTtlInSeconds(int index)
-        {
-            switch (index)
+        private int GetTtlInSeconds(int index) =>
+            index switch
             {
-                case 0: return 1; // Auto
-                case 1: return 60; // 1 min
-                case 2: return 120; // 2 min
-                case 3: return 300; // 5 min
-                case 4: return 600; // 10 min
-                case 5: return 900; // 15 min
-                case 6: return 1800; // 30 min
-                case 7: return 3600; // 1 hr
-                case 8: return 7200; // 2 hr
-                case 9: return 18000; // 5 hr
-                case 10: return 43200; // 12 hr
-                case 11: return 86400; // 1 day
-                default: return 3600; // Default to 1 hour
-            }
-        }
+                0 => 1,
+                1 => 60,
+                2 => 120,
+                3 => 300,
+                4 => 600,
+                5 => 900,
+                6 => 1800,
+                7 => 3600,
+                8 => 7200,
+                9 => 18000,
+                10 => 43200,
+                11 => 86400,
+                _ => 3600
+            };
 
         private async Task UpdateDnsRecords()
         {
             foreach (var item in itemsControlDnsRecords.Items)
             {
-                var dnsRecordPanel = item as StackPanel;
-
-                var txtDnsRecordId = dnsRecordPanel.Children.OfType<TextBox>().FirstOrDefault(t => t.Name == "txtDnsRecordId");
-                var txtName = dnsRecordPanel.Children.OfType<TextBox>().FirstOrDefault(t => t.Name == "txtName");
-                var contentComboBox = dnsRecordPanel.Children.OfType<System.Windows.Controls.ComboBox>().FirstOrDefault(c => c.Name == "content");
-                var cmbType = dnsRecordPanel.Children.OfType<System.Windows.Controls.ComboBox>().FirstOrDefault(c => c.Name == "cmbType");
-                var cmbProxied = dnsRecordPanel.Children.OfType<System.Windows.Controls.ComboBox>().FirstOrDefault(c => c.Name == "cmbProxied");
-                var cmbTtl = dnsRecordPanel.Children.OfType<System.Windows.Controls.ComboBox>().FirstOrDefault(c => c.Name == "cmbTtl");
-
-                if (txtDnsRecordId != null && txtName != null && cmbType != null && cmbProxied != null && cmbTtl != null && contentComboBox != null && contentComboBox.SelectedItem != null)
+                if (item is StackPanel dnsRecordPanel)
                 {
+                    var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
 
-                    string content = "IPv4";
-
-                    // Determine the IP fetching method based on the selected value in the content ComboBox
-                    var selectedContent = ((ComboBoxItem)contentComboBox.SelectedItem).Content.ToString();
-                    if (selectedContent == "IPv4")
+                    if (IsDnsRecordValid(dnsRecordId, name, content, type, proxied, ttl))
                     {
-                        content = await GetWanIpv4();
+                        string ipContent = await GetIpContent((ComboBoxItem)content.SelectedItem);
+
+                        var record = new
+                        {
+                            content = ipContent,
+                            name = name.Text,
+                            proxied = ((ComboBoxItem)proxied.SelectedItem).Content.ToString() == "True",
+                            type = ((ComboBoxItem)type.SelectedItem).Content.ToString(),
+                            ttl = GetTtlInSeconds(ttl.SelectedIndex),
+                            comment = "DDNS updated from WPF"
+                        };
+
+                        await UpdateDnsRecord(record, dnsRecordId.Text);
                     }
-                    else if (selectedContent == "IPv6")
+                    else
                     {
-                        content = await GetWanIpv6();
+                        await ShowErrorMessage("All parameters for API call are not complete.");
                     }
-
-                    var record = new
-                    {
-                        content = content,
-                        name = txtName.Text,
-                        proxied = ((ComboBoxItem)cmbProxied.SelectedItem).Content.ToString() == "True",
-                        type = ((ComboBoxItem)cmbType.SelectedItem).Content.ToString(),
-                        ttl = GetTtlInSeconds(cmbTtl.SelectedIndex),
-                        comment = "DDNS updated from WPF"
-                    };
-
-                    await UpdateDnsRecord(record, txtDnsRecordId.Text);
-
-                }
-                else
-                {
-                    var uiMessageBox = new Wpf.Ui.Controls.MessageBox
-                    {
-                        Title = "Erorr",
-                        Content =
-        "all parameter for API Call are not complate",
-                    };
-
-                    _ = await uiMessageBox.ShowDialogAsync();
                 }
             }
         }
 
+        private async Task<string> GetIpContent(ComboBoxItem selectedContent) =>
+            selectedContent.Content.ToString() switch
+            {
+                "IPv4" => await GetWanIpv4(),
+                "IPv6" => await GetWanIpv6(),
+                _ => string.Empty
+            };
+
         private async Task UpdateDnsRecord(object record, string dnsRecordId)
         {
             string json = JsonSerializer.Serialize(record);
-            using HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", txtApiKey.Text);
+
+            using HttpClient client = new HttpClient
+            {
+                DefaultRequestHeaders =
+                {
+                    Accept = { new MediaTypeWithQualityHeaderValue("application/json") },
+                    Authorization = new AuthenticationHeaderValue("Bearer", txtApiKey.Text)
+                }
+            };
 
             HttpResponseMessage response = await client.PutAsync(
                 $"https://api.cloudflare.com/client/v4/zones/{txtZoneId.Text}/dns_records/{dnsRecordId}",
                 new StringContent(json, Encoding.UTF8, "application/json"));
 
-            string result = await response.Content.ReadAsStringAsync();
-            txtStatus.Text = $"Last update: {DateTime.Now}\nResponse: {result}";
+            txtStatus.Text = $"Last update: {DateTime.Now}\nResponse: {await response.Content.ReadAsStringAsync()}";
         }
 
         private async Task<string> GetWanIpv4()
         {
-            using HttpClient client = new HttpClient();
-            var response = await client.GetStringAsync("https://api.ipify.org?format=json");
-            var ipData = JsonSerializer.Deserialize<Dictionary<string, string>>(response);
-            return ipData["ip"];
+            return await FetchIpAddress("https://api.ipify.org?format=json");
         }
+
         private async Task<string> GetWanIpv6()
         {
+            return await FetchIpAddress("https://api6.ipify.org?format=json");
+        }
+
+        private async Task<string> FetchIpAddress(string url)
+        {
             using HttpClient client = new HttpClient();
-            var response = await client.GetStringAsync("https://api6.ipify.org?format=json");
+            var response = await client.GetStringAsync(url);
             var ipData = JsonSerializer.Deserialize<Dictionary<string, string>>(response);
             return ipData["ip"];
         }
 
         private void BtnAddDnsRecord_Click(object sender, RoutedEventArgs e)
+        {
+            var dnsRecordPanel = CreateDnsRecordPanel();
+            itemsControlDnsRecords.Items.Add(dnsRecordPanel);
+        }
+
+        private StackPanel CreateDnsRecordPanel()
         {
             var dnsRecordPanel = new StackPanel
             {
@@ -194,7 +179,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 Margin = new Thickness(0, 0, 0, 10)
             };
 
-            // Create and add new fields
             dnsRecordPanel.Children.Add(CreateTextBox("txtDnsRecordId"));
             dnsRecordPanel.Children.Add(CreateTextBox("txtName"));
             dnsRecordPanel.Children.Add(CreateComboBox("content", new[] { "IPv4", "IPv6" }));
@@ -206,20 +190,17 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 "2 hr", "5 hr", "12 hr", "1 day"
             }));
 
-            itemsControlDnsRecords.Items.Add(dnsRecordPanel);
+            return dnsRecordPanel;
         }
 
-        private TextBox CreateTextBox(string name, string text = "")
-        {
-            return new TextBox
+        private TextBox CreateTextBox(string name, string text = "") =>
+            new TextBox
             {
                 Name = name,
                 Margin = new Thickness(5),
                 Width = 100,
                 Text = text
             };
-        }
-
 
         private ComboBox CreateComboBox(string name, string[] items, string selectedItem = null)
         {
@@ -230,12 +211,10 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
             if (selectedItem != null)
             {
-                // Select the item that matches the provided selectedItem
                 comboBox.SelectedItem = comboBox.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Content.ToString() == selectedItem);
             }
             return comboBox;
         }
-
 
         private void LoadProfiles()
         {
@@ -245,32 +224,11 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 cmbProfiles.Items.Clear();
                 foreach (var file in profileFiles)
                 {
-                    var profileName = Path.GetFileNameWithoutExtension(file);
-                    cmbProfiles.Items.Add(profileName);
+                    cmbProfiles.Items.Add(Path.GetFileNameWithoutExtension(file));
                 }
                 cmbProfiles.IsEnabled = cmbProfiles.Items.Count > 0;
             }
         }
-        private static int GetTtlIndex(int ttlInSeconds)
-        {
-            switch (ttlInSeconds)
-            {
-                case 1: return 0; // Auto
-                case 60: return 1; // 1 min
-                case 120: return 2; // 2 min
-                case 300: return 3; // 5 min
-                case 600: return 4; // 10 min
-                case 900: return 5; // 15 min
-                case 1800: return 6; // 30 min
-                case 3600: return 7; // 1 hr
-                case 7200: return 8; // 2 hr
-                case 18000: return 9; // 5 hr
-                case 43200: return 10; // 12 hr
-                case 86400: return 11; // 1 day
-                default: return 7; // Default to 1 hr
-            }
-        }
-
 
         private void CmbProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -279,103 +237,121 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
                 if (File.Exists(profilePath))
                 {
-                    var json = File.ReadAllText(profilePath);
-                    var profile = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-
-                    // Decrypt and set API Key and Zone ID
-                    txtApiKey.Text = EncryptionHelper.DecryptString(profile["ApiKey"].ToString());
-                    txtZoneId.Text = EncryptionHelper.DecryptString(profile["ZoneId"].ToString());
-
-                    // Clear existing records
-                    itemsControlDnsRecords.Items.Clear();
-
-                    // Load DNS records
-                    var dnsRecords = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(profile["DnsRecords"].ToString());
-                    foreach (var record in dnsRecords)
-                    {
-                        var dnsRecordPanel = new StackPanel
-                        {
-                            Orientation = Orientation.Horizontal,
-                            Margin = new Thickness(0, 0, 0, 10)
-                        };
-
-                        // Create and add new fields with values from profile
-                        dnsRecordPanel.Children.Add(CreateTextBox("txtDnsRecordId", record["RecordID"]?.ToString()));
-                        dnsRecordPanel.Children.Add(CreateTextBox("txtName", record["Name"]?.ToString()));
-
-                        var content = record["Content"]?.ToString();
-                        dnsRecordPanel.Children.Add(CreateComboBox("content", new[] { "IPv4", "IPv6" }, content));
-
-                        var type = record["Type"]?.ToString();
-                        dnsRecordPanel.Children.Add(CreateComboBox("cmbType", new[] { "A", "AAAA", "CNAME" }, type));
-
-                        var proxied = bool.Parse(record["Proxied"]?.ToString()) ? "True" : "False";
-                        dnsRecordPanel.Children.Add(CreateComboBox("cmbProxied", new[] { "True", "False" }, proxied));
-
-                        var ttlIndex = (record["TTL"]?.ToString());
-                        dnsRecordPanel.Children.Add(CreateComboBox("cmbTtl", new[]
-                        { 
-                            "Auto", "1 min", "2 min", "5 min", "10 min", "15 min", "30 min", "1 hr",
-                            "2 hr", "5 hr", "12 hr", "1 day"
-                         }, ttlIndex));
-
-                        itemsControlDnsRecords.Items.Add(dnsRecordPanel);
-                    }
+                    LoadProfile(profilePath);
                 }
             }
         }
 
+        private void LoadProfile(string profilePath)
+        {
+            var json = File.ReadAllText(profilePath);
+            var profile = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+
+            txtApiKey.Text = EncryptionHelper.DecryptString(profile["ApiKey"].ToString());
+            txtZoneId.Text = EncryptionHelper.DecryptString(profile["ZoneId"].ToString());
+
+            itemsControlDnsRecords.Items.Clear();
+
+            var dnsRecords = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(profile["DnsRecords"].ToString());
+            foreach (var record in dnsRecords)
+            {
+                var dnsRecordPanel = CreateDnsRecordPanel();
+                UpdateDnsRecordPanel(dnsRecordPanel, record);
+                itemsControlDnsRecords.Items.Add(dnsRecordPanel);
+            }
+        }
+        private int GetTtlIndex(int ttlInSeconds)
+        {
+            return ttlInSeconds switch
+            {
+                1 => 0, // Auto
+                60 => 1, // 1 min
+                120 => 2, // 2 min
+                300 => 3, // 5 min
+                600 => 4, // 10 min
+                900 => 5, // 15 min
+                1800 => 6, // 30 min
+                3600 => 7, // 1 hr
+                7200 => 8, // 2 hr
+                18000 => 9, // 5 hr
+                43200 => 10, // 12 hr
+                86400 => 11, // 1 day
+                _ => 0 // Default to Auto
+            };
+        }
 
 
+        private void UpdateDnsRecordPanel(StackPanel dnsRecordPanel, Dictionary<string, object> record)
+        {
+            var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
+
+            dnsRecordId.Text = record["RecordID"]?.ToString();
+            name.Text = record["Name"]?.ToString();
+            content.SelectedItem = FindComboBoxItem(content, record["Content"]?.ToString());
+            type.SelectedItem = FindComboBoxItem(type, record["Type"]?.ToString());
+            proxied.SelectedItem = FindComboBoxItem(proxied, bool.Parse(record["Proxied"]?.ToString()) ? "True" : "False");
+            ttl.SelectedIndex = GetTtlIndex(int.Parse(record["TTL"]?.ToString()));
+        }
+
+        private (TextBox dnsRecordId, TextBox name, ComboBox content, ComboBox type, ComboBox proxied, ComboBox ttl) GetDnsRecordFields(StackPanel dnsRecordPanel)
+        {
+            return (
+                (TextBox)dnsRecordPanel.Children[0],
+                (TextBox)dnsRecordPanel.Children[1],
+                (ComboBox)dnsRecordPanel.Children[2],
+                (ComboBox)dnsRecordPanel.Children[3],
+                (ComboBox)dnsRecordPanel.Children[4],
+                (ComboBox)dnsRecordPanel.Children[5]
+            );
+        }
+
+        private ComboBoxItem FindComboBoxItem(ComboBox comboBox, string content) =>
+            comboBox.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Content.ToString() == content);
 
         private void BtnSaveProfile_Click(object sender, RoutedEventArgs e)
         {
-            var profileName = $"Profile_{DateTime.Now:yyyyMMddHHmmss}";
+
+            var profileName = $"newProfile_{DateTime.Now:yyyyMMddHHmmss}";            
             var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
 
+            var profile = new Dictionary<string, object>
+            {
+                { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
+                { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
+                { "DnsRecords", SerializeDnsRecords() }
+            };
+
+            var json = JsonSerializer.Serialize(profile);
+            File.WriteAllText(profilePath, json);
+
+            LoadProfiles();
+            _ = ShowSuccessMessage("Profile saved successfully.");
+        }
+
+        private string SerializeDnsRecords()
+        {
             var dnsRecords = new List<Dictionary<string, object>>();
 
             foreach (var item in itemsControlDnsRecords.Items)
             {
-                var dnsRecordPanel = item as StackPanel;
-
-                var txtDnsRecordId = dnsRecordPanel.Children.OfType<TextBox>().FirstOrDefault(t => t.Name == "txtDnsRecordId");
-                var txtName = dnsRecordPanel.Children.OfType<TextBox>().FirstOrDefault(t => t.Name == "txtName");
-                var contentComboBox = dnsRecordPanel.Children.OfType<System.Windows.Controls.ComboBox>().FirstOrDefault(c => c.Name == "content");
-                var cmbType = dnsRecordPanel.Children.OfType<System.Windows.Controls.ComboBox>().FirstOrDefault(c => c.Name == "cmbType");
-                var cmbProxied = dnsRecordPanel.Children.OfType<System.Windows.Controls.ComboBox>().FirstOrDefault(c => c.Name == "cmbProxied");
-                var cmbTtl = dnsRecordPanel.Children.OfType<System.Windows.Controls.ComboBox>().FirstOrDefault(c => c.Name == "cmbTtl");
-
-                if (txtDnsRecordId != null && txtName != null && cmbType != null && cmbProxied != null && cmbTtl != null && contentComboBox != null)
+                if (item is StackPanel dnsRecordPanel)
                 {
-                    var record = new Dictionary<string, object>
-            {
-                { "RecordID", txtDnsRecordId.Text },
-                { "Name", txtName.Text },
-                { "Content", ((ComboBoxItem)contentComboBox.SelectedItem)?.Content.ToString() },
-                { "Type", ((ComboBoxItem)cmbType.SelectedItem)?.Content.ToString() },
-                { "Proxied", ((ComboBoxItem)cmbProxied.SelectedItem)?.Content.ToString() },
-                { "TTL", ((ComboBoxItem)cmbTtl.SelectedItem)?.Content.ToString() }
-            };
+                    var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
 
-                    dnsRecords.Add(record);
+                    dnsRecords.Add(new Dictionary<string, object>
+                    {
+                        { "RecordID", dnsRecordId.Text },
+                        { "Name", name.Text },
+                        { "Content", ((ComboBoxItem)content.SelectedItem).Content.ToString() },
+                        { "Type", ((ComboBoxItem)type.SelectedItem).Content.ToString() },
+                        { "Proxied", ((ComboBoxItem)proxied.SelectedItem).Content.ToString() == "True" },
+                        { "TTL", GetTtlInSeconds(ttl.SelectedIndex) }
+                    });
                 }
             }
 
-            var profileData = new Dictionary<string, object>
-    {
-        { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
-        { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
-        { "DnsRecords", dnsRecords }
-    };
-
-            File.WriteAllText(profilePath, JsonSerializer.Serialize(profileData));
-            LoadProfiles();
-            MessageBox.Show("Profile saved successfully.");
+            return JsonSerializer.Serialize(dnsRecords);
         }
-
-
-
 
         private void BtnDeleteProfile_Click(object sender, RoutedEventArgs e)
         {
@@ -386,9 +362,64 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 {
                     File.Delete(profilePath);
                     LoadProfiles();
-                    MessageBox.Show("Profile deleted successfully.");
+                    ClearInputFields();
+                    _ = ShowSuccessMessage("Profile deleted successfully.");
                 }
             }
+            else
+            {
+                _ = ShowErrorMessage("No profile selected to delete.");
+            }
         }
+
+        private void ClearInputFields()
+        {
+            txtApiKey.Text = string.Empty;
+            txtZoneId.Text = string.Empty;
+            itemsControlDnsRecords.Items.Clear();
+        }
+
+        private async Task ShowErrorMessage(string message)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Error",
+                Content = message,
+                PrimaryButtonText = "OK"
+            };
+            await dialog.ShowAsync();
+        }
+
+        private async Task ShowSuccessMessage(string message)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Success",
+                Content = message,
+                PrimaryButtonText = "OK"
+            };
+            await dialog.ShowAsync();
+        }
+
+        private void StartTimer(int intervalMinutes)
+        {
+            timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMinutes(intervalMinutes)
+            };
+            timer.Tick += async (sender, e) => await UpdateDnsRecords();
+            timer.Start();
+        }
+
+        private void StopTimer()
+        {
+            timer?.Stop();
+            timer = null;
+            txtStatus.Text = "Stopped";
+        }
+
+        private bool IsDnsRecordValid(params object[] fields) => fields.All(field => field != null && !string.IsNullOrEmpty(field.ToString()));
+
+
     }
 }
