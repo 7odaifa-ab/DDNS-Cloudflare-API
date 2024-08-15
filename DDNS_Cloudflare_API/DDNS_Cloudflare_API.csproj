@@ -34,12 +34,10 @@
 
   <ItemGroup>
     <None Remove="Assets\DDNS.png" />
-    <None Remove="Assets\DDNS.png" />
     <None Remove="Assets\HuimangTech.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\DDNS.png" />
     <Resource Include="Assets\DDNS.png" />
     <Resource Include="Assets\HuimangTech.png" />
   </ItemGroup>

@@ -123,7 +123,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
         private void UpdateLogFile(string message)
         {
-            string logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "log.txt");
+            string logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "Logs.txt");
 
             if (!File.Exists(logFilePath))
             {
