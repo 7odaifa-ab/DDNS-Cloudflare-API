@@ -14,9 +14,9 @@ using DDNS_Cloudflare_API.ViewModels.Pages;
 using TextBox = Wpf.Ui.Controls.TextBox;
 using Orientation = System.Windows.Controls.Orientation;
 using ComboBox = System.Windows.Controls.ComboBox;
-using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = Wpf.Ui.Controls.MessageBoxButton;
 using System.Collections;
+using MessageBox = Wpf.Ui.Controls.MessageBox;
 
 
 namespace DDNS_Cloudflare_API.Views.Pages
@@ -109,8 +109,15 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
         private async Task UpdateDnsRecords()
         {
+            if (itemsControlDnsRecords.Items.Count == 0)
+            {
+                txtStatus.Text = "ERORR";
+                await ShowErrorMessage("you have to complete all parameters for API call.");
+                return;
+            }
             foreach (var item in itemsControlDnsRecords.Items)
             {
+
                 if (item is StackPanel dnsRecordPanel)
                 {
                     var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
@@ -136,6 +143,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                         await ShowErrorMessage("All parameters for API call are not complete.");
                     }
                 }
+
             }
         }
 
@@ -165,6 +173,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 new StringContent(json, Encoding.UTF8, "application/json"));
 
             txtStatus.Text = $"Last update: {DateTime.Now}\nResponse: {await response.Content.ReadAsStringAsync()}";
+            UpdateLogFile(await response.Content.ReadAsStringAsync());
         }
 
         private async Task<string> GetWanIpv4()
@@ -208,10 +217,10 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 10)
             };
-            dnsInputPanel.Children.Add(CreateTextBox("txtDnsRecordId"));
-            dnsInputPanel.Children.Add(CreateTextBox("txtName"));
+            dnsInputPanel.Children.Add(CreateTextBox("txtDnsRecordId","Record ID"));
+            dnsInputPanel.Children.Add(CreateTextBox("txtName","Name"));
             dnsComboPanel.Children.Add(CreateComboBox("content", new[] { "IPv4", "IPv6" }));
-            dnsComboPanel.Children.Add(CreateComboBox("cmbType", new[] { "A", "AAAA", "CNAME" }));
+            dnsComboPanel.Children.Add(CreateComboBox("cmbType", new[] { "A", "AAAA"}));
             dnsComboPanel.Children.Add(CreateComboBox("cmbProxied", new[] { "True", "False" }));
             dnsComboPanel.Children.Add(CreateComboBox("cmbTtl", new[]
             {
@@ -224,28 +233,42 @@ namespace DDNS_Cloudflare_API.Views.Pages
             return dnsRecordPanel;
         }
 
-        private TextBox CreateTextBox(string name, string text = "input") =>
+        private TextBox CreateTextBox(string name, string holderText, string text = "") =>
             new TextBox
             {
                 Name = name,
                 Margin = new Thickness(5),
-                Width = 100,
-                Text = text
+                Text = text, 
+                Width =205 ,
+                PlaceholderText =holderText,
+                ToolTip = "hint"
             };
 
         private ComboBox CreateComboBox(string name, string[] items, string selectedItem = null)
         {
-            var comboBox = new ComboBox { Name = name, Margin = new Thickness(5) };
+            var comboBox = new ComboBox { Name = name, Margin = new Thickness(5) , MinWidth = 80};
+
+            // Add items to the ComboBox
             foreach (var item in items)
             {
                 comboBox.Items.Add(new ComboBoxItem { Content = item });
             }
+
+            // Set the selected item if specified
             if (selectedItem != null)
             {
                 comboBox.SelectedItem = comboBox.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Content.ToString() == selectedItem);
             }
+
+            // Automatically select the first item if no item is specified
+            if (comboBox.Items.Count > 0 && selectedItem == null)
+            {
+                comboBox.SelectedIndex = 0;
+            }
+
             return comboBox;
         }
+
 
         private void LoadProfiles()
         {
@@ -327,6 +350,26 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
         private ComboBoxItem FindComboBoxItem(ComboBox comboBox, string content) =>
             comboBox.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Content.ToString() == content);
+        
+        private void UpdateLogFile(string message)
+        {
+            var profilePath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API"), "Logs.txt");
+            var logFile = new FileInfo(profilePath);
+            // Ensure the file exists; create it if it does not
+            if (!logFile.Exists)
+            {
+                // Create the file
+                using (var stream = logFile.Create())
+                {
+                }
+            }
+            // Format the message to include a timestamp and two new lines
+            string formattedMessage = $"{DateTime.Now}: {message}\n\n";
+
+            File.AppendAllText(profilePath, formattedMessage);
+        }
+
+
 
         private void BtnSaveProfile_Click(object sender, RoutedEventArgs e)
         {
@@ -401,24 +444,23 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
         private async Task ShowErrorMessage(string message)
         {
-            var dialog = new ContentDialog
+            var messageBox = new MessageBox
             {
                 Title = "Error",
                 Content = message,
-                PrimaryButtonText = "OK"
+                SecondaryButtonText = "OK"
             };
-            await dialog.ShowAsync();
+            await messageBox.ShowDialogAsync();
         }
 
         private async Task ShowSuccessMessage(string message)
         {
-            var dialog = new ContentDialog
+            var dialog = new MessageBox
             {
                 Title = "Success",
                 Content = message,
-                PrimaryButtonText = "OK"
             };
-            await dialog.ShowAsync();
+            await dialog.ShowDialogAsync();
         }
 
         private void StartTimer(int intervalMinutes)

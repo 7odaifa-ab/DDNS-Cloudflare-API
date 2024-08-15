@@ -21,7 +21,19 @@ namespace DDNS_Cloudflare_API.ViewModels.Windows
             {
                 Content = "Log",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.DocumentTextClock24},
-                TargetPageType = typeof(Views.Pages.DataPage)
+                TargetPageType = typeof(Views.Pages.Log)
+            },
+            new NavigationViewItem()
+            {
+                Content = "Records",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.ContentSettings24},
+                TargetPageType = typeof(Views.Pages.DashboardPage)
+            },
+            new NavigationViewItem()
+            {
+                Content = "Tutorial",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.DocumentTextClock24},
+                TargetPageType = typeof(Views.Pages.Tutorial)
             }
         };
 
