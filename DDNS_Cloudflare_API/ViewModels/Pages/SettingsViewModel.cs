@@ -24,7 +24,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
         private void InitializeViewModel()
         {
             CurrentTheme = ApplicationThemeManager.GetAppTheme();
-            AppVersion = $"DDNS - CloudFlare API - {GetAssemblyVersion()}";
+            AppVersion = $"DDNS - CloudFlare API - v{GetAssemblyVersion()}";
 
             _isInitialized = true;
         }

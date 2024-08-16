@@ -41,6 +41,17 @@
             GroupName="themeSelect"
             IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
 
+        <TextBlock FontSize="20"
+                   FontWeight="Medium"
+                   Margin="0 12 0 0 "
+                   Text="Update" />
+        <ui:Button Content="Check for Update"
+                   Click="BtnCheckForUpdate_Click"
+                   HorizontalAlignment="Left"
+                   Margin="0 12 0 0"
+                   Icon="{ui:SymbolIcon ArrowSync24}"
+                   Grid.Row="0" />
+
         <TextBlock
             Margin="0,24,0,0"
             FontSize="20"

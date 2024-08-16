@@ -1,6 +1,6 @@
 ﻿namespace DDNS_Cloudflare_API.ViewModels.Pages
 {
-    public partial class DashboardViewModel : ObservableObject
+    public partial class SetupViewModel : ObservableObject
     {
         [ObservableProperty]
         private int _counter = 0;
