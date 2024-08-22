@@ -101,6 +101,17 @@
 
 Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure to follow the project's coding conventions and include relevant test cases.
 
+**`I Need Help Implementing:**`
+
+- Dashboard
+- Show the Timer Count for the next API call.
+- Add custom profile naming.
+- Startup on logon.
+- Load Profiles on lunch.
+- Rich Tutorial
+- New UI and better UX
+- Portable version
+  
 ### License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
