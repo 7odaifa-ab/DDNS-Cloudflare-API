@@ -101,7 +101,7 @@
 
 Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure to follow the project's coding conventions and include relevant test cases.
 
-**`I Need Help Implementing:**`
+**`I Need Help Implementing:`**
 
 - Dashboard
 - Show the Timer Count for the next API call.
