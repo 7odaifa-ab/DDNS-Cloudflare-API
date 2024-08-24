@@ -17,6 +17,7 @@ using ComboBox = System.Windows.Controls.ComboBox;
 using MessageBoxButton = Wpf.Ui.Controls.MessageBoxButton;
 using System.Collections;
 using MessageBox = Wpf.Ui.Controls.MessageBox;
+using System.Collections.ObjectModel;
 
 
 namespace DDNS_Cloudflare_API.Views.Pages
@@ -481,7 +482,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
         }
 
         private bool IsDnsRecordValid(params object[] fields) => fields.All(field => field != null && !string.IsNullOrEmpty(field.ToString()));
-
 
     }
 }

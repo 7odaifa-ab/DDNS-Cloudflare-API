@@ -1,4 +1,5 @@
 ﻿using DDNS_Cloudflare_API.ViewModels.Pages;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,8 +28,88 @@ namespace DDNS_Cloudflare_API.Views.Pages
             DataContext = this;
 
             InitializeComponent();
+            InitializeStartupSettings();
         }
 
+        private void InitializeStartupSettings()
+        {
+            var (runOnStartup, loadProfilesOnStartup) = LoadStartupSetting();
+
+            RunOnStartupCheckBox.IsChecked = runOnStartup;
+            LoadProfilesOnStartupCheckBox.IsChecked = loadProfilesOnStartup;
+        }
+
+        private void RunOnStartup_Checked(object sender, RoutedEventArgs e)
+        {
+            SetStartup(true);
+            SaveStartupSetting(true, LoadProfilesOnStartupCheckBox.IsChecked == true);
+        }
+
+        private void RunOnStartup_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SetStartup(false);
+            SaveStartupSetting(false, LoadProfilesOnStartupCheckBox.IsChecked == true);
+        }
+
+        private void LoadProfilesOnStartup_Checked(object sender, RoutedEventArgs e)
+        {
+            SaveStartupSetting(RunOnStartupCheckBox.IsChecked == true, true);
+        }
+
+        private void LoadProfilesOnStartup_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SaveStartupSetting(RunOnStartupCheckBox.IsChecked == true, false);
+        }
+
+        private void SetStartup(bool enable)
+        {
+            string appName = "DDNS Cloudflare API";
+            string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            {
+                if (enable)
+                {
+                    key.SetValue(appName, $"\"{exePath}\"");
+                }
+                else
+                {
+                    key.DeleteValue(appName, false);
+                }
+            }
+        }
+
+        private void SaveStartupSetting(bool runOnStartup, bool loadProfilesOnStartup)
+        {
+            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
+
+            var startupSettings = new
+            {
+                RunOnStartup = runOnStartup,
+                LoadProfilesOnStartup = loadProfilesOnStartup
+            };
+
+            string json = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(settingsFilePath, json);
+        }
+
+        private (bool runOnStartup, bool loadProfilesOnStartup) LoadStartupSetting()
+        {
+            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
+
+            if (File.Exists(settingsFilePath))
+            {
+                string json = File.ReadAllText(settingsFilePath);
+                var startupSettings = JsonSerializer.Deserialize<Dictionary<string, bool>>(json);
+
+                return (startupSettings["RunOnStartup"], startupSettings["LoadProfilesOnStartup"]);
+            }
+
+            // Default values if settings file doesn't exist
+            return (false, false);
+        }
+
+        // This is the method you mentioned, still present in the class.
         private async void BtnCheckForUpdate_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -60,7 +141,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
         }
 
-
         private async Task<string> GetLatestVersionAsync()
         {
             using HttpClient client = new HttpClient();
@@ -73,7 +153,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             return latestVersion;
         }
-
 
         private async Task DownloadAndUpdateAsync(string version)
         {
