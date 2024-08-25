@@ -83,15 +83,31 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
 
-            var startupSettings = new
-            {
-                RunOnStartup = runOnStartup,
-                LoadProfilesOnStartup = loadProfilesOnStartup
-            };
+            Dictionary<string, object> startupSettings;
 
+            // Check if the settings file exists
+            if (File.Exists(settingsFilePath))
+            {
+                // Load existing settings
+                string existingJson = File.ReadAllText(settingsFilePath);
+                startupSettings = JsonSerializer.Deserialize<Dictionary<string, object>>(existingJson);
+            }
+            else
+            {
+                // Create a new settings dictionary if the file doesn't exist
+                startupSettings = new Dictionary<string, object>();
+            }
+
+            // Update or add the settings
+            startupSettings["RunOnStartup"] = runOnStartup;
+            startupSettings["LoadProfilesOnStartup"] = loadProfilesOnStartup;
+
+            // Serialize and save the updated settings
             string json = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(settingsFilePath, json);
         }
+
+
 
         private (bool runOnStartup, bool loadProfilesOnStartup) LoadStartupSetting()
         {

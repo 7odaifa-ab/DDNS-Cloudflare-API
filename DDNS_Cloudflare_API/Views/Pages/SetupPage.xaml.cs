@@ -26,8 +26,11 @@ namespace DDNS_Cloudflare_API.Views.Pages
     {
         public SetupViewModel ViewModel { get; }
 
-        private DispatcherTimer timer;
+        private readonly Dictionary<string, DispatcherTimer> profileTimers; // Dictionary to store timers for each profile
+        private readonly Dictionary<string, Dictionary<string, object>> profileData;
+
         private readonly string profilesFolderPath;
+        private readonly string settingsFilePath;
 
         public SetupPage(SetupViewModel viewModel)
         {
@@ -36,33 +39,115 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             InitializeComponent();
             profilesFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "Profiles");
+            settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
             Directory.CreateDirectory(profilesFolderPath);
+            profileData = new Dictionary<string, Dictionary<string, object>>();
+
+            profileTimers = new Dictionary<string, DispatcherTimer>(); // Initialize the Dictionary
 
             LoadProfiles();
+            LoadStartupSettings(); // Load and restore the profile running statuses
         }
+
 
         private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
-            int interval = GetInterval();
-            StartTimer(interval);
-            txtStatus.Text = "Started";
-            _ = UpdateDnsRecords();
+            if (cmbProfiles.SelectedItem != null)
+            {
+                string profileName = cmbProfiles.SelectedItem.ToString();
+
+                // Save profile's status as running
+                SaveStartupSetting(profileName, true);
+
+                int interval = GetInterval();
+                StartTimer(profileName, interval);
+                txtStatus.Text = $"{profileName} Started";
+                _ = UpdateDnsRecords();
+            }
         }
+
 
         private void BtnStop_Click(object sender, RoutedEventArgs e)
         {
-            StopTimer();
+            if (cmbProfiles.SelectedItem != null)
+            {
+                string profileName = cmbProfiles.SelectedItem.ToString();
+
+                // Stop the timer for the selected profile
+                StopTimer(profileName);
+
+                // Save profile's status as stopped
+                SaveStartupSetting(profileName, false);
+            }
         }
+
+
 
         private void BtnOneTime_Click(object sender, RoutedEventArgs e)
         {
             _ = UpdateDnsRecords();
         }
 
+        private void SaveStartupSetting(string profileName, bool isRunning)
+        {
+            Dictionary<string, bool> startupSettings;
+
+            if (File.Exists(settingsFilePath))
+            {
+                string json = File.ReadAllText(settingsFilePath);
+                startupSettings = JsonSerializer.Deserialize<Dictionary<string, bool>>(json);
+            }
+            else
+            {
+                startupSettings = new Dictionary<string, bool>();
+            }
+
+            startupSettings[profileName] = isRunning;
+
+            string updatedJson = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(settingsFilePath, updatedJson);
+        }
+
+        private async Task LoadStartupSettings()
+        {
+            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
+
+            if (File.Exists(settingsFilePath))
+            {
+                string json = File.ReadAllText(settingsFilePath);
+                var startupSettings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+
+                // Check if LoadProfilesOnStartup is true before proceeding
+                if (startupSettings.ContainsKey("LoadProfilesOnStartup") && startupSettings["LoadProfilesOnStartup"].GetBoolean())
+                {
+                    foreach (var kvp in startupSettings)
+                    {
+                        // Skip non-profile entries like "RunOnStartup" and "LoadProfilesOnStartup"
+                        if (kvp.Key == "RunOnStartup" || kvp.Key == "LoadProfilesOnStartup")
+                            continue;
+
+                        // Check if the profile was running and start it if true
+                        if (kvp.Value.GetBoolean())
+                        {
+                            cmbProfiles.SelectedItem = kvp.Key;
+                            BtnStart_Click(null, null); // Automatically start the profile
+
+                            // Wait for 5 seconds before proceeding to the next profile
+                            await Task.Delay(5000);
+
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
         private int GetInterval() =>
             cmbInterval.SelectedIndex switch
             {
-                0 => 15,
+                0 => 1,
                 1 => 30,
                 2 => 60,
                 3 => 360,
@@ -108,45 +193,28 @@ namespace DDNS_Cloudflare_API.Views.Pages
             };
         }
 
-        private async Task UpdateDnsRecords()
+        private async Task UpdateDnsRecordForProfile(string apiKey, string zoneId, object record, string dnsRecordId)
         {
-            if (itemsControlDnsRecords.Items.Count == 0)
+            string json = JsonSerializer.Serialize(record);
+
+            using HttpClient client = new HttpClient
             {
-                txtStatus.Text = "ERORR";
-                await ShowErrorMessage("you have to complete all parameters for API call.");
-                return;
-            }
-            foreach (var item in itemsControlDnsRecords.Items)
-            {
-
-                if (item is StackPanel dnsRecordPanel)
-                {
-                    var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
-
-                    if (IsDnsRecordValid(dnsRecordId, name, content, type, proxied, ttl))
-                    {
-                        string ipContent = await GetIpContent((ComboBoxItem)content.SelectedItem);
-
-                        var record = new
-                        {
-                            content = ipContent,
-                            name = name.Text,
-                            proxied = ((ComboBoxItem)proxied.SelectedItem).Content.ToString() == "True",
-                            type = ((ComboBoxItem)type.SelectedItem).Content.ToString(),
-                            ttl = GetTtlInSeconds(ttl.SelectedIndex),
-                            comment = "DDNS updated from WPF"
-                        };
-
-                        await UpdateDnsRecord(record, dnsRecordId.Text);
-                    }
-                    else
-                    {
-                        await ShowErrorMessage("All parameters for API call are not complete.");
-                    }
-                }
-
-            }
+                DefaultRequestHeaders =
+        {
+            Accept = { new MediaTypeWithQualityHeaderValue("application/json") },
+            Authorization = new AuthenticationHeaderValue("Bearer", apiKey)
         }
+            };
+
+            HttpResponseMessage response = await client.PutAsync(
+                $"https://api.cloudflare.com/client/v4/zones/{zoneId}/dns_records/{dnsRecordId}",
+                new StringContent(json, Encoding.UTF8, "application/json"));
+
+            // Log and display the response as needed
+            txtStatus.Text = $"Last update: {DateTime.Now}\nResponse: {await response.Content.ReadAsStringAsync()}";
+            UpdateLogFile(await response.Content.ReadAsStringAsync());
+        }
+
 
         private async Task<string> GetIpContent(ComboBoxItem selectedContent) =>
             selectedContent.Content.ToString() switch
@@ -464,22 +532,123 @@ namespace DDNS_Cloudflare_API.Views.Pages
             await dialog.ShowDialogAsync();
         }
 
-        private void StartTimer(int intervalMinutes)
+        private void StartTimer(string profileName, int intervalMinutes)
         {
-            timer = new DispatcherTimer
+            if (profileTimers.ContainsKey(profileName))
+            {
+                profileTimers[profileName].Stop();
+                profileTimers[profileName] = null;
+            }
+
+            // Load profile data if not already loaded
+            if (!profileData.ContainsKey(profileName))
+            {
+                var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
+                if (File.Exists(profilePath))
+                {
+                    var json = File.ReadAllText(profilePath);
+                    var profile = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+                    profileData[profileName] = profile;
+                }
+            }
+
+            // Use the loaded profile data in the timer
+            DispatcherTimer timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMinutes(intervalMinutes)
             };
-            timer.Tick += async (sender, e) => await UpdateDnsRecords();
+            timer.Tick += async (sender, e) => await UpdateDnsRecordsForProfile(profileName);
             timer.Start();
+
+            profileTimers[profileName] = timer; // Store the timer in the dictionary
         }
 
-        private void StopTimer()
+        private async Task UpdateDnsRecordsForProfile(string profileName)
         {
-            timer?.Stop();
-            timer = null;
-            txtStatus.Text = "Stopped";
+            if (profileData.ContainsKey(profileName))
+            {
+                var profile = profileData[profileName];
+                string apiKey = EncryptionHelper.DecryptString(profile["ApiKey"].ToString());
+                string zoneId = EncryptionHelper.DecryptString(profile["ZoneId"].ToString());
+                var dnsRecords = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(profile["DnsRecords"].ToString());
+
+                foreach (var record in dnsRecords)
+                {
+                    string dnsRecordId = record["RecordID"]?.ToString();
+                    string name = record["Name"]?.ToString();
+                    string content = record["Content"]?.ToString();
+                    string type = record["Type"]?.ToString();
+                    bool proxied = bool.Parse(record["Proxied"]?.ToString());
+                    int ttl = int.Parse(record["TTL"]?.ToString());
+
+                    // Use the stored profile data for the API call
+                    var recordData = new
+                    {
+                        content = await GetIpContent(new ComboBoxItem { Content = content }),
+                        name,
+                        proxied,
+                        type,
+                        ttl,
+                        comment = "DDNS updated from WPF"
+                    };
+
+                    await UpdateDnsRecordForProfile(apiKey, zoneId, recordData, dnsRecordId);
+                }
+            }
         }
+
+        private async Task UpdateDnsRecords()
+        {
+            if (itemsControlDnsRecords.Items.Count == 0)
+            {
+                txtStatus.Text = "ERORR";
+                await ShowErrorMessage("you have to complete all parameters for API call.");
+                return;
+            }
+            foreach (var item in itemsControlDnsRecords.Items)
+            {
+
+                if (item is StackPanel dnsRecordPanel)
+                {
+                    var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
+
+                    if (IsDnsRecordValid(dnsRecordId, name, content, type, proxied, ttl))
+                    {
+                        string ipContent = await GetIpContent((ComboBoxItem)content.SelectedItem);
+
+                        var record = new
+                        {
+                            content = ipContent,
+                            name = name.Text,
+                            proxied = ((ComboBoxItem)proxied.SelectedItem).Content.ToString() == "True",
+                            type = ((ComboBoxItem)type.SelectedItem).Content.ToString(),
+                            ttl = GetTtlInSeconds(ttl.SelectedIndex),
+                            comment = "DDNS updated from WPF"
+                        };
+
+                        await UpdateDnsRecord(record, dnsRecordId.Text);
+                    }
+                    else
+                    {
+                        await ShowErrorMessage("All parameters for API call are not complete.");
+                    }
+                }
+
+            }
+        }
+
+
+
+        private void StopTimer(string profileName)
+        {
+            if (profileTimers.ContainsKey(profileName))
+            {
+                profileTimers[profileName].Stop();
+                profileTimers.Remove(profileName); // Remove the timer from the dictionary
+                txtStatus.Text = $"{profileName} Stopped";
+            }
+        }
+
 
         private bool IsDnsRecordValid(params object[] fields) => fields.All(field => field != null && !string.IsNullOrEmpty(field.ToString()));
 
