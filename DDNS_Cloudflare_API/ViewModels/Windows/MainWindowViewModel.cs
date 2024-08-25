@@ -25,12 +25,6 @@ namespace DDNS_Cloudflare_API.ViewModels.Windows
             },
             new NavigationViewItem()
             {
-                Content = "Log",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.DocumentTextClock24},
-                TargetPageType = typeof(Views.Pages.Log)
-            },
-            new NavigationViewItem()
-            {
                 Content = "Tutorial",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.NotebookQuestionMark24},
                 TargetPageType = typeof(Views.Pages.Tutorial)
@@ -40,6 +34,12 @@ namespace DDNS_Cloudflare_API.ViewModels.Windows
         [ObservableProperty]
         private ObservableCollection<object> _footerMenuItems = new()
         {
+            new NavigationViewItem()
+            {
+                Content = "Log",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.DocumentTextClock24},
+                TargetPageType = typeof(Views.Pages.Log)
+            },
             new NavigationViewItem()
             {
                 Content = "Settings",
