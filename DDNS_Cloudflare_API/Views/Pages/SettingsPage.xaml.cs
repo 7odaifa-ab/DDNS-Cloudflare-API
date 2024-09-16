@@ -120,10 +120,34 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
                 return (startupSettings["RunOnStartup"], startupSettings["LoadProfilesOnStartup"]);
             }
+            else
+            {
+                CreateStartupSetting();
+            }
 
             // Default values if settings file doesn't exist
             return (false, false);
         }
+
+        private void CreateStartupSetting()
+        {
+            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
+
+            Dictionary<string, object> startupSettings;
+            
+            // Create a new settings dictionary if the file doesn't exist
+            startupSettings = new Dictionary<string, object>();
+
+
+            // Update or add the settings
+            startupSettings["RunOnStartup"] = true;
+            startupSettings["LoadProfilesOnStartup"] = false;
+
+            // Serialize and save the updated settings
+            string json = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(settingsFilePath, json);
+        }
+
 
         // This is the method you mentioned, still present in the class.
         private async void BtnCheckForUpdate_Click(object sender, RoutedEventArgs e)

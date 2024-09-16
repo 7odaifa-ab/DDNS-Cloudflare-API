@@ -100,6 +100,9 @@ namespace DDNS_Cloudflare_API.Views.Pages
             else
             {
                 startupSettings = new Dictionary<string, bool>();
+                // Update or add the settings
+                startupSettings["RunOnStartup"] = true;
+                startupSettings["LoadProfilesOnStartup"] = false;
             }
 
             startupSettings[profileName] = isRunning;
