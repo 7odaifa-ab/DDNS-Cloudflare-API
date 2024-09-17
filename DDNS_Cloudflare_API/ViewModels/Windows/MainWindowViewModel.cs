@@ -13,6 +13,12 @@ namespace DDNS_Cloudflare_API.ViewModels.Windows
         {
             new NavigationViewItem()
             {
+                Content = "Dashboard",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.ContentSettings24},
+                TargetPageType = typeof(Views.Pages.Dashboard)
+            },
+            new NavigationViewItem()
+            {
                 Content = "Setup",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.ContentSettings24},
                 TargetPageType = typeof(Views.Pages.SetupPage)

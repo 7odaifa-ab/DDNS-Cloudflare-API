@@ -46,6 +46,8 @@ namespace DDNS_Cloudflare_API
                 services.AddSingleton<INavigationWindow, MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
 
+                services.AddSingleton<Dashboard>();
+                services.AddSingleton<DashboardViewModel>();
                 services.AddSingleton<SetupPage>();
                 services.AddSingleton<SetupViewModel>();
                 services.AddSingleton<Log>();

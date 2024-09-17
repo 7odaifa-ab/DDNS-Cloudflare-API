@@ -1,5 +1,8 @@
 ﻿using DDNS_Cloudflare_API.ViewModels.Pages;
 using System.IO;
+using System.Text;
+using System.Text.Json;
+using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
 using Wpf.Ui.Controls;
@@ -22,21 +25,16 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
         private void LoadLog()
         {
-            // Correct path to your log file
             string logFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API");
-            string logFilePath = Path.Combine(logFolderPath, "Logs.txt"); // Ensure the file name is included
+            string logFilePath = Path.Combine(logFolderPath, "Logs.txt");
 
-            // Check if the log file exists
             if (File.Exists(logFilePath))
             {
-                // Read all lines from the log file
                 var lines = File.ReadAllLines(logFilePath);
-
-                // Reverse the lines and join them with new lines
                 var reversedLines = lines.Reverse().ToArray();
-                string logContent = string.Join(Environment.NewLine, reversedLines);
+                string formattedLogContent = FormatLogContent(reversedLines);
 
-                txtLog.Text = logContent;
+                txtLog.Text = formattedLogContent;
             }
             else
             {
@@ -44,10 +42,53 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
         }
 
+        private string FormatLogContent(string[] logLines)
+        {
+            StringBuilder formattedLog = new StringBuilder();
+
+            foreach (var line in logLines)
+            {
+                if (line.Contains("Response: {") || line.Contains("Fetched IP:"))
+                {
+                    // Extract the JSON part of the log
+                    int jsonStartIndex = line.IndexOf("{");
+                    if (jsonStartIndex != -1)
+                    {
+                        string jsonString = line.Substring(jsonStartIndex);
+
+                        try
+                        {
+                            // Try to parse and format the JSON
+                            var jsonElement = JsonSerializer.Deserialize<JsonElement>(jsonString);
+                            string formattedJson = JsonSerializer.Serialize(jsonElement, new JsonSerializerOptions { WriteIndented = true });
+
+                            // Combine the formatted JSON with the log prefix
+                            string logPrefix = line.Substring(0, jsonStartIndex);
+                            formattedLog.AppendLine($"{logPrefix}{formattedJson}");
+                        }
+                        catch (JsonException)
+                        {
+                            // If parsing fails, keep the original line
+                            formattedLog.AppendLine(line);
+                        }
+                    }
+                    else
+                    {
+                        formattedLog.AppendLine(line);
+                    }
+                }
+                else
+                {
+                    formattedLog.AppendLine(line);
+                }
+            }
+
+            return formattedLog.ToString();
+        }
+
         private void UpdateLogButton_Click(object sender, RoutedEventArgs e)
         {
             LoadLog(); // Refresh the log content
         }
-
     }
 }

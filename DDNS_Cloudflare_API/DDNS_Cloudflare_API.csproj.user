@@ -9,6 +9,9 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Views\Pages\Dashboard.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Pages\Records.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -17,6 +20,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Views\Pages\Dashboard.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Pages\SetupPage.xaml">
       <SubType>Designer</SubType>
     </Page>
