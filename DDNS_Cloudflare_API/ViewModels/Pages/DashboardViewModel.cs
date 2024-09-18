@@ -9,6 +9,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
     public partial class DashboardViewModel : ObservableObject
     {
         private readonly ProfileTimerService _profileTimerService;
+        private bool _isInitialized;
 
         [ObservableProperty]
         private ObservableCollection<ProfileStatus> profileStatuses;
@@ -19,21 +20,44 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
 
             // Subscribe to the ProfileTimerUpdated event
             _profileTimerService.ProfileTimerUpdated += OnProfileTimerUpdated;
-            Debug.WriteLine("here subscribed to ProfileTimerUpdated event");
 
             // Initialize the ProfileStatuses list
             ProfileStatuses = new ObservableCollection<ProfileStatus>();
 
-            Debug.WriteLine($"ProfileTimerService instance in ViewModel: {_profileTimerService.GetHashCode()}");
-
-
             // Load existing profiles
-           // LoadProfiles();
+            LoadProfiles();
 
-            // Load initial profile statuses
-            LoadInitialStatuses();
+            // Mark that the ViewModel is initialized
+            _isInitialized = true;
+        }
+        private void OnProfileTimerUpdated(string profileName, string status)
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                UpdateProfileStatus(profileName, status);
+            });
         }
 
+        private void UpdateProfileStatus(string profileName, string status)
+        {
+            var profileStatus = ProfileStatuses.FirstOrDefault(p => p.ProfileName == profileName);
+
+            if (profileStatus != null)
+            {
+                profileStatus.Status = status;  // Update status
+            }
+            else
+            {
+                ProfileStatuses.Add(new ProfileStatus
+                {
+                    ProfileName = profileName,
+                    Status = status
+                });
+            }
+
+            // Notify UI about changes
+            OnPropertyChanged(nameof(ProfileStatuses));
+        }
 
 
         private void LoadProfiles()
@@ -52,39 +76,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
                 });
             }
         }
-
-        private void OnProfileTimerUpdated(string profileName, string status)
-        {
-            var profileStatus = ProfileStatuses.FirstOrDefault(p => p.ProfileName == profileName);
-            Debug.WriteLine($"**** i'm  trying here to update the profile staues");
-            if (profileStatus != null)
-            {
-                profileStatus.Status = status;
-                //profileStatus.NextRunTime = nextRunTime;
-            }
-            else
-            {
-                ProfileStatuses.Add(new ProfileStatus
-                {
-                    ProfileName = profileName,
-                    Status = status,
-                    //NextRunTime = nextRunTime
-                });
-            }
-
-            // Notify UI about changes
-            OnPropertyChanged(nameof(ProfileStatuses));
-        }
-        private void LoadInitialStatuses()
-        {
-            // Initialize the ProfileStatuses collection with some data
-            foreach (var profileTimer in _profileTimerService.GetProfileTimers())
-            {
-                ProfileStatuses.Add(new ProfileStatus { ProfileName = profileTimer.Key, Status = "Stopped" });
-            }
-        }
-
-
+    
         // You can call this method to refresh the status at runtime when necessary
         public void RefreshStatuses()
         {

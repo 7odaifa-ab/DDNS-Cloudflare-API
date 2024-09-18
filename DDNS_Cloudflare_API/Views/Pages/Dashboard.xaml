@@ -11,20 +11,19 @@
       d:DesignWidth="400"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-      mc:Ignorable="d">
-
-    <Grid>
-        <ListView ItemsSource="{Binding ProfileStatuses}">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Profile Name" DisplayMemberBinding="{Binding ProfileName}" Width="200" />
-                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="100" />
-                </GridView>
-            </ListView.View>
-        </ListView>
-    </Grid>
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"      
+      mc:Ignorable="d"
+      Loaded="Page_Loaded">
 
 
+    <DataGrid ItemsSource="{Binding ProfileStatuses}"
+              AutoGenerateColumns="False">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Profile Name"
+                                Binding="{Binding ProfileName}" />
+            <DataGridTextColumn Header="Status"
+                                Binding="{Binding Status}" />
+        </DataGrid.Columns>
+    </DataGrid>
 
 </Page>

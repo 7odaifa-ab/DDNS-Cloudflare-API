@@ -37,22 +37,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
             _ = LoadStartupSettings(); // Load and restore the profile running statuses
         }
 
-        private void BtnSimulateUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            if (cmbProfiles.SelectedItem != null)
-            {
-                string profileName = cmbProfiles.SelectedItem.ToString();
-                Debug.WriteLine($"[SimulateProfileUpdate] Triggering btn update for {profileName} with status fake");
-
-                // Use the timerService to simulate profile update
-                timerService.SimulateProfileUpdate(profileName);
-                txtStatus.Text = $"{profileName} - Simulated Update Triggered";
-
-                Debug.WriteLine($"ProfileTimerService instance in ViewModel: {timerService.GetHashCode()}");
-            }
-        }
-
-
         private void OnStatusUpdated(string message)
         {
             Dispatcher.Invoke(() =>

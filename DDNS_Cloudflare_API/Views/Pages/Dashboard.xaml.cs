@@ -22,6 +22,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using DDNS_Cloudflare_API.Services;
+using System.Diagnostics;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
@@ -36,31 +37,25 @@ namespace DDNS_Cloudflare_API.Views.Pages
         public Dashboard(DashboardViewModel viewModel, ProfileTimerService timerService)  // Inject ProfileTimerService
         {
             InitializeComponent();
+
+
             Profiles = new ObservableCollection<ProfileInfo>();
             ViewModel = viewModel;  // Set ViewModel
             DataContext = ViewModel;  // Bind DataContext to the ViewModel
 
             this.timerService = timerService;  // Use the injected singleton instance
-            InitializeProfiles();
+            
         }
 
-        private void InitializeProfiles()
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            var profileTimers = timerService.GetProfileTimers();
+            RefreshDashboard();
+        }
 
-            foreach (var kvp in profileTimers)
-            {
-                string profileName = kvp.Key;
-                DispatcherTimer timer = kvp.Value;
+        public void RefreshDashboard()
+        {
 
-                Profiles.Add(new ProfileInfo
-                {
-                    ProfileName = profileName,
-                    TimerStatus = "Running",
-                    RemainingTime = GetRemainingTime(timer),
-                    NextApiCallTime = GetNextApiCallTime(timer)
-                });
-            }
+           ViewModel.RefreshStatuses();
         }
 
         private string GetRemainingTime(DispatcherTimer timer)

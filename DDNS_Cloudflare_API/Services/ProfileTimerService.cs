@@ -23,6 +23,10 @@ namespace DDNS_Cloudflare_API.Services
         // Define the event to notify status updates
         public event Action<string, string> ProfileTimerUpdated;
 
+        public Dictionary<string, DispatcherTimer> GetProfileTimers() => profileTimers;
+
+        public Dictionary<string, Dictionary<string, object>> GetProfileData() => profileData;
+
         public ProfileTimerService()
         {
             profileTimers = new Dictionary<string, DispatcherTimer>();
@@ -32,11 +36,10 @@ namespace DDNS_Cloudflare_API.Services
 
             // Initialize data
             LoadProfiles();
+
+
+            // Subscribe the event handler to fire regardless of UI initialization
         }
-
-        public Dictionary<string, DispatcherTimer> GetProfileTimers() => profileTimers;
-
-        public Dictionary<string, Dictionary<string, object>> GetProfileData() => profileData;
 
         private void LoadProfiles()
         {
@@ -58,29 +61,10 @@ namespace DDNS_Cloudflare_API.Services
             }
         }
 
-        public void SimulateProfileUpdate(string profileName)
-        {
-            // Simulate a fake status update for a profile
-            string fakeStatus = "Simulated Running";
-            DateTime nextRunTime = DateTime.Now.AddMinutes(5);
-
-            Debug.WriteLine($"Simulating profile update for {profileName}");
-
-            // Trigger the ProfileTimerUpdated event
-            ProfileTimerUpdated?.Invoke(profileName, fakeStatus);
-
-            if (ProfileTimerUpdated != null)
-            {
-                Debug.WriteLine($"Event triggered for {profileName}.");
-            }
-            else
-            {
-                Debug.WriteLine($"No subscribers for ProfileTimerUpdated event.");
-            }
-        }
-
         public void StartTimer(string profileName, int intervalMinutes)
         {
+            Debug.WriteLine($"Starting timer for {profileName}");
+
             if (profileTimers.ContainsKey(profileName))
             {
                 profileTimers[profileName].Stop();
@@ -95,19 +79,20 @@ namespace DDNS_Cloudflare_API.Services
             timer.Tag = DateTime.Now;
             timer.Tick += async (sender, e) =>
             {
-                timer.Tag = DateTime.Now; // Update the last run time
+                timer.Tag = DateTime.Now;
                 await UpdateDnsRecordsForProfile(profileName);
 
-                // Trigger the ProfileTimerUpdated event
-               // ProfileTimerUpdated?.Invoke(profileName, "Running", timer.Interval, (DateTime)timer.Tag);
+                // Trigger the ProfileTimerUpdated event with real status
+                ProfileTimerUpdated?.Invoke(profileName, "Running");
             };
 
             timer.Start();
             profileTimers[profileName] = timer;
 
-            // Trigger the ProfileTimerUpdated event immediately when the timer starts
-          //  ProfileTimerUpdated?.Invoke(profileName, "Running", timer.Interval, DateTime.Now);
+            // Immediately update the profile status
+            ProfileTimerUpdated?.Invoke(profileName, "Running");
         }
+
 
         public void StopTimer(string profileName)
         {
@@ -116,10 +101,12 @@ namespace DDNS_Cloudflare_API.Services
                 profileTimers[profileName].Stop();
                 profileTimers.Remove(profileName);
 
-                // Notify about the timer stop
-              //  ProfileTimerUpdated?.Invoke(profileName, "Stopped", TimeSpan.Zero, DateTime.Now);
+                // Trigger the ProfileTimerUpdated event with "Stopped" status
+                ProfileTimerUpdated?.Invoke(profileName, "Stopped");
             }
         }
+
+
 
         public async Task UpdateDnsRecordForProfile(string apiKey, string zoneId, object record, string dnsRecordId)
         {
@@ -139,7 +126,7 @@ namespace DDNS_Cloudflare_API.Services
                 new StringContent(json, Encoding.UTF8, "application/json"));
 
             string responseContent = await response.Content.ReadAsStringAsync();
-            string logMessage = $"Last update: {DateTime.Now}\nResponse: {responseContent}";
+            string logMessage = $"Last update: {DateTime.Now} Response: {responseContent}";
 
             // Log the response
             Log(logMessage);

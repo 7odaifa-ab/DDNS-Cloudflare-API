@@ -84,8 +84,6 @@
                            Content="One-Time Call"
                            Click="BtnOneTime_Click" />
 
-                <Button Content="Simulate Update" Click="BtnSimulateUpdate_Click" />
-
             </StackPanel>
 
             <TextBlock Name="txtStatus"
