@@ -10,6 +10,7 @@ using MessageBoxButton = Wpf.Ui.Controls.MessageBoxButton;
 using MessageBox = Wpf.Ui.Controls.MessageBox;
 using Label = System.Windows.Controls.Label;
 using DDNS_Cloudflare_API.Services;
+using System.Diagnostics;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
@@ -20,26 +21,37 @@ namespace DDNS_Cloudflare_API.Views.Pages
         private readonly string profilesFolderPath;
         private readonly string settingsFilePath;
 
-        public SetupPage(SetupViewModel viewModel)
+        public SetupPage(SetupViewModel viewModel, ProfileTimerService timerService)  // Inject the service here
         {
             ViewModel = viewModel;
             DataContext = this;
+            this.timerService = timerService;  // Assign the injected singleton instance to the local variable
 
             InitializeComponent();
+
             profilesFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "Profiles");
             settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
             Directory.CreateDirectory(profilesFolderPath);
 
-            // Initialize the service
-            timerService = new ProfileTimerService();
-
-            // Subscribe to the status update event
-            timerService.StatusUpdated += OnStatusUpdated;
-
-
             LoadProfiles();
             _ = LoadStartupSettings(); // Load and restore the profile running statuses
         }
+
+        private void BtnSimulateUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            if (cmbProfiles.SelectedItem != null)
+            {
+                string profileName = cmbProfiles.SelectedItem.ToString();
+                Debug.WriteLine($"[SimulateProfileUpdate] Triggering btn update for {profileName} with status fake");
+
+                // Use the timerService to simulate profile update
+                timerService.SimulateProfileUpdate(profileName);
+                txtStatus.Text = $"{profileName} - Simulated Update Triggered";
+
+                Debug.WriteLine($"ProfileTimerService instance in ViewModel: {timerService.GetHashCode()}");
+            }
+        }
+
 
         private void OnStatusUpdated(string message)
         {

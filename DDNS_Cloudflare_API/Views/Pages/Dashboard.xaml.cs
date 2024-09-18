@@ -25,30 +25,24 @@ using DDNS_Cloudflare_API.Services;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
-    /// <summary>
-    /// Interaction logic for Dashboard.xaml
-    /// </summary>
     public partial class Dashboard : INavigableView<DashboardViewModel>
     {
         // Observable collection to bind to the DataGrid
         public ObservableCollection<ProfileInfo> Profiles { get; set; }
         public DashboardViewModel ViewModel { get; }
 
-        private readonly ProfileTimerService timerService;
+        private readonly ProfileTimerService timerService;  // Use the injected service here
 
-        public Dashboard(DashboardViewModel viewModel)
+        public Dashboard(DashboardViewModel viewModel, ProfileTimerService timerService)  // Inject ProfileTimerService
         {
-            ViewModel = viewModel;
-            DataContext = this;
             InitializeComponent();
             Profiles = new ObservableCollection<ProfileInfo>();
-            DataContext = this;
+            ViewModel = viewModel;  // Set ViewModel
+            DataContext = ViewModel;  // Bind DataContext to the ViewModel
 
-            // Use the shared service
-            timerService = new ProfileTimerService();
+            this.timerService = timerService;  // Use the injected singleton instance
             InitializeProfiles();
         }
-
 
         private void InitializeProfiles()
         {
@@ -88,7 +82,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
             return "N/A";
         }
-
     }
 
     public class ProfileInfo
@@ -99,3 +92,4 @@ namespace DDNS_Cloudflare_API.Views.Pages
         public string NextApiCallTime { get; set; }
     }
 }
+

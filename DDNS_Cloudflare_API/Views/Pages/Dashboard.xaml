@@ -4,9 +4,9 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:DDNS_Cloudflare_API.Views.Pages"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-      Title="SetupPage"
-      d:DataContext="{d:DesignInstance local:SetupPage, IsDesignTimeCreatable=False}"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml" xmlns:vm="clr-namespace:DDNS_Cloudflare_API.ViewModels.Pages"
+      Title="Dashboard"
+      d:DataContext="{d:DesignInstance local:Dashboard, IsDesignTimeCreatable=True}"
       d:DesignHeight="800"
       d:DesignWidth="400"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -14,14 +14,17 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       mc:Ignorable="d">
 
-    <DataGrid x:Name="ProfileGrid" AutoGenerateColumns="False" ItemsSource="{Binding Profiles}">
-        <DataGrid.Columns>
-            <DataGridTextColumn Header="Profile Name" Binding="{Binding ProfileName}" />
-            <DataGridTextColumn Header="Timer Order Status" Binding="{Binding TimerStatus}" />
-            <DataGridTextColumn Header="Remaining Time" Binding="{Binding RemainingTime}" />
-            <DataGridTextColumn Header="Next API Call Time" Binding="{Binding NextApiCallTime}" />
-        </DataGrid.Columns>
-    </DataGrid>
+    <Grid>
+        <ListView ItemsSource="{Binding ProfileStatuses}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Profile Name" DisplayMemberBinding="{Binding ProfileName}" Width="200" />
+                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="100" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+
 
 
 </Page>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -8,6 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace DDNS_Cloudflare_API.Services
 {
@@ -19,7 +21,7 @@ namespace DDNS_Cloudflare_API.Services
         private readonly string logFilePath;
 
         // Define the event to notify status updates
-        public event Action<string> StatusUpdated;
+        public event Action<string, string> ProfileTimerUpdated;
 
         public ProfileTimerService()
         {
@@ -56,39 +58,55 @@ namespace DDNS_Cloudflare_API.Services
             }
         }
 
+        public void SimulateProfileUpdate(string profileName)
+        {
+            // Simulate a fake status update for a profile
+            string fakeStatus = "Simulated Running";
+            DateTime nextRunTime = DateTime.Now.AddMinutes(5);
+
+            Debug.WriteLine($"Simulating profile update for {profileName}");
+
+            // Trigger the ProfileTimerUpdated event
+            ProfileTimerUpdated?.Invoke(profileName, fakeStatus);
+
+            if (ProfileTimerUpdated != null)
+            {
+                Debug.WriteLine($"Event triggered for {profileName}.");
+            }
+            else
+            {
+                Debug.WriteLine($"No subscribers for ProfileTimerUpdated event.");
+            }
+        }
+
         public void StartTimer(string profileName, int intervalMinutes)
         {
-            // Stop and remove the old timer if it exists
             if (profileTimers.ContainsKey(profileName))
             {
                 profileTimers[profileName].Stop();
                 profileTimers.Remove(profileName);
             }
 
-            if (!profileData.ContainsKey(profileName))
-                return;
-
-            // Create and start a new timer
             DispatcherTimer timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMinutes(intervalMinutes)
             };
 
-            // Set the initial run time
             timer.Tag = DateTime.Now;
-
-            // Update the timer's Tick event
             timer.Tick += async (sender, e) =>
             {
                 timer.Tag = DateTime.Now; // Update the last run time
                 await UpdateDnsRecordsForProfile(profileName);
+
+                // Trigger the ProfileTimerUpdated event
+               // ProfileTimerUpdated?.Invoke(profileName, "Running", timer.Interval, (DateTime)timer.Tag);
             };
 
             timer.Start();
-            profileTimers[profileName] = timer; // Store the timer
+            profileTimers[profileName] = timer;
 
-            // Trigger an immediate update
-            Task.Run(async () => await UpdateDnsRecordsForProfile(profileName));
+            // Trigger the ProfileTimerUpdated event immediately when the timer starts
+          //  ProfileTimerUpdated?.Invoke(profileName, "Running", timer.Interval, DateTime.Now);
         }
 
         public void StopTimer(string profileName)
@@ -97,6 +115,9 @@ namespace DDNS_Cloudflare_API.Services
             {
                 profileTimers[profileName].Stop();
                 profileTimers.Remove(profileName);
+
+                // Notify about the timer stop
+              //  ProfileTimerUpdated?.Invoke(profileName, "Stopped", TimeSpan.Zero, DateTime.Now);
             }
         }
 
@@ -120,9 +141,7 @@ namespace DDNS_Cloudflare_API.Services
             string responseContent = await response.Content.ReadAsStringAsync();
             string logMessage = $"Last update: {DateTime.Now}\nResponse: {responseContent}";
 
-            // Raise the event to update status in UI
-            StatusUpdated?.Invoke(logMessage);
-
+            // Log the response
             Log(logMessage);
         }
 
@@ -135,8 +154,8 @@ namespace DDNS_Cloudflare_API.Services
                 _ => string.Empty
             };
 
-            // Raise the event to update status in UI
-            StatusUpdated?.Invoke($"Fetched IP: {ipContent}");
+            // Log fetched IP
+            Log($"Fetched IP: {ipContent}");
 
             return ipContent;
         }
@@ -196,7 +215,6 @@ namespace DDNS_Cloudflare_API.Services
         {
             try
             {
-                // Use StreamWriter with AutoFlush to ensure data is saved immediately
                 using (StreamWriter writer = new StreamWriter(logFilePath, true) { AutoFlush = true })
                 {
                     writer.WriteLine($"{DateTime.Now}: {message}");
