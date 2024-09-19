@@ -14,6 +14,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = DDNS_Cloudflare_API
-build_property.ProjectDir = C:\Users\loffy\Documents\GitHub\DDNS_Cloudflare_API\DDNS_Cloudflare_API\
+build_property.ProjectDir = C:\Users\AnasPC\Documents\GitHub\DDNS-Cloudflare-API\DDNS_Cloudflare_API\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

@@ -15,15 +15,19 @@
       mc:Ignorable="d"
       Loaded="Page_Loaded">
 
+    <StackPanel>
+        <Button Content="Refresh" Command="{Binding RefreshCommand}" Width="100" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"/>
+        <DataGrid ItemsSource="{Binding ProfileStatuses}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Profile Name" Binding="{Binding ProfileName}" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+                <DataGridTextColumn Header="Remaining Time" Binding="{Binding RemainingTime}" />
+                <DataGridTextColumn Header="Next API Call Time" Binding="{Binding NextApiCallTime}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
 
-    <DataGrid ItemsSource="{Binding ProfileStatuses}"
-              AutoGenerateColumns="False">
-        <DataGrid.Columns>
-            <DataGridTextColumn Header="Profile Name"
-                                Binding="{Binding ProfileName}" />
-            <DataGridTextColumn Header="Status"
-                                Binding="{Binding Status}" />
-        </DataGrid.Columns>
-    </DataGrid>
+
+
 
 </Page>

@@ -58,25 +58,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
            ViewModel.RefreshStatuses();
         }
 
-        private string GetRemainingTime(DispatcherTimer timer)
-        {
-            if (timer.Tag is DateTime lastRunTime)
-            {
-                TimeSpan timeLeft = timer.Interval - (DateTime.Now - lastRunTime);
-                return timeLeft.ToString(@"hh\:mm\:ss");
-            }
-            return "N/A";
-        }
-
-        private string GetNextApiCallTime(DispatcherTimer timer)
-        {
-            if (timer.Tag is DateTime lastRunTime)
-            {
-                DateTime nextCallTime = lastRunTime + timer.Interval;
-                return nextCallTime.ToString("HH:mm:ss");
-            }
-            return "N/A";
-        }
     }
 
     public class ProfileInfo
