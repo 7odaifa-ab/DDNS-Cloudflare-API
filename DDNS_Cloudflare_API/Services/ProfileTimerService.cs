@@ -61,7 +61,7 @@ namespace DDNS_Cloudflare_API.Services
             }
         }
 
-        public void StartTimer(string profileName, int intervalMinutes)
+        public async void StartTimer(string profileName, int intervalMinutes)
         {
             Debug.WriteLine($"Starting timer for {profileName}");
 
@@ -91,10 +91,13 @@ namespace DDNS_Cloudflare_API.Services
 
             // Immediately update the profile status
             ProfileTimerUpdated?.Invoke(profileName, "Running");
+
+            // Save the status when the timer starts
+            await SaveProfileStatusToSettings(profileName, true);  // Save only this profile
         }
 
 
-        public void StopTimer(string profileName)
+        public async void StopTimer(string profileName)
         {
             if (profileTimers.ContainsKey(profileName))
             {
@@ -103,7 +106,33 @@ namespace DDNS_Cloudflare_API.Services
 
                 // Trigger the ProfileTimerUpdated event with "Stopped" status
                 ProfileTimerUpdated?.Invoke(profileName, "Stopped");
+
+                // Save the status when the timer stops
+                await SaveProfileStatusToSettings(profileName, false);  // Save only this profile
             }
+        }
+
+        private async Task SaveProfileStatusToSettings(string profileName, bool isRunning)
+        {
+            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
+
+            // Load existing settings
+            Dictionary<string, object> startupSettings = new Dictionary<string, object>();
+
+            if (File.Exists(settingsFilePath))
+            {
+                string json = await File.ReadAllTextAsync(settingsFilePath);
+                startupSettings = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+            }
+
+            // Add or update the profile status
+            startupSettings[profileName] = isRunning;
+
+            // Serialize and save the updated settings back to the file
+            string updatedJson = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
+            await File.WriteAllTextAsync(settingsFilePath, updatedJson);
+
+            Debug.WriteLine($"Saved profile {profileName} with status {(isRunning ? "Running" : "Stopped")}");
         }
 
 

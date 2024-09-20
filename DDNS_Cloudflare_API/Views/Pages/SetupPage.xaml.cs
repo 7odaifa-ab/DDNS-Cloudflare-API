@@ -145,32 +145,40 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             _ = UpdateDnsRecords(); // This calls the one-time DNS update logic
         }
-
         private async Task LoadStartupSettings()
         {
             if (File.Exists(settingsFilePath))
             {
-                string json = File.ReadAllText(settingsFilePath);
+                string json = await File.ReadAllTextAsync(settingsFilePath);
                 var startupSettings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
 
-                // Check if LoadProfilesOnStartup is true before proceeding
+                // Check if LoadProfilesOnStartup is true
                 if (startupSettings.ContainsKey("LoadProfilesOnStartup") && startupSettings["LoadProfilesOnStartup"].GetBoolean())
                 {
                     foreach (var kvp in startupSettings)
                     {
-                        if (kvp.Key == "RunOnStartup" || kvp.Key == "LoadProfilesOnStartup")
+                        if (kvp.Key == "LoadProfilesOnStartup")
                             continue;
 
-                        if (kvp.Value.GetBoolean())
+                        // Check the profile's saved status (running or stopped)
+                        bool wasRunning = kvp.Value.GetBoolean();
+                        string profileName = kvp.Key;
+
+                        if (wasRunning)
                         {
-                            cmbProfiles.SelectedItem = kvp.Key;
-                            BtnStart_Click(null, null); // Automatically start the profile
-                            await Task.Delay(5000);
+                            // Start the timer only for this profile
+                            if (!timerService.GetProfileTimers().ContainsKey(profileName))
+                            {
+                                timerService.StartTimer(profileName, GetInterval());  // Use saved interval or default
+                                Debug.WriteLine($"Starting profile {profileName} on startup.");
+                            }
                         }
                     }
                 }
             }
         }
+
+
 
         private int GetInterval() =>
             cmbInterval.SelectedIndex switch
