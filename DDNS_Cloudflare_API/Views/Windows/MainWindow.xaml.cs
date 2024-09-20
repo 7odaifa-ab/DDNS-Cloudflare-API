@@ -8,7 +8,10 @@ using System.Windows.Forms; // For NotifyIcon
 using System.Drawing; // For Icon
 using Application = System.Windows.Application; // To avoid conflict with System.Windows.Forms.Application
 using ContextMenu = System.Windows.Controls.ContextMenu; // To avoid conflict with System.Windows.Forms.ContextMenu
-using MenuItem = System.Windows.Controls.MenuItem; // To avoid conflict with System.Windows.Forms.MenuItem
+using MenuItem = System.Windows.Controls.MenuItem;
+using DDNS_Cloudflare_API.Services;
+using System.Diagnostics;
+using System.IO; // To avoid conflict with System.Windows.Forms.MenuItem
 
 
 namespace DDNS_Cloudflare_API.Views.Windows
@@ -19,10 +22,13 @@ namespace DDNS_Cloudflare_API.Views.Windows
         private NotifyIcon trayIcon;
         private bool isRunning = false; // To track if the timer is running
 
+        private readonly ProfileTimerService _profileTimerService;
+
+
         public MainWindow(
             MainWindowViewModel viewModel,
             IPageService pageService,
-            INavigationService navigationService
+            INavigationService navigationService, ProfileTimerService timerService
         )
         {
             ViewModel = viewModel;
@@ -50,6 +56,18 @@ namespace DDNS_Cloudflare_API.Views.Windows
 
 
             CreateContextMenu();
+
+            _profileTimerService = timerService;
+            Debug.WriteLine($"ProfileTimerService instance in ViewModel: {timerService.GetHashCode()}");
+
+            // Load startup settings when the MainWindow is loaded
+            Loaded += MainWindow_Loaded;
+
+        }
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
+            await _profileTimerService.LoadStartupSettings(settingsFilePath);
         }
 
         #region INavigationWindow methods
@@ -138,5 +156,6 @@ namespace DDNS_Cloudflare_API.Views.Windows
             isRunning = running;
             trayIcon.Visible = running;
         }
+
     }
 }

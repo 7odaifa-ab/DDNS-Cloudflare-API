@@ -26,6 +26,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
             ViewModel = viewModel;
             DataContext = this;
             this.timerService = timerService;  // Assign the injected singleton instance to the local variable
+            Debug.WriteLine($"ProfileTimerService instance in ViewModel: {timerService.GetHashCode()}");
 
             InitializeComponent();
 
@@ -34,7 +35,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
             Directory.CreateDirectory(profilesFolderPath);
 
             LoadProfiles();
-            _ = LoadStartupSettings(); // Load and restore the profile running statuses
         }
 
         private void OnStatusUpdated(string message)
@@ -145,40 +145,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             _ = UpdateDnsRecords(); // This calls the one-time DNS update logic
         }
-        private async Task LoadStartupSettings()
-        {
-            if (File.Exists(settingsFilePath))
-            {
-                string json = await File.ReadAllTextAsync(settingsFilePath);
-                var startupSettings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
-
-                // Check if LoadProfilesOnStartup is true
-                if (startupSettings.ContainsKey("LoadProfilesOnStartup") && startupSettings["LoadProfilesOnStartup"].GetBoolean())
-                {
-                    foreach (var kvp in startupSettings)
-                    {
-                        if (kvp.Key == "LoadProfilesOnStartup")
-                            continue;
-
-                        // Check the profile's saved status (running or stopped)
-                        bool wasRunning = kvp.Value.GetBoolean();
-                        string profileName = kvp.Key;
-
-                        if (wasRunning)
-                        {
-                            // Start the timer only for this profile
-                            if (!timerService.GetProfileTimers().ContainsKey(profileName))
-                            {
-                                timerService.StartTimer(profileName, GetInterval());  // Use saved interval or default
-                                Debug.WriteLine($"Starting profile {profileName} on startup.");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-
+      
 
         private int GetInterval() =>
             cmbInterval.SelectedIndex switch

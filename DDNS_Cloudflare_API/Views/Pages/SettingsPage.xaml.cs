@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
@@ -116,18 +117,43 @@ namespace DDNS_Cloudflare_API.Views.Pages
             if (File.Exists(settingsFilePath))
             {
                 string json = File.ReadAllText(settingsFilePath);
-                var startupSettings = JsonSerializer.Deserialize<Dictionary<string, bool>>(json);
 
-                return (startupSettings["RunOnStartup"], startupSettings["LoadProfilesOnStartup"]);
+                var startupSettings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+
+                // Handle general settings
+                bool runOnStartup = startupSettings.ContainsKey("RunOnStartup") && startupSettings["RunOnStartup"].GetBoolean();
+                bool loadProfilesOnStartup = startupSettings.ContainsKey("LoadProfilesOnStartup") && startupSettings["LoadProfilesOnStartup"].GetBoolean();
+
+                // Handle individual profiles
+                foreach (var kvp in startupSettings)
+                {
+                    if (kvp.Key == "RunOnStartup" || kvp.Key == "LoadProfilesOnStartup")
+                        continue;
+
+                    // Check if the value is an object (profile details)
+                    if (kvp.Value.ValueKind == JsonValueKind.Object)
+                    {
+                        var profileSettings = kvp.Value;
+                        bool isRunning = profileSettings.GetProperty("IsRunning").GetBoolean();
+                        int interval = profileSettings.GetProperty("Interval").GetInt32();
+
+                        // You can store or handle the profile status (isRunning) and interval as needed
+                        Debug.WriteLine($"Profile: {kvp.Key}, IsRunning: {isRunning}, Interval: {interval}");
+                    }
+                }
+
+                return (runOnStartup, loadProfilesOnStartup);
             }
             else
             {
+                // Create the settings file if it doesn't exist
                 CreateStartupSetting();
             }
 
             // Default values if settings file doesn't exist
             return (false, false);
         }
+
 
         private void CreateStartupSetting()
         {

@@ -93,7 +93,7 @@ namespace DDNS_Cloudflare_API.Services
             ProfileTimerUpdated?.Invoke(profileName, "Running");
 
             // Save the status when the timer starts
-            await SaveProfileStatusToSettings(profileName, true);  // Save only this profile
+            await SaveProfileStatusToSettings(profileName, true, intervalMinutes);  // Save interval when starting
         }
 
 
@@ -108,12 +108,13 @@ namespace DDNS_Cloudflare_API.Services
                 ProfileTimerUpdated?.Invoke(profileName, "Stopped");
 
                 // Save the status when the timer stops
-                await SaveProfileStatusToSettings(profileName, false);  // Save only this profile
+                await SaveProfileStatusToSettings(profileName, false, 0);  // Stop and reset the interval
             }
         }
 
-        private async Task SaveProfileStatusToSettings(string profileName, bool isRunning)
+        private async Task SaveProfileStatusToSettings(string profileName, bool isRunning, int intervalMinutes)
         {
+
             var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
 
             // Load existing settings
@@ -125,15 +126,22 @@ namespace DDNS_Cloudflare_API.Services
                 startupSettings = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
             }
 
-            // Add or update the profile status
-            startupSettings[profileName] = isRunning;
+            // Save the profile's status and interval
+            var profileSettings = new Dictionary<string, object>
+    {
+        { "IsRunning", isRunning },
+        { "Interval", intervalMinutes }  // Save the interval here
+    };
+
+            startupSettings[profileName] = profileSettings;
 
             // Serialize and save the updated settings back to the file
             string updatedJson = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(settingsFilePath, updatedJson);
 
-            Debug.WriteLine($"Saved profile {profileName} with status {(isRunning ? "Running" : "Stopped")}");
+            Debug.WriteLine($"Saved profile {profileName} with status {(isRunning ? "Running" : "Stopped")} and interval {intervalMinutes} minutes.");
         }
+
 
 
 
@@ -226,6 +234,40 @@ namespace DDNS_Cloudflare_API.Services
                 }
             }
         }
+
+
+        public async Task LoadStartupSettings(string settingsFilePath)
+        {
+            if (File.Exists(settingsFilePath))
+            {
+                string json = await File.ReadAllTextAsync(settingsFilePath);
+                var startupSettings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+
+                if (startupSettings.ContainsKey("LoadProfilesOnStartup") && startupSettings["LoadProfilesOnStartup"].GetBoolean())
+                {
+                    foreach (var kvp in startupSettings)
+                    {
+                        if (kvp.Key == "RunOnStartup" || kvp.Key == "LoadProfilesOnStartup")
+                            continue;
+
+                        string profileName = kvp.Key;
+
+                        // Load the profile settings (status and interval)
+                        var profileSettings = kvp.Value;
+                        bool wasRunning = profileSettings.GetProperty("IsRunning").GetBoolean();
+                        int interval = profileSettings.GetProperty("Interval").GetInt32();  // Load the saved interval
+
+                        if (wasRunning && !GetProfileTimers().ContainsKey(profileName))
+                        {
+                            // Start the timer with the loaded interval
+                            StartTimer(profileName, interval);
+                            Debug.WriteLine($"Starting profile {profileName} on startup with interval {interval} minutes.");
+                        }
+                    }
+                }
+            }
+        }
+
 
         private void Log(string message)
         {
