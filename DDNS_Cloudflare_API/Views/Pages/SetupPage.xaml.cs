@@ -11,6 +11,7 @@ using MessageBox = Wpf.Ui.Controls.MessageBox;
 using Label = System.Windows.Controls.Label;
 using DDNS_Cloudflare_API.Services;
 using System.Diagnostics;
+using Button = Wpf.Ui.Controls.Button;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
@@ -76,19 +77,20 @@ namespace DDNS_Cloudflare_API.Views.Pages
                     var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
 
                     dnsRecords.Add(new Dictionary<string, object>
-                    {
-                        { "RecordID", dnsRecordId.Text },
-                        { "Name", name.Text },
-                        { "Content", ((ComboBoxItem)content.SelectedItem).Content.ToString() },
-                        { "Type", ((ComboBoxItem)type.SelectedItem).Content.ToString() },
-                        { "Proxied", ((ComboBoxItem)proxied.SelectedItem).Content.ToString() == "True" },
-                        { "TTL", GetTtlInSeconds(ttl.SelectedIndex) }
-                    });
+            {
+                { "RecordID", dnsRecordId.Text },
+                { "Name", name.Text },
+                { "Content", ((ComboBoxItem)content.SelectedItem).Content.ToString() },
+                { "Type", ((ComboBoxItem)type.SelectedItem).Content.ToString() },
+                { "Proxied", ((ComboBoxItem)proxied.SelectedItem).Content.ToString() == "True" },
+                { "TTL", GetTtlInSeconds(ttl.SelectedIndex) }
+            });
                 }
             }
 
             return JsonSerializer.Serialize(dnsRecords);
         }
+
 
         // Event handler for the Delete Profile button
         private void BtnDeleteProfile_Click(object sender, RoutedEventArgs e)
@@ -347,15 +349,40 @@ namespace DDNS_Cloudflare_API.Views.Pages
             dnsComboPanel.Children.Add(CreateComboBox("cmbProxied", new[] { "True", "False" }));
             dnsComboPanel.Children.Add(CreateComboBox("cmbTtl", new[]
             {
-                "Auto", "1 min", "2 min", "5 min", "10 min", "15 min", "30 min", "1 hr",
-                "2 hr", "5 hr", "12 hr", "1 day"
-            }));
+        "Auto", "1 min", "2 min", "5 min", "10 min", "15 min", "30 min", "1 hr",
+        "2 hr", "5 hr", "12 hr", "1 day"
+    }));
+
+            // Add a remove button for each DNS record
+            var removeButton = new Button
+            {
+                Content = "Remove",
+                Margin = new Thickness(5)
+            };
+            removeButton.Click += (sender, e) => RemoveDnsRecord(dnsRecordPanel);
 
             dnsRecordPanel.Children.Add(dnsInputPanel);
             dnsRecordPanel.Children.Add(dnsComboPanel);
+            dnsRecordPanel.Children.Add(removeButton);  // Add the remove button to the panel
 
             return dnsRecordPanel;
         }
+
+        private void RemoveDnsRecord(StackPanel dnsRecordPanel)
+        {
+            // Ensure at least one DNS record remains
+            if (itemsControlDnsRecords.Items.Count > 1)
+            {
+                itemsControlDnsRecords.Items.Remove(dnsRecordPanel);
+            }
+            else
+            {
+                // Show an error message if the user tries to remove the last DNS record
+                _ = ShowErrorMessage("At least one DNS record must remain.");
+            }
+        }
+
+
 
         private Label CreateLabel(string name, string text) => new Label
         {
