@@ -46,6 +46,11 @@
             <ui:TextBox Name="txtZoneId"
                         PlaceholderText="Zone ID"
                         Margin="0,0,0,10" />
+            <ui:TextBox Name="txtMainDomain"
+                     PlaceholderText="Main Domain/Website"
+                        Margin="0,0,0,10" />
+            
+
             <ItemsControl Name="itemsControlDnsRecords" Margin="0,0,0,10">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

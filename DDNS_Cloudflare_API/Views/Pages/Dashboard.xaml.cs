@@ -62,7 +62,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
     public class ProfileInfo
     {
-        public string ProfileName { get; set; }
+        public string ProfileName { get; set; }  // Make sure to set this as FullName (Name + Domain) when loading profiles
         public string TimerStatus { get; set; }
         public string RemainingTime { get; set; }
         public string NextApiCallTime { get; set; }

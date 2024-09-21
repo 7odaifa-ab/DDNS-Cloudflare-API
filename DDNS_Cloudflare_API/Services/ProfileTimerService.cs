@@ -214,7 +214,8 @@ namespace DDNS_Cloudflare_API.Services
                 foreach (var record in dnsRecords)
                 {
                     string dnsRecordId = record["RecordID"]?.ToString();
-                    string name = record["Name"]?.ToString();
+string mainDomain = profile["mainDomain"]?.ToString();  // Fetch the main domain from the profile
+string name = record["Name"]?.ToString() + "." + mainDomain;  // Concatenate Name with Domain
                     string content = record["Content"]?.ToString();
                     string type = record["Type"]?.ToString();
                     bool proxied = bool.Parse(record["Proxied"]?.ToString());

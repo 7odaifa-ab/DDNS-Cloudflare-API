@@ -49,22 +49,40 @@ namespace DDNS_Cloudflare_API.Views.Pages
         // Event handler for the Save Profile button
         private void BtnSaveProfile_Click(object sender, RoutedEventArgs e)
         {
-            var profileName = $"newProfile_{DateTime.Now:yyyyMMddHHmmss}";
+            var mainDomain = txtMainDomain.Text;  // Get the main domain from input
+            var dnsRecords = SerializeDnsRecords();  // Serialize DNS records to a list
+
+            // Generate profile name using mainDomain and DNS record types
+            string profileName = mainDomain;
+            var dnsRecordsList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(dnsRecords);
+
+            foreach (var record in dnsRecordsList)
+            {
+                string recordType = record["Type"]?.ToString();
+                if (!string.IsNullOrEmpty(recordType))
+                {
+                    profileName += "-" + recordType;  // Concatenate the record type
+                }
+            }
+
+            // Save the profile with the dynamic profile name
             var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
 
             var profile = new Dictionary<string, object>
-            {
-                { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
-                { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
-                { "DnsRecords", SerializeDnsRecords() }
-            };
+    {
+        { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
+        { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
+        { "mainDomain", mainDomain },  // Save the main domain
+        { "DnsRecords", dnsRecords }   // Save the DNS records
+    };
 
             var json = JsonSerializer.Serialize(profile);
-            File.WriteAllText(profilePath, json);
+            File.WriteAllText(profilePath, json);  // Save the profile to a file with the dynamic profile name
 
-            LoadProfiles();
+            LoadProfiles();  // Reload profiles after saving
             _ = ShowSuccessMessage("Profile saved successfully.");
         }
+
 
         private string SerializeDnsRecords()
         {
@@ -147,7 +165,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             _ = UpdateDnsRecords(); // This calls the one-time DNS update logic
         }
-      
+
 
         private int GetInterval() =>
             cmbInterval.SelectedIndex switch
@@ -194,6 +212,8 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             txtApiKey.Text = EncryptionHelper.DecryptString(profile["ApiKey"].ToString());
             txtZoneId.Text = EncryptionHelper.DecryptString(profile["ZoneId"].ToString());
+            txtMainDomain.Text = profile["mainDomain"].ToString();  // Load main domain
+
 
             itemsControlDnsRecords.Items.Clear();
 
