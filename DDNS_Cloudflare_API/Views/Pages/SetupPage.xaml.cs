@@ -120,7 +120,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             foreach (var item in itemsControlDnsRecords.Items)
             {
-                if (item is StackPanel dnsRecordPanel)
+                if (item is Grid dnsRecordPanel)
                 {
                     var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
 
@@ -240,7 +240,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         private int GetInterval() =>
             cmbInterval.SelectedIndex switch
             {
-                0 => 1,
+                0 => 15,
                 1 => 30,
                 2 => 60,
                 3 => 360,
@@ -335,7 +335,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             foreach (var item in itemsControlDnsRecords.Items)
             {
-                if (item is StackPanel dnsRecordPanel)
+                if (item is Grid dnsRecordPanel)
                 {
                     var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
 
@@ -427,24 +427,28 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
         private bool IsDnsRecordValid(params object[] fields) => fields.All(field => field != null && !string.IsNullOrEmpty(field.ToString()));
 
-        private (TextBox dnsRecordId, TextBox name, ComboBox content, ComboBox type, ComboBox proxied, ComboBox ttl) GetDnsRecordFields(StackPanel dnsRecordPanel)
+        private (TextBox dnsRecordId, TextBox name, ComboBox content, ComboBox type, ComboBox proxied, ComboBox ttl) GetDnsRecordFields(Grid dnsRecordGrid)
         {
-            var dnsInputPanel = (StackPanel)dnsRecordPanel.Children[1];
-            var dnsComboPanel = (StackPanel)dnsRecordPanel.Children[2];
+            // Access the second row grid (Record ID and Name Grid)
+            var recordGrid = (Grid)dnsRecordGrid.Children[1];  // Second row grid
+            var dnsRecordId = (TextBox)recordGrid.Children[0]; // First child in the second row (Record ID)
+            var name = (TextBox)recordGrid.Children[1];        // Second child in the second row (Name)
 
-            return (
-                (TextBox)dnsInputPanel.Children[0],
-                (TextBox)dnsInputPanel.Children[1],
-                (ComboBox)dnsComboPanel.Children[0],
-                (ComboBox)dnsComboPanel.Children[1],
-                (ComboBox)dnsComboPanel.Children[2],
-                (ComboBox)dnsComboPanel.Children[3]
-            );
+            // Access the third row grid (ComboBoxes Grid)
+            var comboGrid = (Grid)dnsRecordGrid.Children[2];   // Third row grid
+            var content = (ComboBox)comboGrid.Children[0];     // First child in the third row (Content ComboBox)
+            var type = (ComboBox)comboGrid.Children[1];        // Second child in the third row (Type ComboBox)
+            var proxied = (ComboBox)comboGrid.Children[2];     // Third child in the third row (Proxied ComboBox)
+            var ttl = (ComboBox)comboGrid.Children[3];         // Fourth child in the third row (TTL ComboBox)
+
+            return (dnsRecordId, name, content, type, proxied, ttl);
         }
 
-        private void UpdateDnsRecordPanel(StackPanel dnsRecordPanel, Dictionary<string, object> record)
+
+
+        private void UpdateDnsRecordPanel(Grid dnsRecordGrid, Dictionary<string, object> record)
         {
-            var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
+            var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordGrid);
 
             dnsRecordId.Text = record["RecordID"]?.ToString();
             name.Text = record["Name"]?.ToString();
@@ -454,64 +458,105 @@ namespace DDNS_Cloudflare_API.Views.Pages
             ttl.SelectedIndex = GetTtlIndex(int.Parse(record["TTL"]?.ToString()));
         }
 
+
         private ComboBoxItem FindComboBoxItem(ComboBox comboBox, string content) =>
             comboBox.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Content.ToString() == content);
-
         private void BtnAddDnsRecord_Click(object sender, RoutedEventArgs e)
         {
             var dnsRecordPanel = CreateDnsRecordPanel();
-            itemsControlDnsRecords.Items.Add(dnsRecordPanel);
+            itemsControlDnsRecords.Items.Add(dnsRecordPanel); // Add Grid instead of StackPanel
         }
 
-        private StackPanel CreateDnsRecordPanel()
+
+        private Grid CreateDnsRecordPanel()
         {
-            var dnsRecordPanel = new StackPanel
+            var dnsRecordGrid = new Grid
             {
-                Orientation = Orientation.Vertical,
                 Margin = new Thickness(0, 0, 0, 10)
             };
 
-            dnsRecordPanel.Children.Add(CreateLabel("lblRecord", "DNS Record"));
+            // Define rows for the outer grid
+            dnsRecordGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Row for DNS Record label
+            dnsRecordGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Row for nested grid for Record ID and Name
+            dnsRecordGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Row for nested grid for ComboBoxes
+            dnsRecordGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto }); // Row for Remove button
 
-            var dnsInputPanel = new StackPanel
-            {
-                Orientation = Orientation.Vertical,
-                Margin = new Thickness(0, 0, 0, 10)
-            };
+            // First Row: Add Label for DNS Record
+            var lblRecord = CreateLabel("lblRecord", "DNS Record");
+            Grid.SetRow(lblRecord, 0);
+            Grid.SetColumnSpan(lblRecord, 2);  // Span across both columns in the first row
+            dnsRecordGrid.Children.Add(lblRecord);
 
-            dnsInputPanel.Children.Add(CreateTextBox("txtDnsRecordId", "Record ID"));
-            dnsInputPanel.Children.Add(CreateTextBox("txtName", "Name"));
+            // Second Row: Nested Grid for Record ID and Name
+            var recordGrid = new Grid(); // Create a new Grid for the second row (Record ID and Name)
+            recordGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // Record ID
+            recordGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // Name
 
-            var dnsComboPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 0, 0, 10)
-            };
-            dnsComboPanel.Children.Add(CreateComboBox("content", new[] { "IPv4", "IPv6" }));
-            dnsComboPanel.Children.Add(CreateComboBox("cmbType", new[] { "A", "AAAA" }));
-            dnsComboPanel.Children.Add(CreateComboBox("cmbProxied", new[] { "True", "False" }));
-            dnsComboPanel.Children.Add(CreateComboBox("cmbTtl", new[]
+            var txtDnsRecordId = CreateTextBox("txtDnsRecordId", "Record ID");
+            txtDnsRecordId.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            Grid.SetColumn(txtDnsRecordId, 0);
+            recordGrid.Children.Add(txtDnsRecordId);
+
+            var txtName = CreateTextBox("txtName", "Name");
+            txtName.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            Grid.SetColumn(txtName, 1);
+            recordGrid.Children.Add(txtName);
+
+            Grid.SetRow(recordGrid, 1); // Place the nested grid in the second row
+            dnsRecordGrid.Children.Add(recordGrid);
+
+            // Third Row: Nested Grid for ComboBoxes
+            var comboGrid = new Grid(); // Create a new Grid for the third row (ComboBoxes)
+            comboGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // ComboBox content
+            comboGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // ComboBox type
+            comboGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // ComboBox proxied
+            comboGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // ComboBox TTL
+
+            var contentCombo = CreateComboBox("content", new[] { "IPv4", "IPv6" });
+            contentCombo.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            Grid.SetColumn(contentCombo, 0);
+            comboGrid.Children.Add(contentCombo);
+
+            var typeCombo = CreateComboBox("cmbType", new[] { "A", "AAAA" });
+            typeCombo.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            Grid.SetColumn(typeCombo, 1);
+            comboGrid.Children.Add(typeCombo);
+
+            var proxiedCombo = CreateComboBox("cmbProxied", new[] { "True", "False" });
+            proxiedCombo.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            Grid.SetColumn(proxiedCombo, 2);
+            comboGrid.Children.Add(proxiedCombo);
+
+            var ttlCombo = CreateComboBox("cmbTtl", new[]
             {
         "Auto", "1 min", "2 min", "5 min", "10 min", "15 min", "30 min", "1 hr",
         "2 hr", "5 hr", "12 hr", "1 day"
-    }));
+    });
+            ttlCombo.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+            Grid.SetColumn(ttlCombo, 3);
+            comboGrid.Children.Add(ttlCombo);
 
-            // Add a remove button for each DNS record
+            Grid.SetRow(comboGrid, 2); // Place the nested grid in the third row
+            dnsRecordGrid.Children.Add(comboGrid);
+
+            // Fourth Row: Add Remove Button
             var removeButton = new Button
             {
                 Content = "Remove",
                 Margin = new Thickness(5)
             };
-            removeButton.Click += (sender, e) => RemoveDnsRecord(dnsRecordPanel);
+            removeButton.Click += (sender, e) => RemoveDnsRecord(dnsRecordGrid);
+            Grid.SetRow(removeButton, 3);  // Place it in the fourth row
+            Grid.SetColumnSpan(removeButton, 4);  // Span the button across all columns
+            dnsRecordGrid.Children.Add(removeButton);
 
-            dnsRecordPanel.Children.Add(dnsInputPanel);
-            dnsRecordPanel.Children.Add(dnsComboPanel);
-            dnsRecordPanel.Children.Add(removeButton);  // Add the remove button to the panel
-
-            return dnsRecordPanel;
+            return dnsRecordGrid;
         }
 
-        private void RemoveDnsRecord(StackPanel dnsRecordPanel)
+
+
+
+        private void RemoveDnsRecord(Grid dnsRecordPanel)
         {
             // Ensure at least one DNS record remains
             if (itemsControlDnsRecords.Items.Count > 1)

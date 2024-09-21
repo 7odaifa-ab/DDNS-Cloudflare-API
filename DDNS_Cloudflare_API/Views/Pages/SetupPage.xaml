@@ -75,6 +75,7 @@
                        Content="Add DNS Record"
                        Click="BtnAddDnsRecord_Click"
                        Margin="0,0,0,10" />
+            <Label Content="Interval Update Time"/>
             <ComboBox Name="cmbInterval"
                       SelectedIndex="0"
                       Margin="0,0,0,10">
@@ -100,7 +101,8 @@
                            Margin="0,0,10,0" />
                 <ui:Button Name="btnOneTime"
                            Content="One-Time Call"
-                           Click="BtnOneTime_Click" />
+                           Click="BtnOneTime_Click"
+                           Appearance="Primary"/>
 
             </StackPanel>
 

@@ -3,12 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\setuppage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\setuppage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\windows\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\windows\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\setuppage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\setuppage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\windows\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\windows\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\dashboard.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\dashboard.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\ddns_cloudflare_api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\ddns_cloudflare_api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\settingspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\settingspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\settingspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\settingspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\dashboard.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -19,28 +35,16 @@
       "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\services\\profiletimerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\settingspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\settingspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\setuppage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\setuppage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\dashboard.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\dashboard.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\settingspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\settingspage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\windows\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\windows\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\views\\pages\\setuppage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\setuppage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\viewmodels\\pages\\dataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\viewmodels\\pages\\dataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\loffy\\documents\\github\\ddns_cloudflare_api\\ddns_cloudflare_api\\ddns_cloudflare_api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\ddns_cloudflare_api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -50,49 +54,50 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "SetupPage.xaml",
-              "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml",
-              "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml",
-              "ToolTip": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml",
-              "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-08-24T11:24:02.125Z",
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml.cs",
+              "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml.cs",
+              "ViewState": "AQIAAEoAAAAAAAAAAAAqwEoAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T16:31:21.117Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 9,
               "Title": "SetupPage.xaml.cs",
               "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml.cs",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml.cs",
               "ToolTip": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml.cs",
               "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml.cs",
-              "ViewState": "AQIAAKcBAAAAAAAAAAAwwOwBAABFAAAA",
+              "ViewState": "AQIAAOQAAAAAAAAAAAAkwPIAAAAYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-24T11:24:05.981Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "ProfileTimerService.cs",
               "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Services\\ProfileTimerService.cs",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Services\\ProfileTimerService.cs",
               "ToolTip": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Services\\ProfileTimerService.cs",
               "RelativeToolTip": "DDNS_Cloudflare_API\\Services\\ProfileTimerService.cs",
-              "ViewState": "AQIAAJIAAAAAAAAAAAAAAJ4AAAAJAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAJ4AAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-18T08:31:14.806Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "Dashboard.xaml",
               "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Pages\\Dashboard.xaml",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\Dashboard.xaml",
@@ -104,7 +109,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "SettingsPage.xaml.cs",
               "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Pages\\SettingsPage.xaml.cs",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\SettingsPage.xaml.cs",
@@ -117,7 +122,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 2,
               "Title": "Dashboard.xaml.cs",
               "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Pages\\Dashboard.xaml.cs",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\Dashboard.xaml.cs",
@@ -130,7 +135,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 3,
               "Title": "DDNS_Cloudflare_API.csproj",
               "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj",
@@ -143,7 +148,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 4,
               "Title": "SettingsPage.xaml",
               "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Pages\\SettingsPage.xaml",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\SettingsPage.xaml",
@@ -155,12 +160,12 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 0,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml",
-              "ToolTip": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml",
-              "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml*",
+              "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml*",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2024-09-16T10:11:17.877Z",
               "EditorCaption": ""
@@ -168,6 +173,18 @@
             {
               "$type": "Document",
               "DocumentIndex": 8,
+              "Title": "SetupPage.xaml",
+              "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml",
+              "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml",
+              "ToolTip": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml",
+              "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Pages\\SetupPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-08-24T11:24:02.125Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "DataViewModel.cs",
               "DocumentMoniker": "C:\\Users\\loffy\\Documents\\GitHub\\DDNS_Cloudflare_API\\DDNS_Cloudflare_API\\ViewModels\\Pages\\DataViewModel.cs",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\ViewModels\\Pages\\DataViewModel.cs",
