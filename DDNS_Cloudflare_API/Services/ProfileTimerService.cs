@@ -145,17 +145,18 @@ namespace DDNS_Cloudflare_API.Services
 
 
 
-        public async Task UpdateDnsRecordForProfile(string apiKey, string zoneId, object record, string dnsRecordId)
+        public async Task<string> UpdateDnsRecordForProfile(string apiKey, string zoneId, object record, string dnsRecordId)
         {
             string json = JsonSerializer.Serialize(record);
+            Debug.WriteLine($"Update Request for: {json}");
 
             using HttpClient client = new HttpClient
             {
                 DefaultRequestHeaders =
-                {
-                    Accept = { new MediaTypeWithQualityHeaderValue("application/json") },
-                    Authorization = new AuthenticationHeaderValue("Bearer", apiKey)
-                }
+        {
+            Accept = { new MediaTypeWithQualityHeaderValue("application/json") },
+            Authorization = new AuthenticationHeaderValue("Bearer", apiKey)
+        }
             };
 
             HttpResponseMessage response = await client.PutAsync(
@@ -167,7 +168,10 @@ namespace DDNS_Cloudflare_API.Services
 
             // Log the response
             Log(logMessage);
+
+            return responseContent;  // Return the response content
         }
+
 
         public async Task<string> GetIpContent(ComboBoxItem selectedContent)
         {

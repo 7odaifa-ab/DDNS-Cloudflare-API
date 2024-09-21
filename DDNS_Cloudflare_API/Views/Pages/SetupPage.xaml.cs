@@ -12,6 +12,7 @@ using Label = System.Windows.Controls.Label;
 using DDNS_Cloudflare_API.Services;
 using System.Diagnostics;
 using Button = Wpf.Ui.Controls.Button;
+using System.Threading.Tasks;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
@@ -212,6 +213,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             if (cmbProfiles.SelectedItem != null)
             {
+                UpdateDnsRecords();
                 string profileName = cmbProfiles.SelectedItem.ToString();
                 timerService.StartTimer(profileName, GetInterval());
                 txtStatus.Text = $"{profileName} Started";
@@ -321,7 +323,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 itemsControlDnsRecords.Items.Add(dnsRecordPanel);
             }
         }
-
         private async Task UpdateDnsRecords()
         {
             if (itemsControlDnsRecords.Items.Count == 0)
@@ -337,21 +338,44 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 {
                     var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
 
+                    // Validate DNS record fields
                     if (IsDnsRecordValid(dnsRecordId, name, content, type, proxied, ttl))
                     {
                         string ipContent = await timerService.GetIpContent((ComboBoxItem)content.SelectedItem);
 
+                        // Get mainDomain from the input field
+                        string mainDomain = txtMainDomain.Text;
+
+                        // Create the full record name (Name + mainDomain)
+                        string fullName = name.Text + "." + mainDomain;
+
                         var record = new
                         {
                             content = ipContent,
-                            name = name.Text,
+                            name = fullName,  // Use the full name for the DNS record
                             proxied = ((ComboBoxItem)proxied.SelectedItem).Content.ToString() == "True",
                             type = ((ComboBoxItem)type.SelectedItem).Content.ToString(),
                             ttl = GetTtlInSeconds(ttl.SelectedIndex),
-                            comment = "DDNS updated from WPF"
+                            comment = "DDNS updated from WPF - one time update"
                         };
 
-                        await timerService.UpdateDnsRecordForProfile(EncryptionHelper.DecryptString(txtApiKey.Text), EncryptionHelper.DecryptString(txtZoneId.Text), record, dnsRecordId.Text);
+                        try
+                        {
+                            // Call the method and get the response content
+                            string response = await timerService.UpdateDnsRecordForProfile(
+                                txtApiKey.Text,
+                                txtZoneId.Text,
+                                record,
+                                dnsRecordId.Text);
+
+                            // Update status with the API response using OnStatusUpdated
+                            OnStatusUpdated($"Update Successful: {response}");
+                            Debug.WriteLine("UpdateDnsRecordForProfile call succeeded");
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"Error in UpdateDnsRecordForProfile: {ex.Message}");
+                        }
                     }
                     else
                     {
@@ -360,6 +384,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 }
             }
         }
+
 
         private int GetTtlInSeconds(int index) =>
             index switch
