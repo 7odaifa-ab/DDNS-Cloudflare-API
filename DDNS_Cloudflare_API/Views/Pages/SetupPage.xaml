@@ -29,11 +29,11 @@
                 <ComboBoxItem Content="+ Add a New Profile" />
                 <!-- Profiles will be loaded here -->
             </ComboBox>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <ui:Button Name="btnSaveProfile"
                            Content="Save Profile"
                            Click="BtnSaveProfile_Click"
-                           Width="100"
+                           Width="120"
                            Margin="5" />
                 <ui:Button Name="btnDeleteProfile"
                            Content="Delete Profile"
@@ -54,6 +54,7 @@
             <!-- Existing TextBoxes and ComboBoxes -->
             <ui:TextBox Name="txtApiKey"
                         PlaceholderText="API Key"
+                        HorizontalAlignment="Stretch"
                         Margin="0,0,0,10" />
             <ui:TextBox Name="txtZoneId"
                         PlaceholderText="Zone ID"

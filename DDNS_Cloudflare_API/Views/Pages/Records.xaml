@@ -27,11 +27,9 @@
                     Orientation="Vertical"
                     Margin="10">
             <ui:TextBox x:Name="ApiKeyTextBox"
-                     Width="300"
                      Margin="5"
                      PlaceholderText="Enter API Key" />
             <ui:TextBox x:Name="ZoneIdTextBox"
-                     Width="300"
                      Margin="5"
                      PlaceholderText="Enter Zone ID" />
             <ui:Button Content="Get DNS Records"

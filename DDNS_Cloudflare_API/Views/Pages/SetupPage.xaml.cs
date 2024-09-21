@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Windows.Controls;
 using System.Text.Json;
+using System.Windows;
 using Wpf.Ui.Controls;
 using DDNS_Cloudflare_API.ViewModels.Pages;
 using TextBox = Wpf.Ui.Controls.TextBox;
@@ -474,9 +475,10 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             var dnsInputPanel = new StackPanel
             {
-                Orientation = Orientation.Horizontal,
+                Orientation = Orientation.Vertical,
                 Margin = new Thickness(0, 0, 0, 10)
             };
+
             dnsInputPanel.Children.Add(CreateTextBox("txtDnsRecordId", "Record ID"));
             dnsInputPanel.Children.Add(CreateTextBox("txtName", "Name"));
 
@@ -538,8 +540,8 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 Name = name,
                 Margin = new Thickness(5),
                 Text = text,
-                Width = 205,
                 PlaceholderText = holderText,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,  // Use the fully qualified type name
                 ToolTip = "hint"
             };
 
