@@ -26,16 +26,28 @@
                       SelectionChanged="CmbProfiles_SelectionChanged"
                       Margin="0,0,0,10"
                       IsEnabled="False">
+                <ComboBoxItem Content="+ Add a New Profile" />
                 <!-- Profiles will be loaded here -->
             </ComboBox>
-            <ui:Button Name="btnSaveProfile"
-                       Content="Save Profile"
-                       Click="BtnSaveProfile_Click"
-                       Margin="0,0,0,10" />
-            <ui:Button Name="btnDeleteProfile"
-                       Content="Delete Profile"
-                       Click="BtnDeleteProfile_Click"
-                       Margin="0,0,0,10" />
+            <StackPanel Orientation="Horizontal">
+                <ui:Button Name="btnSaveProfile"
+                           Content="Save Profile"
+                           Click="BtnSaveProfile_Click"
+                           Width="100"
+                           Margin="5" />
+                <ui:Button Name="btnDeleteProfile"
+                           Content="Delete Profile"
+                           Click="BtnDeleteProfile_Click"
+                           Width="120"
+                           Margin="5" />
+                <Button Content="Update Profile"
+                        Click="BtnUpdateProfile_Click"
+                        x:Name="btnUpdateProfile"
+                        IsEnabled="False"
+                        Width="120"
+                        Margin="5" />
+
+            </StackPanel>
         </StackPanel>
 
         <StackPanel Grid.Row="1" Margin="10,10,10,10">

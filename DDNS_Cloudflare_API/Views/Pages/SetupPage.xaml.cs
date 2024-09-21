@@ -53,17 +53,10 @@ namespace DDNS_Cloudflare_API.Views.Pages
             var dnsRecords = SerializeDnsRecords();  // Serialize DNS records to a list
 
             // Generate profile name using mainDomain and DNS record types
-            string profileName = mainDomain;
-            var dnsRecordsList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(dnsRecords);
+            string profileName = GenerateProfileName(mainDomain, dnsRecords);
 
-            foreach (var record in dnsRecordsList)
-            {
-                string recordType = record["Type"]?.ToString();
-                if (!string.IsNullOrEmpty(recordType))
-                {
-                    profileName += "-" + recordType;  // Concatenate the record type
-                }
-            }
+            // Check if profile with the same name exists and create numbered profile name if needed
+            profileName = GetUniqueProfileName(profileName);
 
             // Save the profile with the dynamic profile name
             var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
@@ -82,6 +75,41 @@ namespace DDNS_Cloudflare_API.Views.Pages
             LoadProfiles();  // Reload profiles after saving
             _ = ShowSuccessMessage("Profile saved successfully.");
         }
+
+        // Method to generate profile name based on mainDomain and DNS record types
+        private string GenerateProfileName(string mainDomain, string dnsRecords)
+        {
+            var dnsRecordsList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(dnsRecords);
+            string profileName = mainDomain;
+
+            foreach (var record in dnsRecordsList)
+            {
+                string recordType = record["Type"]?.ToString();
+                if (!string.IsNullOrEmpty(recordType))
+                {
+                    profileName += "-" + recordType;  // Concatenate the record type
+                }
+            }
+
+            return profileName;
+        }
+
+        // Method to generate a unique profile name if one already exists
+        private string GetUniqueProfileName(string baseName)
+        {
+            int counter = 1;
+            string profilePath = Path.Combine(profilesFolderPath, $"{baseName}.json");
+
+            while (File.Exists(profilePath))
+            {
+                string newName = $"{baseName}-{counter}";
+                profilePath = Path.Combine(profilesFolderPath, $"{newName}.json");
+                counter++;
+            }
+
+            return Path.GetFileNameWithoutExtension(profilePath);
+        }
+
 
 
         private string SerializeDnsRecords()
@@ -108,6 +136,43 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             return JsonSerializer.Serialize(dnsRecords);
         }
+
+        private void BtnUpdateProfile_Click(object sender, RoutedEventArgs e)
+        {
+            if (cmbProfiles.SelectedItem is string profileName)
+            {
+                var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
+
+                if (File.Exists(profilePath))
+                {
+                    var mainDomain = txtMainDomain.Text;  // Get the main domain from input
+                    var dnsRecords = SerializeDnsRecords();  // Serialize DNS records to a list
+
+                    var profile = new Dictionary<string, object>
+            {
+                { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
+                { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
+                { "mainDomain", mainDomain },  // Save the main domain
+                { "DnsRecords", dnsRecords }   // Save the DNS records
+            };
+
+                    var json = JsonSerializer.Serialize(profile);
+                    File.WriteAllText(profilePath, json);  // Overwrite the profile with updated details
+
+                    LoadProfiles();  // Reload profiles after updating
+                    _ = ShowSuccessMessage("Profile updated successfully.");
+                }
+                else
+                {
+                    _ = ShowErrorMessage("Profile not found for updating.");
+                }
+            }
+            else
+            {
+                _ = ShowErrorMessage("No profile selected to update.");
+            }
+        }
+
 
 
         // Event handler for the Delete Profile button
@@ -138,8 +203,10 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             txtApiKey.Text = string.Empty;
             txtZoneId.Text = string.Empty;
+            txtMainDomain.Text = string.Empty;
             itemsControlDnsRecords.Items.Clear();
         }
+
 
         private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
@@ -185,25 +252,54 @@ namespace DDNS_Cloudflare_API.Views.Pages
             {
                 var profileFiles = Directory.GetFiles(profilesFolderPath, "*.json");
                 cmbProfiles.Items.Clear();
+
+                // First, add all existing profiles
                 foreach (var file in profileFiles)
                 {
                     cmbProfiles.Items.Add(Path.GetFileNameWithoutExtension(file));
                 }
+
+                // Finally, add the "+ Add a New Profile" option at the end
+                ComboBoxItem newProfileItem = new ComboBoxItem { Content = "+ Add a New Profile" };
+                cmbProfiles.Items.Add(newProfileItem);
+
                 cmbProfiles.IsEnabled = cmbProfiles.Items.Count > 0;
             }
         }
 
+
+
         private void CmbProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbProfiles.SelectedItem is string profileName)
+            if (cmbProfiles.SelectedItem is ComboBoxItem selectedItem && selectedItem.Content.ToString() == "+ Add a New Profile")
+            {
+                // Clear all input fields to allow creating a new profile
+                ClearInputFields();
+                btnUpdateProfile.IsEnabled = false;  // Disable the Update button when adding a new profile
+            }
+            else if (cmbProfiles.SelectedItem is string profileName)
             {
                 var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
+
                 if (File.Exists(profilePath))
                 {
-                    LoadProfile(profilePath);
+                    LoadProfile(profilePath);  // Load the selected profile's data
+                    btnUpdateProfile.IsEnabled = true;  // Enable the Update button when a profile is selected
+                }
+                else
+                {
+                    ClearInputFields();
+                    btnUpdateProfile.IsEnabled = false;  // Disable the Update button
                 }
             }
+            else
+            {
+                ClearInputFields();  // If no valid selection is made, clear input fields
+                btnUpdateProfile.IsEnabled = false;
+            }
         }
+
+
 
         private void LoadProfile(string profilePath)
         {
