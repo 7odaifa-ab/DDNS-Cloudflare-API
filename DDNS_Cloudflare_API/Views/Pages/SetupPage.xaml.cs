@@ -240,7 +240,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         private int GetInterval() =>
             cmbInterval.SelectedIndex switch
             {
-                0 => 1,
+                0 => 15,
                 1 => 30,
                 2 => 60,
                 3 => 360,
@@ -333,6 +333,13 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 return;
             }
 
+            // Check if a profile is selected
+            string profileName = "One Time Call";  // Default profile name
+            if (cmbProfiles.SelectedItem is string selectedProfile)
+            {
+                profileName = selectedProfile;  // Set profile name if one is selected
+            }
+
             foreach (var item in itemsControlDnsRecords.Items)
             {
                 if (item is Grid dnsRecordPanel)
@@ -368,7 +375,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                                 txtZoneId.Text,
                                 record,
                                 dnsRecordId.Text,
-                                "One Time Call",
+                                profileName,  // Use the selected profile name or "One Time Call"
                                 mainDomain,
                                 ipContent);
 

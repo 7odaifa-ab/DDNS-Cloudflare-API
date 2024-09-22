@@ -24,91 +24,111 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label  Grid.Row="0" Content="Overview"/>
+        <!-- First Section Header: Last API Call -->
+        <TextBlock Grid.Row="0"
+                   Text="Last API Call"
+                   FontSize="25"
+                   FontWeight="Bold"
+                   Margin="0 30 0 0" />
+
         <!-- First Section: Log Information -->
         <Grid Grid.Row="1"
-              Margin="10">
+              Margin="0 20 0 20">
             <!-- Define columns for the inner grid -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1.5*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.9*" />
+                <ColumnDefinition Width="1.4*" />
+                <ColumnDefinition Width="0.7*" />
                 <ColumnDefinition Width="1.5*" />
             </Grid.ColumnDefinitions>
 
             <!-- Define rows for the inner grid -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <!-- Profile Name and Running Status Row -->
                 <RowDefinition Height="Auto" />
-                <!-- Domain Row -->
                 <RowDefinition Height="Auto" />
-                <!-- IP Address Row -->
-                <!-- Date Row -->
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!-- Profile Name -->
             <TextBlock Text="Profile Name:"
+                       FontWeight="Bold"
+                       FontSize="15"
+                       Margin="5"
                        Grid.Row="0"
-                       Grid.Column="0"
-                       Margin="5" />
+                       Grid.Column="0" />
             <TextBlock Text="{Binding LastLogEntry.ProfileName}"
+                       Margin="5"
                        Grid.Row="0"
-                       Grid.Column="1"
-                       Margin="5" />
-
-            <!-- Running Status -->
-            <TextBlock Text="Running Status:"
-                       Grid.Row="0"
-                       Grid.Column="2"
-                       Margin="5" />
-            <TextBlock Text="{Binding LastLogEntry.RunningStatus}"
-                       Grid.Row="0"
-                       Grid.Column="3"
-                       Margin="5" />
+                       Grid.Column="1" />
 
             <!-- Call Status -->
             <TextBlock Text="Call Status:"
+                       FontWeight="Bold"
+                       FontSize="15"
+                       Margin="5"
                        Grid.Row="1"
-                       Grid.Column="0"
-                       Margin="5" />
+                       Grid.Column="0" />
             <TextBlock Text="{Binding LastLogEntry.CallStatus}"
+                       Margin="5"
                        Grid.Row="1"
-                       Grid.Column="1"
-                       Margin="5" />
+                       Grid.Column="1" />
 
             <!-- Domain -->
             <TextBlock Text="Domain:"
+                       FontWeight="Bold"
+                       FontSize="15"
+                       Margin="5"
                        Grid.Row="1"
-                       Grid.Column="2"
-                       Margin="5" />
+                       Grid.Column="2" />
             <TextBlock Text="{Binding LastLogEntry.Domain}"
+                       Margin="5"
                        Grid.Row="1"
-                       Grid.Column="3"
-                       Margin="5" />
+                       Grid.Column="3" />
 
             <!-- IP Address -->
             <TextBlock Text="IP:"
-                       Grid.Row="3"
-                       Grid.Column="0"
-                       Margin="5" />
+                       FontWeight="Bold"
+                       FontSize="15"
+                       Margin="5"
+                       Grid.Row="0"
+                       Grid.Column="2" />
             <TextBlock Text="{Binding LastLogEntry.IpAddress}"
-                       Grid.Row="3"
-                       Grid.Column="1"
-                       Margin="5" />
+                       Margin="5"
+                       Grid.Row="0"
+                       Grid.Column="3" />
 
-            <!-- Date -->
+            <!-- Timer Status -->
+            <TextBlock Text="Timer Status:"
+                       FontWeight="Bold"
+                       FontSize="15"
+                       Margin="5"
+                       Grid.Row="3"
+                       Grid.Column="0" />
+            <TextBlock Text="{Binding LastLogEntry.RunningStatus}"
+                       Margin="5"
+                       Grid.Row="3"
+                       Grid.Column="1" />
+
+            <!-- On Date -->
             <TextBlock Text="On Date:"
+                       FontWeight="Bold"
+                       FontSize="15"
+                       Margin="5"
                        Grid.Row="3"
-                       Grid.Column="2"
-                       Margin="5" />
+                       Grid.Column="2" />
             <TextBlock Text="{Binding LastLogEntry.Date}"
+                       Margin="5"
                        Grid.Row="3"
-                       Grid.Column="3"
-                       Margin="5" />
+                       Grid.Column="3" />
         </Grid>
 
-        <Label Grid.Row="2"  Content="Dashboard" />
+        <!-- Second Section Header: Dashboard -->
+        <TextBlock Grid.Row="2"
+                   Text="Dashboard"
+                   FontSize="25"
+                   FontWeight="Bold"
+                   Margin="0 20 0 0" />
 
         <!-- Second Section: Profile Statuses (DataGrid) -->
         <DataGrid Grid.Row="3"
@@ -123,16 +143,45 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Profile Name"
                                     Binding="{Binding ProfileName}"
-                                    Width="*" />
-                <DataGridTextColumn Header="Status"
+                                    Width="*"
+                                    MinWidth="250"/>
+                <DataGridTextColumn Header="State"
                                     Binding="{Binding Status}"
-                                    Width="*" />
-                <DataGridTextColumn Header="Remaining Time"
+                                    Width="*"
+                                    MinWidth="100">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Center" />
+                            <Setter Property="TextAlignment"
+                                    Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Time Left"
                                     Binding="{Binding RemainingTime}"
-                                    Width="*" />
-                <DataGridTextColumn Header="Next API Call Time"
+                                    Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Center" />
+                            <Setter Property="TextAlignment"
+                                    Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Next Call"
                                     Binding="{Binding NextApiCallTime}"
-                                    Width="*" />
+                                    Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Center" />
+                            <Setter Property="TextAlignment"
+                                    Value="Center" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
