@@ -240,7 +240,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         private int GetInterval() =>
             cmbInterval.SelectedIndex switch
             {
-                0 => 15,
+                0 => 1,
                 1 => 30,
                 2 => 60,
                 3 => 360,
@@ -367,7 +367,10 @@ namespace DDNS_Cloudflare_API.Views.Pages
                                 txtApiKey.Text,
                                 txtZoneId.Text,
                                 record,
-                                dnsRecordId.Text);
+                                dnsRecordId.Text,
+                                "One Time Call",
+                                mainDomain,
+                                ipContent);
 
                             // Update status with the API response using OnStatusUpdated
                             OnStatusUpdated($"Update Successful: {response}");

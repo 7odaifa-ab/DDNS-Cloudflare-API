@@ -58,7 +58,6 @@ namespace DDNS_Cloudflare_API.Views.Windows
             CreateContextMenu();
 
             _profileTimerService = timerService;
-            Debug.WriteLine($"ProfileTimerService instance in ViewModel: {timerService.GetHashCode()}");
 
             // Load startup settings when the MainWindow is loaded
             Loaded += MainWindow_Loaded;

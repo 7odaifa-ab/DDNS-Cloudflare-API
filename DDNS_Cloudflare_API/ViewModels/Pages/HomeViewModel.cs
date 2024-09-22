@@ -8,10 +8,12 @@ using System.Windows.Threading;
 
 namespace DDNS_Cloudflare_API.ViewModels.Pages
 {
-    public partial class DashboardViewModel : ObservableObject
+    public partial class HomeViewModel : ObservableObject
     {
         private readonly ProfileTimerService _profileTimerService;
         private bool _isInitialized;
+
+        private LogEntry _lastLogEntry;
 
         [ObservableProperty]
         private ObservableCollection<ProfileStatus> profileStatuses;
@@ -19,7 +21,17 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
         public event EventHandler<string> ProfileTimerUpdated;
         public IRelayCommand RefreshCommand { get; }
 
-        public DashboardViewModel(ProfileTimerService profileTimerService)
+        public LogEntry LastLogEntry
+        {
+            get => _lastLogEntry;
+            set
+            {
+                _lastLogEntry = value;
+                OnPropertyChanged(nameof(LastLogEntry));  // Notify UI about the change
+            }
+        }
+
+        public HomeViewModel(ProfileTimerService profileTimerService)
         {
             _profileTimerService = profileTimerService;
 
@@ -166,5 +178,17 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+    }
+    public class LogEntry
+    {
+        public string ProfileName { get; set; }
+        public string CallStatus { get; set; }
+        public string Domain { get; set; }
+        public string IpAddress { get; set; }
+        public string Date { get; set; }
+        public string RunningStatus { get; set; }
+
+
     }
 }

@@ -63,10 +63,10 @@
                               TextWrapping="Wrap"
                               Margin="0,0,0,20" />
 
-                <!-- Section 4: Dashboard Page -->
+            <!-- Section 4: Home Page -->
                 <ui:TextBlock FontSize="18"
                               FontWeight="Bold"
-                              Text="4. Dashboard Page"
+                          Text="4. Home Page"
                               Margin="0,0,0,10" />
                 <ui:TextBlock Text="The dashboard shows profiles, their status, and timing information."
                               TextWrapping="Wrap" />

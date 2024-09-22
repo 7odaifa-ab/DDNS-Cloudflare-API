@@ -48,8 +48,8 @@ namespace DDNS_Cloudflare_API
 
 
                 services.AddSingleton<ProfileTimerService>();
-                services.AddSingleton<DashboardViewModel>();
-                services.AddSingleton<Dashboard>();
+                services.AddSingleton<HomeViewModel>();
+                services.AddSingleton<Home>();
                 services.AddSingleton<SetupPage>();
                 services.AddSingleton<SetupViewModel>();
                 services.AddSingleton<Log>();

@@ -51,7 +51,7 @@ namespace DDNS_Cloudflare_API.Services
                 )!;
                 _navigationWindow!.ShowWindow();
 
-                _navigationWindow.Navigate(typeof(Views.Pages.Dashboard));
+                _navigationWindow.Navigate(typeof(Views.Pages.Home));
             }
 
             await Task.CompletedTask;

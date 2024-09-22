@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -19,7 +20,7 @@ namespace DDNS_Cloudflare_API
             catch (Exception ex)
             {
                 // Log or handle encryption error
-                Console.WriteLine($"Encryption Error: {ex.Message}");
+                Debug.WriteLine($"Encryption Error: {ex.Message}");
                 throw;
             }
         }
@@ -37,7 +38,7 @@ namespace DDNS_Cloudflare_API
             catch (Exception ex)
             {
                 // Log or handle decryption error
-                Console.WriteLine($"Decryption Error: {ex.Message}");
+                Debug.WriteLine($"Decryption Error: {ex.Message}");
                 throw;
             }
         }

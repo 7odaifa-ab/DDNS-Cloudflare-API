@@ -9,7 +9,7 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\Pages\Dashboard.xaml.cs">
+    <Compile Update="Views\Pages\Home.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\Records.xaml.cs">
@@ -20,7 +20,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Pages\Dashboard.xaml">
+    <Page Update="Views\Pages\Home.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Pages\SetupPage.xaml">

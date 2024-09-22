@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -22,6 +23,8 @@ namespace DDNS_Cloudflare_API.Services
 
         // Define the event to notify status updates
         public event Action<string, string> ProfileTimerUpdated;
+
+        public Action UpdateLastApiCallLogAction { get; set; }  // Delegate to hold the method
 
         public Dictionary<string, DispatcherTimer> GetProfileTimers() => profileTimers;
 
@@ -79,7 +82,7 @@ namespace DDNS_Cloudflare_API.Services
             {
                 dnsTimer.Tag = DateTime.Now;
                 await UpdateDnsRecordsForProfile(profileName);
-
+                UpdateLastApiCallLogAction?.Invoke();
                 ProfileTimerUpdated?.Invoke(profileName, "Running");
             };
             dnsTimer.Start();
@@ -170,8 +173,7 @@ namespace DDNS_Cloudflare_API.Services
 
 
 
-
-        public async Task<string> UpdateDnsRecordForProfile(string apiKey, string zoneId, object record, string dnsRecordId)
+        public async Task<string> UpdateDnsRecordForProfile(string apiKey, string zoneId, object record, string dnsRecordId, string profileName, string domain, string ipAddress)
         {
             string json = JsonSerializer.Serialize(record);
             Debug.WriteLine($"Update Request for: {json}");
@@ -190,13 +192,15 @@ namespace DDNS_Cloudflare_API.Services
                 new StringContent(json, Encoding.UTF8, "application/json"));
 
             string responseContent = await response.Content.ReadAsStringAsync();
-            string logMessage = $"Last update: {DateTime.Now} Response: {responseContent}";
 
-            // Log the response
-            Log(logMessage);
+            // Log major info before response content
+            string logMessage = $"Profile: {profileName}, Domain: {domain}, IP: {ipAddress}, Response: {responseContent}";
+            Log(logMessage); // Log the profile, domain, IP, and response
 
             return responseContent;  // Return the response content
         }
+
+
 
 
         public async Task<string> GetIpContent(ComboBoxItem selectedContent)
@@ -261,10 +265,17 @@ string name = record["Name"]?.ToString() + "." + mainDomain;  // Concatenate Nam
                         comment = "DDNS updated from WPF"
                     };
 
-                    await UpdateDnsRecordForProfile(apiKey, zoneId, recordData, dnsRecordId);
+                    await UpdateDnsRecordForProfile(apiKey, zoneId, recordData, dnsRecordId, profileName, mainDomain, recordData.content);
+                
                 }
             }
         }
+
+        public bool IsProfileTimerRunning(string profileName)
+        {
+            return profileTimers.ContainsKey(profileName) && profileTimers[profileName].IsEnabled;
+        }
+
 
 
         public async Task LoadStartupSettings(string settingsFilePath)
@@ -312,8 +323,9 @@ string name = record["Name"]?.ToString() + "." + mainDomain;  // Concatenate Nam
             catch (Exception ex)
             {
                 // Handle logging exceptions, if needed
-                Console.WriteLine($"Error writing log: {ex.Message}");
+                Debug.WriteLine($"Error writing log: {ex.Message}");
             }
         }
+
     }
 }
