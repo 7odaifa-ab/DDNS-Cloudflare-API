@@ -58,6 +58,8 @@ namespace DDNS_Cloudflare_API
                 services.AddSingleton<DataViewModel>();
                 services.AddSingleton<SettingsPage>();
                 services.AddSingleton<SettingsViewModel>();
+                services.AddSingleton<TutorialViewModel>();
+                services.AddSingleton<Tutorial>();
             }).Build();
 
         /// <summary>

@@ -54,7 +54,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
         public void RefreshDashboard()
         {
-
            ViewModel.RefreshStatuses();
         }
 

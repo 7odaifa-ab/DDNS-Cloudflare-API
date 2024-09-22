@@ -16,8 +16,7 @@
       Loaded="Page_Loaded">
 
     <StackPanel>
-        <Button Content="Refresh" Command="{Binding RefreshCommand}" Width="100" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10"/>
-        <DataGrid ItemsSource="{Binding ProfileStatuses}" AutoGenerateColumns="False">
+        <DataGrid ItemsSource="{Binding ProfileStatuses}" AutoGenerateColumns="False" CanUserReorderColumns="False" IsReadOnly="True" SelectionMode="Single" IsHitTestVisible="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Profile Name" Binding="{Binding ProfileName}" />
                 <DataGridTextColumn Header="Status" Binding="{Binding Status}" />

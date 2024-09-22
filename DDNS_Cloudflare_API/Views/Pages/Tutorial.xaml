@@ -1,14 +1,97 @@
 ﻿<Page x:Class="DDNS_Cloudflare_API.Views.Pages.Tutorial"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:DDNS_Cloudflare_API.Views.Pages"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      mc:Ignorable="d"
+      d:DesignHeight="800"
+      d:DesignWidth="400"
+      ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+      ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Title="Tutorial">
 
     <Grid>
-        
+            <StackPanel Margin="10">
+
+                <!-- Title -->
+                <ui:TextBlock FontSize="24"
+                              FontWeight="Bold"
+                              Text="How to Use the Cloudflare API DNS Program"
+                              Margin="0,0,0,20" />
+
+                <!-- Section 1: Setup Page -->
+                <ui:TextBlock FontSize="18"
+                              FontWeight="Bold"
+                              Text="1. Setup Page"
+                              Margin="0,0,0,10" />
+                <ui:TextBlock Text="This page lets you input Cloudflare API credentials and DNS record details."
+                              TextWrapping="Wrap" />
+                <ui:TextBlock Text="• API Key: Enter the Cloudflare API key."
+                              TextWrapping="Wrap" />
+                <ui:TextBlock Text="• Zone ID: Enter the zone ID of your domain."
+                              TextWrapping="Wrap" />
+                <ui:TextBlock Text="• Main Domain/Website: Enter the main domain."
+                              TextWrapping="Wrap" />
+                <ui:TextBlock Text="You can add multiple DNS records with fields like Record ID, Name, Type, Proxied, and TTL."
+                              TextWrapping="Wrap" />
+                <ui:TextBlock Text="Use 'Add DNS Record' to add additional entries."
+                              TextWrapping="Wrap"
+                              Margin="0,0,0,20" />
+
+                <!-- Section 2: Saving Profiles -->
+                <ui:TextBlock FontSize="18"
+                              FontWeight="Bold"
+                              Text="2. Saving Profiles"
+                              Margin="0,0,0,10" />
+                <ui:TextBlock Text="Press 'Save Profile' to save a new DNS profile configuration."
+                              TextWrapping="Wrap" />
+                <ui:TextBlock Text="If a profile with the same name exists, the program will create a numbered version."
+                              TextWrapping="Wrap"
+                              Margin="0,0,0,20" />
+
+                <!-- Section 3: Updating Profiles -->
+                <ui:TextBlock FontSize="18"
+                              FontWeight="Bold"
+                              Text="3. Updating Profiles"
+                              Margin="0,0,0,10" />
+                <ui:TextBlock Text="Select an existing profile from the dropdown list and click 'Update Profile' to modify DNS settings."
+                              TextWrapping="Wrap" />
+                <ui:TextBlock Text="Use 'Delete Profile' to remove the selected profile."
+                              TextWrapping="Wrap"
+                              Margin="0,0,0,20" />
+
+                <!-- Section 4: Dashboard Page -->
+                <ui:TextBlock FontSize="18"
+                              FontWeight="Bold"
+                              Text="4. Dashboard Page"
+                              Margin="0,0,0,10" />
+                <ui:TextBlock Text="The dashboard shows profiles, their status, and timing information."
+                              TextWrapping="Wrap" />
+                <ui:TextBlock Text="Use the 'Refresh' button to update the list of profiles."
+                              TextWrapping="Wrap"
+                              Margin="0,0,0,20" />
+
+                <!-- Section 5: API Interaction -->
+                <ui:TextBlock FontSize="18"
+                              FontWeight="Bold"
+                              Text="5. API Interaction"
+                              Margin="0,0,0,10" />
+                <ui:TextBlock Text="The program interacts with Cloudflare's API for creating, updating, and managing DNS records."
+                              TextWrapping="Wrap" />
+                <ui:TextBlock Text="The program uses the PATCH request to modify DNS records for a given zone."
+                              TextWrapping="Wrap"
+                              Margin="0,0,0,20" />
+
+            <!-- Hyperlink to Cloudflare API Documentation -->
+            <ui:TextBlock FontSize="14"
+                          FontStyle="Italic"
+                          Margin="0,20,0,0">
+                <Hyperlink NavigateUri="https://developers.cloudflare.com/api/operations/dns-records-for-a-zone-patch-dns-record"
+                           RequestNavigate="Hyperlink_RequestNavigate">For more details, visit Cloudflare's API documentation.</Hyperlink>
+            </ui:TextBlock>
+        </StackPanel>
     </Grid>
 </Page>

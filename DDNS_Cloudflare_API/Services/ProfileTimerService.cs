@@ -37,8 +37,6 @@ namespace DDNS_Cloudflare_API.Services
             // Initialize data
             LoadProfiles();
 
-
-            // Subscribe the event handler to fire regardless of UI initialization
         }
 
         private void LoadProfiles()
@@ -71,30 +69,30 @@ namespace DDNS_Cloudflare_API.Services
                 profileTimers.Remove(profileName);
             }
 
-            DispatcherTimer timer = new DispatcherTimer
+            DispatcherTimer dnsTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMinutes(intervalMinutes)
             };
 
-            timer.Tag = DateTime.Now;
-            timer.Tick += async (sender, e) =>
+            dnsTimer.Tag = DateTime.Now;
+            dnsTimer.Tick += async (sender, e) =>
             {
-                timer.Tag = DateTime.Now;
+                dnsTimer.Tag = DateTime.Now;
                 await UpdateDnsRecordsForProfile(profileName);
 
-                // Trigger the ProfileTimerUpdated event with real status
                 ProfileTimerUpdated?.Invoke(profileName, "Running");
             };
+            dnsTimer.Start();
+            profileTimers[profileName] = dnsTimer;
 
-            timer.Start();
-            profileTimers[profileName] = timer;
+            // Start the UI update timer
+            var uiTimer = CreateUiTimer(profileName, intervalMinutes);
+            uiTimer.Start();
 
-            // Immediately update the profile status
             ProfileTimerUpdated?.Invoke(profileName, "Running");
-
-            // Save the status when the timer starts
-            await SaveProfileStatusToSettings(profileName, true, intervalMinutes);  // Save interval when starting
+            await SaveProfileStatusToSettings(profileName, true, intervalMinutes);
         }
+
 
 
         public async void StopTimer(string profileName)
@@ -111,6 +109,34 @@ namespace DDNS_Cloudflare_API.Services
                 await SaveProfileStatusToSettings(profileName, false, 0);  // Stop and reset the interval
             }
         }
+
+        // Declare a new event to notify remaining time updates
+        public event EventHandler<(string profileName, TimeSpan remainingTime)> RemainingTimeUpdated;
+
+        private DispatcherTimer CreateUiTimer(string profileName, int intervalMinutes)
+        {
+            DispatcherTimer uiTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+
+            uiTimer.Tick += (sender, e) =>
+            {
+
+                if (profileTimers.ContainsKey(profileName))
+                {
+                    var timer = profileTimers[profileName];
+                    var lastRun = (DateTime)timer.Tag;
+                    var remainingTime = TimeSpan.FromMinutes(intervalMinutes) - (DateTime.Now - lastRun);
+
+                    // Fire event to notify the remaining time update
+                    RemainingTimeUpdated?.Invoke(this, (profileName, remainingTime));
+                }
+            };
+
+            return uiTimer;
+        }
+
 
         private async Task SaveProfileStatusToSettings(string profileName, bool isRunning, int intervalMinutes)
         {
