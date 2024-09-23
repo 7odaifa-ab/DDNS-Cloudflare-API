@@ -1,4 +1,13 @@
-﻿using DDNS_Cloudflare_API.ViewModels.Pages;
+﻿/*
+ * Author: Hudaifa Abdullah
+ * @7odaifa_ab
+ * info@huimangtech.com
+ *
+ * This class manages the logic for retrieving and displaying DNS records using Cloudflare's API.
+ * It interacts with the API, logs responses, and shows DNS records in the user interface.
+ */
+
+using DDNS_Cloudflare_API.ViewModels.Pages;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -6,13 +15,12 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
-using System.Windows.Navigation;
 using Wpf.Ui.Controls;
-using MessageBox = System.Windows.MessageBox;
 using TextBlock = Wpf.Ui.Controls.TextBlock;
 using TextBox = System.Windows.Controls.TextBox;
+using MessageBox = System.Windows.MessageBox;
+
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
@@ -20,14 +28,21 @@ namespace DDNS_Cloudflare_API.Views.Pages
     {
         public DataViewModel ViewModel { get; }
 
+        #region Constructor
+
+        // Initializes the Records page with the provided ViewModel
         public Records(DataViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;
-
             InitializeComponent();
         }
 
+        #endregion
+
+        #region Event Handlers
+
+        // Triggered when the "Get DNS Records" button is clicked
         private async void GetDnsRecords_Click(object sender, RoutedEventArgs e)
         {
             string apiKey = ApiKeyTextBox.Text;
@@ -51,10 +66,9 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 };
 
                 HttpResponseMessage response = await client.GetAsync($"https://api.cloudflare.com/client/v4/zones/{zoneId}/dns_records");
-
                 string responseContent = await response.Content.ReadAsStringAsync();
-                UpdateLogFile(responseContent);
 
+                UpdateLogFile(responseContent);
                 DisplayDnsRecords(responseContent);
             }
             catch (Exception ex)
@@ -63,13 +77,18 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
         }
 
+        #endregion
+
+        #region Helper Methods
+
+        // Displays DNS records parsed from the API response
         private void DisplayDnsRecords(string responseContent)
         {
             ResultsPanel.Children.Clear();
 
             var jsonDocument = JsonDocument.Parse(responseContent);
             var resultArray = jsonDocument.RootElement.GetProperty("result").EnumerateArray();
-            int recordNumber = 1; // Initialize record counter
+            int recordNumber = 1;  // Initialize record counter
 
             foreach (var record in resultArray)
             {
@@ -79,7 +98,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                     Margin = new Thickness(5)
                 };
 
-                // Add a numbered header
+                // Add a numbered header for each record
                 TextBlock header = new TextBlock
                 {
                     Text = $"Record {recordNumber++}",
@@ -100,38 +119,36 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
         }
 
-
+        // Adds labels to display DNS record fields
         private void AddLabel(StackPanel panel, string label, string value)
         {
-            // Create a TextBox to make the text selectable and copyable
             TextBox textBox = new TextBox
             {
                 Text = $"{label}: {value}",
-                IsReadOnly = true, // Make it read-only
-                BorderThickness = new Thickness(0), // Remove border
-                Background = new SolidColorBrush(Colors.Transparent), // Make background transparent
+                IsReadOnly = true,
+                BorderThickness = new Thickness(0),
+                Background = new SolidColorBrush(Colors.Transparent),
                 Margin = new Thickness(0, 0, 0, 2),
                 VerticalAlignment = VerticalAlignment.Top,
-                TextWrapping = TextWrapping.Wrap // Ensure text wraps correctly
+                TextWrapping = TextWrapping.Wrap
             };
-
             panel.Children.Add(textBox);
         }
 
-
-
-
+        // Logs the DNS API response to a file
         private void UpdateLogFile(string message)
         {
             string logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "Logs.txt");
 
             if (!File.Exists(logFilePath))
             {
-                File.Create(logFilePath).Dispose(); // Create and close the file if it doesn't exist
+                File.Create(logFilePath).Dispose();  // Create and close the file if it doesn't exist
             }
 
-            string formattedMessage = $"{DateTime.Now}: {message}\n\n"; // Add a timestamp and two new lines
+            string formattedMessage = $"{DateTime.Now}: {message}\n\n";
             File.AppendAllText(logFilePath, formattedMessage);
         }
+
+        #endregion
     }
 }

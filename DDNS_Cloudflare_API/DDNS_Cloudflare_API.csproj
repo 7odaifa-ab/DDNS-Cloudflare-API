@@ -10,8 +10,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings> 
     <AssemblyName>DDNS Cloudflare API</AssemblyName>
-    <Version>1.0.1</Version>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <Version>2.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

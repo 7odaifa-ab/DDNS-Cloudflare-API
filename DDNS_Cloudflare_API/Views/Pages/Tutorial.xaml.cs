@@ -1,43 +1,46 @@
-﻿using DDNS_Cloudflare_API.ViewModels.Pages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+﻿/*
+ * Author: Hudaifa Abdullah
+ * @7odaifa_ab
+ * info@huimangtech.com
+ *
+ * This class defines the logic for the Tutorial page of the DDNS Cloudflare API application.
+ * It displays instructional content on how to use the application and handles hyperlink navigation to external resources.
+ */
+
+using DDNS_Cloudflare_API.ViewModels.Pages;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
-    /// <summary>
-    /// Interaction logic for Tutorial.xaml
-    /// </summary>
-    public partial class Tutorial  : INavigableView<TutorialViewModel>
+    public partial class Tutorial : INavigableView<TutorialViewModel>
     {
         public TutorialViewModel ViewModel { get; }
 
+        #region Constructor
+
+        // Initializes the Tutorial page with its ViewModel
         public Tutorial(TutorialViewModel viewModel)
         {
             InitializeComponent();
+            ViewModel = viewModel;
         }
 
-        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        #endregion
+
+        #region Hyperlink Navigation
+
+        // Handles hyperlink navigation to external URLs
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
                 FileName = e.Uri.AbsoluteUri,
-                UseShellExecute = true  // This ensures it opens in the default browser
+                UseShellExecute = true  // Ensures the link opens in the default browser
             });
             e.Handled = true;
         }
 
+        #endregion
     }
 }

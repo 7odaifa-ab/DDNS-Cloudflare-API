@@ -1,4 +1,13 @@
-﻿using DDNS_Cloudflare_API.ViewModels.Pages;
+﻿/*
+ * Author: Hudaifa Abdullah
+ * @7odaifa_ab
+ * info@huimangtech.com
+ *
+ * This class defines the logic for managing the Settings Page of the DDNS Cloudflare API application.
+ * It handles application startup settings, update checks, and allows users to configure the application behavior on startup.
+ */
+
+using DDNS_Cloudflare_API.ViewModels.Pages;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -23,49 +32,60 @@ namespace DDNS_Cloudflare_API.Views.Pages
     {
         public SettingsViewModel ViewModel { get; }
 
+        #region Constructor
+
+        // Initializes the Settings page and loads the startup settings
         public SettingsPage(SettingsViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;
-
             InitializeComponent();
             InitializeStartupSettings();
         }
 
+        #endregion
+
+        #region Startup Settings
+
+        // Initializes startup settings by loading them from a JSON file
         private void InitializeStartupSettings()
         {
             var (runOnStartup, loadProfilesOnStartup) = LoadStartupSetting();
-
             RunOnStartupCheckBox.IsChecked = runOnStartup;
             LoadProfilesOnStartupCheckBox.IsChecked = loadProfilesOnStartup;
         }
 
+        // Handles checking the "Run On Startup" option and saves the setting
         private void RunOnStartup_Checked(object sender, RoutedEventArgs e)
         {
             SetStartup(true);
             SaveStartupSetting(true, LoadProfilesOnStartupCheckBox.IsChecked == true);
         }
 
+        // Handles unchecking the "Run On Startup" option and saves the setting
         private void RunOnStartup_Unchecked(object sender, RoutedEventArgs e)
         {
             SetStartup(false);
             SaveStartupSetting(false, LoadProfilesOnStartupCheckBox.IsChecked == true);
         }
 
+        // Handles checking the "Load Profiles On Startup" option
         private void LoadProfilesOnStartup_Checked(object sender, RoutedEventArgs e)
         {
             SaveStartupSetting(RunOnStartupCheckBox.IsChecked == true, true);
         }
 
+        // Handles unchecking the "Load Profiles On Startup" option
         private void LoadProfilesOnStartup_Unchecked(object sender, RoutedEventArgs e)
         {
             SaveStartupSetting(RunOnStartupCheckBox.IsChecked == true, false);
         }
 
+        // Enables or disables the application to run at startup by modifying registry settings
         private void SetStartup(bool enable)
         {
             string appName = "DDNS Cloudflare API";
-            string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string exePath = Assembly.GetExecutingAssembly().Location;
 
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
             {
@@ -80,36 +100,34 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
         }
 
+        #endregion
+
+        #region Saving and Loading Settings
+
+        // Saves the startup settings to a JSON file
         private void SaveStartupSetting(bool runOnStartup, bool loadProfilesOnStartup)
         {
             var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
-
             Dictionary<string, object> startupSettings;
 
-            // Check if the settings file exists
             if (File.Exists(settingsFilePath))
             {
-                // Load existing settings
                 string existingJson = File.ReadAllText(settingsFilePath);
                 startupSettings = JsonSerializer.Deserialize<Dictionary<string, object>>(existingJson);
             }
             else
             {
-                // Create a new settings dictionary if the file doesn't exist
                 startupSettings = new Dictionary<string, object>();
             }
 
-            // Update or add the settings
             startupSettings["RunOnStartup"] = runOnStartup;
             startupSettings["LoadProfilesOnStartup"] = loadProfilesOnStartup;
 
-            // Serialize and save the updated settings
             string json = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(settingsFilePath, json);
         }
 
-
-
+        // Loads startup settings from a JSON file
         private (bool runOnStartup, bool loadProfilesOnStartup) LoadStartupSetting()
         {
             var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
@@ -117,27 +135,22 @@ namespace DDNS_Cloudflare_API.Views.Pages
             if (File.Exists(settingsFilePath))
             {
                 string json = File.ReadAllText(settingsFilePath);
-
                 var startupSettings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
 
-                // Handle general settings
                 bool runOnStartup = startupSettings.ContainsKey("RunOnStartup") && startupSettings["RunOnStartup"].GetBoolean();
                 bool loadProfilesOnStartup = startupSettings.ContainsKey("LoadProfilesOnStartup") && startupSettings["LoadProfilesOnStartup"].GetBoolean();
 
-                // Handle individual profiles
                 foreach (var kvp in startupSettings)
                 {
                     if (kvp.Key == "RunOnStartup" || kvp.Key == "LoadProfilesOnStartup")
                         continue;
 
-                    // Check if the value is an object (profile details)
                     if (kvp.Value.ValueKind == JsonValueKind.Object)
                     {
                         var profileSettings = kvp.Value;
                         bool isRunning = profileSettings.GetProperty("IsRunning").GetBoolean();
                         int interval = profileSettings.GetProperty("Interval").GetInt32();
 
-                        // You can store or handle the profile status (isRunning) and interval as needed
                         Debug.WriteLine($"Profile: {kvp.Key}, IsRunning: {isRunning}, Interval: {interval}");
                     }
                 }
@@ -146,48 +159,41 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
             else
             {
-                // Create the settings file if it doesn't exist
                 CreateStartupSetting();
             }
 
-            // Default values if settings file doesn't exist
             return (false, false);
         }
 
-
+        // Creates default startup settings
         private void CreateStartupSetting()
         {
             var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
+            Dictionary<string, object> startupSettings = new Dictionary<string, object>
+            {
+                ["RunOnStartup"] = true,
+                ["LoadProfilesOnStartup"] = false
+            };
 
-            Dictionary<string, object> startupSettings;
-            
-            // Create a new settings dictionary if the file doesn't exist
-            startupSettings = new Dictionary<string, object>();
-
-
-            // Update or add the settings
-            startupSettings["RunOnStartup"] = true;
-            startupSettings["LoadProfilesOnStartup"] = false;
-
-            // Serialize and save the updated settings
             string json = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(settingsFilePath, json);
         }
 
+        #endregion
 
-        // This is the method you mentioned, still present in the class.
+        #region Update Check
+
+        // Button click handler to check for application updates
         private async void BtnCheckForUpdate_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 var latestVersion = await GetLatestVersionAsync();
-                var currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? String.Empty;
+                var currentVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
 
-                // Parse the versions
-                Version latest = new Version(latestVersion.TrimStart('v')); // Trim 'v' if it's in the version string from GitHub
+                Version latest = new Version(latestVersion.TrimStart('v'));
                 Version current = new Version(currentVersion);
 
-                // Compare versions
                 if (latest > current)
                 {
                     var result = MessageBox.Show($"A new version ({latestVersion}) is available. Do you want to update?", "Update Available", MessageBoxButton.YesNo);
@@ -207,6 +213,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
         }
 
+        // Retrieves the latest version from the GitHub releases page
         private async Task<string> GetLatestVersionAsync()
         {
             using HttpClient client = new HttpClient();
@@ -214,12 +221,10 @@ namespace DDNS_Cloudflare_API.Views.Pages
             var response = await client.GetStringAsync("https://api.github.com/repos/7odaifa-ab/DDNS-Cloudflare-API/releases/latest");
             var releaseInfo = JsonSerializer.Deserialize<Dictionary<string, object>>(response);
 
-            string latestVersionTag = releaseInfo["tag_name"].ToString(); // Assumes the release tag is the version number.
-            string latestVersion = latestVersionTag.TrimStart('v'); // Remove 'v' prefix if present.
-
-            return latestVersion;
+            return releaseInfo["tag_name"].ToString().TrimStart('v');
         }
 
+        // Downloads and updates the application
         private async Task DownloadAndUpdateAsync(string version)
         {
             try
@@ -229,19 +234,15 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 var zipFilePath = Path.Combine(tempPath, "DDNS-Cloudflare-API.zip");
                 var extractPath = AppDomain.CurrentDomain.BaseDirectory;
 
-                using (HttpClient client = new HttpClient())
-                {
-                    var data = await client.GetByteArrayAsync(downloadUrl);
-                    await File.WriteAllBytesAsync(zipFilePath, data);
-                }
+                using HttpClient client = new HttpClient();
+                var data = await client.GetByteArrayAsync(downloadUrl);
+                await File.WriteAllBytesAsync(zipFilePath, data);
 
-                // Extract the ZIP file and overwrite existing files
                 ZipFile.ExtractToDirectory(zipFilePath, extractPath, true);
 
                 MessageBox.Show("Update completed. The application will now restart.", "Update Completed");
 
-                // Restart the application
-                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                Process.Start(Application.ResourceAssembly.Location);
                 Application.Current.Shutdown();
             }
             catch (Exception ex)
@@ -249,5 +250,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 MessageBox.Show($"Error during update: {ex.Message}", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        #endregion
     }
 }

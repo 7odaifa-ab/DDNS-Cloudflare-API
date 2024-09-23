@@ -1,8 +1,15 @@
-﻿using System;
+﻿/*
+ * Author: Hudaifa Abdullah
+ * @7odaifa_ab
+ * info@huimangtech.com
+ *
+ * This class handles the logic for managing DNS profiles and timers in the DDNS Cloudflare API application.
+ * It includes functions for starting/stopping timers, updating DNS records, fetching IP addresses, and managing profile status.
+ */
+
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -10,7 +17,11 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
+using System.Drawing;
+using System.Numerics;
+using System.Xml.Linq;
 
 namespace DDNS_Cloudflare_API.Services
 {
@@ -21,14 +32,11 @@ namespace DDNS_Cloudflare_API.Services
         private readonly string profilesFolderPath;
         private readonly string logFilePath;
 
-        // Define the event to notify status updates
+        // Event to notify when profile timer status changes
         public event Action<string, string> ProfileTimerUpdated;
 
-        public Action UpdateLastApiCallLogAction { get; set; }  // Delegate to hold the method
-
-        public Dictionary<string, DispatcherTimer> GetProfileTimers() => profileTimers;
-
-        public Dictionary<string, Dictionary<string, object>> GetProfileData() => profileData;
+        // Delegate to invoke the method that updates the last API call log
+        public Action UpdateLastApiCallLogAction { get; set; }
 
         public ProfileTimerService()
         {
@@ -36,22 +44,20 @@ namespace DDNS_Cloudflare_API.Services
             profileData = new Dictionary<string, Dictionary<string, object>>();
             profilesFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "Profiles");
             logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "Logs.txt");
-
-            // Initialize data
             LoadProfiles();
-
         }
 
+        #region Profile Loading
+
+        // Loads all profiles from the saved JSON files
         private void LoadProfiles()
         {
             if (Directory.Exists(profilesFolderPath))
             {
                 var profileFiles = Directory.GetFiles(profilesFolderPath, "*.json");
-
                 foreach (var file in profileFiles)
                 {
                     string profileName = Path.GetFileNameWithoutExtension(file);
-
                     if (!profileData.ContainsKey(profileName))
                     {
                         var json = File.ReadAllText(file);
@@ -62,6 +68,13 @@ namespace DDNS_Cloudflare_API.Services
             }
         }
 
+        public Dictionary<string, Dictionary<string, object>> GetProfileData() => profileData;
+
+        #endregion
+
+        #region Timer Management
+
+        // Starts a DNS update timer for a profile
         public async void StartTimer(string profileName, int intervalMinutes)
         {
             Debug.WriteLine($"Starting timer for {profileName}");
@@ -85,10 +98,10 @@ namespace DDNS_Cloudflare_API.Services
                 UpdateLastApiCallLogAction?.Invoke();
                 ProfileTimerUpdated?.Invoke(profileName, "Running");
             };
+
             dnsTimer.Start();
             profileTimers[profileName] = dnsTimer;
 
-            // Start the UI update timer
             var uiTimer = CreateUiTimer(profileName, intervalMinutes);
             uiTimer.Start();
 
@@ -96,26 +109,26 @@ namespace DDNS_Cloudflare_API.Services
             await SaveProfileStatusToSettings(profileName, true, intervalMinutes);
         }
 
-
-
+        // Stops the timer for a profile
         public async void StopTimer(string profileName)
         {
             if (profileTimers.ContainsKey(profileName))
             {
                 profileTimers[profileName].Stop();
                 profileTimers.Remove(profileName);
-
-                // Trigger the ProfileTimerUpdated event with "Stopped" status
                 ProfileTimerUpdated?.Invoke(profileName, "Stopped");
-
-                // Save the status when the timer stops
-                await SaveProfileStatusToSettings(profileName, false, 0);  // Stop and reset the interval
+                await SaveProfileStatusToSettings(profileName, false, 0);
             }
         }
 
-        // Declare a new event to notify remaining time updates
-        public event EventHandler<(string profileName, TimeSpan remainingTime)> RemainingTimeUpdated;
+        // Returns a dictionary of currently active profile timers
+        public Dictionary<string, DispatcherTimer> GetProfileTimers() => profileTimers;
 
+        #endregion
+
+        #region UI Timer
+
+        // Creates a UI timer that updates the remaining time for a profile
         private DispatcherTimer CreateUiTimer(string profileName, int intervalMinutes)
         {
             DispatcherTimer uiTimer = new DispatcherTimer
@@ -125,14 +138,11 @@ namespace DDNS_Cloudflare_API.Services
 
             uiTimer.Tick += (sender, e) =>
             {
-
                 if (profileTimers.ContainsKey(profileName))
                 {
                     var timer = profileTimers[profileName];
                     var lastRun = (DateTime)timer.Tag;
                     var remainingTime = TimeSpan.FromMinutes(intervalMinutes) - (DateTime.Now - lastRun);
-
-                    // Fire event to notify the remaining time update
                     RemainingTimeUpdated?.Invoke(this, (profileName, remainingTime));
                 }
             };
@@ -140,102 +150,14 @@ namespace DDNS_Cloudflare_API.Services
             return uiTimer;
         }
 
+        // Event to notify when remaining time is updated
+        public event EventHandler<(string profileName, TimeSpan remainingTime)> RemainingTimeUpdated;
 
-        private async Task SaveProfileStatusToSettings(string profileName, bool isRunning, int intervalMinutes)
-        {
+        #endregion
 
-            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
+        #region DNS Records
 
-            // Load existing settings
-            Dictionary<string, object> startupSettings = new Dictionary<string, object>();
-
-            if (File.Exists(settingsFilePath))
-            {
-                string json = await File.ReadAllTextAsync(settingsFilePath);
-                startupSettings = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-            }
-
-            // Save the profile's status and interval
-            var profileSettings = new Dictionary<string, object>
-    {
-        { "IsRunning", isRunning },
-        { "Interval", intervalMinutes }  // Save the interval here
-    };
-
-            startupSettings[profileName] = profileSettings;
-
-            // Serialize and save the updated settings back to the file
-            string updatedJson = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
-            await File.WriteAllTextAsync(settingsFilePath, updatedJson);
-
-            Debug.WriteLine($"Saved profile {profileName} with status {(isRunning ? "Running" : "Stopped")} and interval {intervalMinutes} minutes.");
-        }
-
-
-
-        public async Task<string> UpdateDnsRecordForProfile(string apiKey, string zoneId, object record, string dnsRecordId, string profileName, string domain, string ipAddress)
-        {
-            string json = JsonSerializer.Serialize(record);
-            Debug.WriteLine($"Update Request for: {json}");
-
-            using HttpClient client = new HttpClient
-            {
-                DefaultRequestHeaders =
-        {
-            Accept = { new MediaTypeWithQualityHeaderValue("application/json") },
-            Authorization = new AuthenticationHeaderValue("Bearer", apiKey)
-        }
-            };
-
-            HttpResponseMessage response = await client.PutAsync(
-                $"https://api.cloudflare.com/client/v4/zones/{zoneId}/dns_records/{dnsRecordId}",
-                new StringContent(json, Encoding.UTF8, "application/json"));
-
-            string responseContent = await response.Content.ReadAsStringAsync();
-
-            // Log major info before response content
-            string logMessage = $"Profile: {profileName}, Domain: {domain}, IP: {ipAddress}, Response: {responseContent}";
-            Log(logMessage); // Log the profile, domain, IP, and response
-
-            return responseContent;  // Return the response content
-        }
-
-
-
-
-        public async Task<string> GetIpContent(ComboBoxItem selectedContent)
-        {
-            string ipContent = selectedContent.Content.ToString() switch
-            {
-                "IPv4" => await GetWanIpv4(),
-                "IPv6" => await GetWanIpv6(),
-                _ => string.Empty
-            };
-
-            // Log fetched IP
-            Log($"Fetched IP: {ipContent}");
-
-            return ipContent;
-        }
-
-        private async Task<string> GetWanIpv4()
-        {
-            return await FetchIpAddress("https://api.ipify.org?format=json");
-        }
-
-        private async Task<string> GetWanIpv6()
-        {
-            return await FetchIpAddress("https://api6.ipify.org?format=json");
-        }
-
-        private async Task<string> FetchIpAddress(string url)
-        {
-            using HttpClient client = new HttpClient();
-            var response = await client.GetStringAsync(url);
-            var ipData = JsonSerializer.Deserialize<Dictionary<string, string>>(response);
-            return ipData["ip"];
-        }
-
+        // Updates DNS records for a profile
         private async Task UpdateDnsRecordsForProfile(string profileName)
         {
             if (profileData.ContainsKey(profileName))
@@ -248,36 +170,108 @@ namespace DDNS_Cloudflare_API.Services
                 foreach (var record in dnsRecords)
                 {
                     string dnsRecordId = record["RecordID"]?.ToString();
-string mainDomain = profile["mainDomain"]?.ToString();  // Fetch the main domain from the profile
-string name = record["Name"]?.ToString() + "." + mainDomain;  // Concatenate Name with Domain
-                    string content = record["Content"]?.ToString();
-                    string type = record["Type"]?.ToString();
-                    bool proxied = bool.Parse(record["Proxied"]?.ToString());
-                    int ttl = int.Parse(record["TTL"]?.ToString());
+                    string mainDomain = profile["mainDomain"]?.ToString();
+                    string name = record["Name"]?.ToString() + "." + mainDomain;
+                    string content = await GetIpContent(new ComboBoxItem { Content = record["Content"]?.ToString() });
 
                     var recordData = new
                     {
-                        content = await GetIpContent(new ComboBoxItem { Content = content }),
+                        content,
                         name,
-                        proxied,
-                        type,
-                        ttl,
+                        proxied = bool.Parse(record["Proxied"]?.ToString()),
+                        type = record["Type"]?.ToString(),
+                        ttl = int.Parse(record["TTL"]?.ToString()),
                         comment = "DDNS updated from WPF"
                     };
 
-                    await UpdateDnsRecordForProfile(apiKey, zoneId, recordData, dnsRecordId, profileName, mainDomain, recordData.content);
-                
+                    await UpdateDnsRecordForProfile(apiKey, zoneId, recordData, dnsRecordId, profileName, mainDomain, content);
                 }
             }
         }
 
-        public bool IsProfileTimerRunning(string profileName)
+        // Updates a specific DNS record for a profile
+        public async Task<string> UpdateDnsRecordForProfile(string apiKey, string zoneId, object record, string dnsRecordId, string profileName, string domain, string ipAddress)
         {
-            return profileTimers.ContainsKey(profileName) && profileTimers[profileName].IsEnabled;
+            string json = JsonSerializer.Serialize(record);
+            Debug.WriteLine($"Update Request for: {json}");
+
+            using HttpClient client = new HttpClient
+            {
+                DefaultRequestHeaders =
+                {
+                    Accept = { new MediaTypeWithQualityHeaderValue("application/json") },
+                    Authorization = new AuthenticationHeaderValue("Bearer", apiKey)
+                }
+            };
+
+            HttpResponseMessage response = await client.PutAsync(
+                $"https://api.cloudflare.com/client/v4/zones/{zoneId}/dns_records/{dnsRecordId}",
+                new StringContent(json, Encoding.UTF8, "application/json"));
+
+            string responseContent = await response.Content.ReadAsStringAsync();
+
+            string logMessage = $"Profile: {profileName}, Domain: {domain}, IP: {ipAddress}, Response: {responseContent}";
+            Log(logMessage);
+
+            return responseContent;
         }
 
+        #endregion
 
+        #region IP Fetching
 
+        // Fetches the public IP address based on the selected content (IPv4 or IPv6)
+        public async Task<string> GetIpContent(ComboBoxItem selectedContent)
+        {
+            return selectedContent.Content.ToString() switch
+            {
+                "IPv4" => await GetWanIpv4(),
+                "IPv6" => await GetWanIpv6(),
+                _ => string.Empty
+            };
+        }
+
+        private async Task<string> GetWanIpv4() => await FetchIpAddress("https://api.ipify.org?format=json");
+        private async Task<string> GetWanIpv6() => await FetchIpAddress("https://api6.ipify.org?format=json");
+
+        private async Task<string> FetchIpAddress(string url)
+        {
+            using HttpClient client = new HttpClient();
+            var response = await client.GetStringAsync(url);
+            var ipData = JsonSerializer.Deserialize<Dictionary<string, string>>(response);
+            return ipData["ip"];
+        }
+
+        #endregion
+
+        #region Profile Settings Management
+
+        // Saves the status of the profile to the startup settings file
+        private async Task SaveProfileStatusToSettings(string profileName, bool isRunning, int intervalMinutes)
+        {
+            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
+
+            Dictionary<string, object> startupSettings = new Dictionary<string, object>();
+            if (File.Exists(settingsFilePath))
+            {
+                string json = await File.ReadAllTextAsync(settingsFilePath);
+                startupSettings = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+            }
+
+            var profileSettings = new Dictionary<string, object>
+            {
+                { "IsRunning", isRunning },
+                { "Interval", intervalMinutes }
+            };
+
+            startupSettings[profileName] = profileSettings;
+
+            string updatedJson = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
+            await File.WriteAllTextAsync(settingsFilePath, updatedJson);
+            Debug.WriteLine($"Saved profile {profileName} with status {(isRunning ? "Running" : "Stopped")} and interval {intervalMinutes} minutes.");
+        }
+
+        // Loads the startup settings and starts timers if necessary
         public async Task LoadStartupSettings(string settingsFilePath)
         {
             if (File.Exists(settingsFilePath))
@@ -310,7 +304,22 @@ string name = record["Name"]?.ToString() + "." + mainDomain;  // Concatenate Nam
             }
         }
 
+        #endregion
 
+        #region Timer Status
+
+        // Checks if a profile's timer is currently running
+        public bool IsProfileTimerRunning(string profileName)
+        {
+            return profileTimers.ContainsKey(profileName) && profileTimers[profileName].IsEnabled;
+        }
+
+        #endregion
+
+
+        #region Logging
+
+        // Logs any message to the log file
         private void Log(string message)
         {
             try
@@ -327,5 +336,6 @@ string name = record["Name"]?.ToString() + "." + mainDomain;  // Concatenate Nam
             }
         }
 
+        #endregion
     }
 }

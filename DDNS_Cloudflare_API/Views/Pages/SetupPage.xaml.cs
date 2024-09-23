@@ -1,4 +1,13 @@
-﻿using System.IO;
+﻿/*
+ * Author: Hudaifa Abdullah
+ * @7odaifa_ab
+ * info@huimangtech.com
+ *
+ * This class defines the logic for managing the Setup Page of the DDNS Cloudflare API application.
+ * It allows users to input Cloudflare API credentials, DNS record details, and manage profiles for DNS records.
+ * The page facilitates the creation, updating, and deletion of DNS records and profiles.
+ */
+using System.IO;
 using System.Windows.Controls;
 using System.Text.Json;
 using System.Windows;
@@ -17,6 +26,7 @@ using System.Threading.Tasks;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
+    #region Class Setup
     public partial class SetupPage : INavigableView<SetupViewModel>
     {
         public SetupViewModel ViewModel { get; }
@@ -24,11 +34,11 @@ namespace DDNS_Cloudflare_API.Views.Pages
         private readonly string profilesFolderPath;
         private readonly string settingsFilePath;
 
-        public SetupPage(SetupViewModel viewModel, ProfileTimerService timerService)  // Inject the service here
+        public SetupPage(SetupViewModel viewModel, ProfileTimerService timerService)
         {
             ViewModel = viewModel;
             DataContext = this;
-            this.timerService = timerService;  // Assign the injected singleton instance to the local variable
+            this.timerService = timerService;
             Debug.WriteLine($"ProfileTimerService instance in ViewModel: {timerService.GetHashCode()}");
 
             InitializeComponent();
@@ -39,7 +49,9 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             LoadProfiles();
         }
+        #endregion
 
+        #region Status Management
         private void OnStatusUpdated(string message)
         {
             Dispatcher.Invoke(() =>
@@ -47,96 +59,32 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 txtStatus.Text = message;
             });
         }
+        #endregion
 
-        // Event handler for the Save Profile button
+        #region Profile Management
         private void BtnSaveProfile_Click(object sender, RoutedEventArgs e)
         {
-            var mainDomain = txtMainDomain.Text;  // Get the main domain from input
-            var dnsRecords = SerializeDnsRecords();  // Serialize DNS records to a list
+            var mainDomain = txtMainDomain.Text;
+            var dnsRecords = SerializeDnsRecords();
 
-            // Generate profile name using mainDomain and DNS record types
             string profileName = GenerateProfileName(mainDomain, dnsRecords);
-
-            // Check if profile with the same name exists and create numbered profile name if needed
             profileName = GetUniqueProfileName(profileName);
 
-            // Save the profile with the dynamic profile name
             var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
 
             var profile = new Dictionary<string, object>
-    {
-        { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
-        { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
-        { "mainDomain", mainDomain },  // Save the main domain
-        { "DnsRecords", dnsRecords }   // Save the DNS records
-    };
+            {
+                { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
+                { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
+                { "mainDomain", mainDomain },
+                { "DnsRecords", dnsRecords }
+            };
 
             var json = JsonSerializer.Serialize(profile);
-            File.WriteAllText(profilePath, json);  // Save the profile to a file with the dynamic profile name
+            File.WriteAllText(profilePath, json);
 
-            LoadProfiles();  // Reload profiles after saving
+            LoadProfiles();
             _ = ShowSuccessMessage("Profile saved successfully.");
-        }
-
-        // Method to generate profile name based on mainDomain and DNS record types
-        private string GenerateProfileName(string mainDomain, string dnsRecords)
-        {
-            var dnsRecordsList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(dnsRecords);
-            string profileName = mainDomain;
-
-            foreach (var record in dnsRecordsList)
-            {
-                string recordType = record["Type"]?.ToString();
-                if (!string.IsNullOrEmpty(recordType))
-                {
-                    profileName += "-" + recordType;  // Concatenate the record type
-                }
-            }
-
-            return profileName;
-        }
-
-        // Method to generate a unique profile name if one already exists
-        private string GetUniqueProfileName(string baseName)
-        {
-            int counter = 1;
-            string profilePath = Path.Combine(profilesFolderPath, $"{baseName}.json");
-
-            while (File.Exists(profilePath))
-            {
-                string newName = $"{baseName}-{counter}";
-                profilePath = Path.Combine(profilesFolderPath, $"{newName}.json");
-                counter++;
-            }
-
-            return Path.GetFileNameWithoutExtension(profilePath);
-        }
-
-
-
-        private string SerializeDnsRecords()
-        {
-            var dnsRecords = new List<Dictionary<string, object>>();
-
-            foreach (var item in itemsControlDnsRecords.Items)
-            {
-                if (item is Grid dnsRecordPanel)
-                {
-                    var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
-
-                    dnsRecords.Add(new Dictionary<string, object>
-            {
-                { "RecordID", dnsRecordId.Text },
-                { "Name", name.Text },
-                { "Content", ((ComboBoxItem)content.SelectedItem).Content.ToString() },
-                { "Type", ((ComboBoxItem)type.SelectedItem).Content.ToString() },
-                { "Proxied", ((ComboBoxItem)proxied.SelectedItem).Content.ToString() == "True" },
-                { "TTL", GetTtlInSeconds(ttl.SelectedIndex) }
-            });
-                }
-            }
-
-            return JsonSerializer.Serialize(dnsRecords);
         }
 
         private void BtnUpdateProfile_Click(object sender, RoutedEventArgs e)
@@ -147,21 +95,21 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
                 if (File.Exists(profilePath))
                 {
-                    var mainDomain = txtMainDomain.Text;  // Get the main domain from input
-                    var dnsRecords = SerializeDnsRecords();  // Serialize DNS records to a list
+                    var mainDomain = txtMainDomain.Text;
+                    var dnsRecords = SerializeDnsRecords();
 
                     var profile = new Dictionary<string, object>
-            {
-                { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
-                { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
-                { "mainDomain", mainDomain },  // Save the main domain
-                { "DnsRecords", dnsRecords }   // Save the DNS records
-            };
+                    {
+                        { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
+                        { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
+                        { "mainDomain", mainDomain },
+                        { "DnsRecords", dnsRecords }
+                    };
 
                     var json = JsonSerializer.Serialize(profile);
-                    File.WriteAllText(profilePath, json);  // Overwrite the profile with updated details
+                    File.WriteAllText(profilePath, json);
 
-                    LoadProfiles();  // Reload profiles after updating
+                    LoadProfiles();
                     _ = ShowSuccessMessage("Profile updated successfully.");
                 }
                 else
@@ -175,9 +123,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
         }
 
-
-
-        // Event handler for the Delete Profile button
         private void BtnDeleteProfile_Click(object sender, RoutedEventArgs e)
         {
             if (cmbProfiles.SelectedItem is string profileName)
@@ -200,16 +145,9 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 _ = ShowErrorMessage("No profile selected to delete.");
             }
         }
+        #endregion
 
-        private void ClearInputFields()
-        {
-            txtApiKey.Text = string.Empty;
-            txtZoneId.Text = string.Empty;
-            txtMainDomain.Text = string.Empty;
-            itemsControlDnsRecords.Items.Clear();
-        }
-
-
+        #region Timer Control Methods
         private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
             if (cmbProfiles.SelectedItem != null)
@@ -233,9 +171,123 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
         private void BtnOneTime_Click(object sender, RoutedEventArgs e)
         {
-            _ = UpdateDnsRecords(); // This calls the one-time DNS update logic
+            _ = UpdateDnsRecords();
+        }
+        #endregion
+
+        #region Utility Methods
+        private void ClearInputFields()
+        {
+            txtApiKey.Text = string.Empty;
+            txtZoneId.Text = string.Empty;
+            txtMainDomain.Text = string.Empty;
+            itemsControlDnsRecords.Items.Clear();
         }
 
+        private string SerializeDnsRecords()
+        {
+            var dnsRecords = new List<Dictionary<string, object>>();
+
+            foreach (var item in itemsControlDnsRecords.Items)
+            {
+                if (item is Grid dnsRecordPanel)
+                {
+                    var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordPanel);
+
+                    dnsRecords.Add(new Dictionary<string, object>
+                    {
+                        { "RecordID", dnsRecordId.Text },
+                        { "Name", name.Text },
+                        { "Content", ((ComboBoxItem)content.SelectedItem).Content.ToString() },
+                        { "Type", ((ComboBoxItem)type.SelectedItem).Content.ToString() },
+                        { "Proxied", ((ComboBoxItem)proxied.SelectedItem).Content.ToString() == "True" },
+                        { "TTL", GetTtlInSeconds(ttl.SelectedIndex) }
+                    });
+                }
+            }
+
+            return JsonSerializer.Serialize(dnsRecords);
+        }
+
+        private string GenerateProfileName(string mainDomain, string dnsRecords)
+        {
+            var dnsRecordsList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(dnsRecords);
+            string profileName = mainDomain;
+
+            foreach (var record in dnsRecordsList)
+            {
+                string recordType = record["Type"]?.ToString();
+                if (!string.IsNullOrEmpty(recordType))
+                {
+                    profileName += "-" + recordType;
+                }
+            }
+
+            return profileName;
+        }
+
+        private string GetUniqueProfileName(string baseName)
+        {
+            int counter = 1;
+            string profilePath = Path.Combine(profilesFolderPath, $"{baseName}.json");
+
+            while (File.Exists(profilePath))
+            {
+                string newName = $"{baseName}-{counter}";
+                profilePath = Path.Combine(profilesFolderPath, $"{newName}.json");
+                counter++;
+            }
+
+            return Path.GetFileNameWithoutExtension(profilePath);
+        }
+
+        private void LoadProfiles()
+        {
+            if (Directory.Exists(profilesFolderPath))
+            {
+                var profileFiles = Directory.GetFiles(profilesFolderPath, "*.json");
+                cmbProfiles.Items.Clear();
+
+                foreach (var file in profileFiles)
+                {
+                    cmbProfiles.Items.Add(Path.GetFileNameWithoutExtension(file));
+                }
+
+                ComboBoxItem newProfileItem = new ComboBoxItem { Content = "+ Add a New Profile" };
+                cmbProfiles.Items.Add(newProfileItem);
+
+                cmbProfiles.IsEnabled = cmbProfiles.Items.Count > 0;
+            }
+        }
+
+        private void CmbProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cmbProfiles.SelectedItem is ComboBoxItem selectedItem && selectedItem.Content.ToString() == "+ Add a New Profile")
+            {
+                ClearInputFields();
+                btnUpdateProfile.IsEnabled = false;
+            }
+            else if (cmbProfiles.SelectedItem is string profileName)
+            {
+                var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
+
+                if (File.Exists(profilePath))
+                {
+                    LoadProfile(profilePath);
+                    btnUpdateProfile.IsEnabled = true;
+                }
+                else
+                {
+                    ClearInputFields();
+                    btnUpdateProfile.IsEnabled = false;
+                }
+            }
+            else
+            {
+                ClearInputFields();
+                btnUpdateProfile.IsEnabled = false;
+            }
+        }
 
         private int GetInterval() =>
             cmbInterval.SelectedIndex switch
@@ -248,61 +300,6 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 5 => 1440,
                 _ => 60
             };
-
-        private void LoadProfiles()
-        {
-            if (Directory.Exists(profilesFolderPath))
-            {
-                var profileFiles = Directory.GetFiles(profilesFolderPath, "*.json");
-                cmbProfiles.Items.Clear();
-
-                // First, add all existing profiles
-                foreach (var file in profileFiles)
-                {
-                    cmbProfiles.Items.Add(Path.GetFileNameWithoutExtension(file));
-                }
-
-                // Finally, add the "+ Add a New Profile" option at the end
-                ComboBoxItem newProfileItem = new ComboBoxItem { Content = "+ Add a New Profile" };
-                cmbProfiles.Items.Add(newProfileItem);
-
-                cmbProfiles.IsEnabled = cmbProfiles.Items.Count > 0;
-            }
-        }
-
-
-
-        private void CmbProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (cmbProfiles.SelectedItem is ComboBoxItem selectedItem && selectedItem.Content.ToString() == "+ Add a New Profile")
-            {
-                // Clear all input fields to allow creating a new profile
-                ClearInputFields();
-                btnUpdateProfile.IsEnabled = false;  // Disable the Update button when adding a new profile
-            }
-            else if (cmbProfiles.SelectedItem is string profileName)
-            {
-                var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
-
-                if (File.Exists(profilePath))
-                {
-                    LoadProfile(profilePath);  // Load the selected profile's data
-                    btnUpdateProfile.IsEnabled = true;  // Enable the Update button when a profile is selected
-                }
-                else
-                {
-                    ClearInputFields();
-                    btnUpdateProfile.IsEnabled = false;  // Disable the Update button
-                }
-            }
-            else
-            {
-                ClearInputFields();  // If no valid selection is made, clear input fields
-                btnUpdateProfile.IsEnabled = false;
-            }
-        }
-
-
 
         private void LoadProfile(string profilePath)
         {
@@ -436,7 +433,14 @@ namespace DDNS_Cloudflare_API.Views.Pages
         }
 
         private bool IsDnsRecordValid(params object[] fields) => fields.All(field => field != null && !string.IsNullOrEmpty(field.ToString()));
+        #endregion
 
+        #region DNS Record Field Accessors
+        /// <summary>
+        /// Retrieves the DNS record fields from the specified DNS record grid.
+        /// </summary>
+        /// <param name="dnsRecordGrid">The grid containing the DNS record controls.</param>
+        /// <returns>A tuple containing the DNS record fields.</returns>
         private (TextBox dnsRecordId, TextBox name, ComboBox content, ComboBox type, ComboBox proxied, ComboBox ttl) GetDnsRecordFields(Grid dnsRecordGrid)
         {
             // Access the second row grid (Record ID and Name Grid)
@@ -453,9 +457,14 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             return (dnsRecordId, name, content, type, proxied, ttl);
         }
+        #endregion
 
-
-
+        #region DNS Record Panel Management
+        /// <summary>
+        /// Updates the DNS record panel with the provided DNS record data.
+        /// </summary>
+        /// <param name="dnsRecordGrid">The grid representing the DNS record panel.</param>
+        /// <param name="record">A dictionary containing the DNS record data.</param>
         private void UpdateDnsRecordPanel(Grid dnsRecordGrid, Dictionary<string, object> record)
         {
             var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordGrid);
@@ -468,16 +477,30 @@ namespace DDNS_Cloudflare_API.Views.Pages
             ttl.SelectedIndex = GetTtlIndex(int.Parse(record["TTL"]?.ToString()));
         }
 
-
+        /// <summary>
+        /// Finds a ComboBoxItem in a ComboBox based on its content.
+        /// </summary>
+        /// <param name="comboBox">The ComboBox to search.</param>
+        /// <param name="content">The content to match.</param>
+        /// <returns>The matching ComboBoxItem, or null if not found.</returns>
         private ComboBoxItem FindComboBoxItem(ComboBox comboBox, string content) =>
             comboBox.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Content.ToString() == content);
+
+        /// <summary>
+        /// Event handler for adding a new DNS record panel.
+        /// </summary>
         private void BtnAddDnsRecord_Click(object sender, RoutedEventArgs e)
         {
             var dnsRecordPanel = CreateDnsRecordPanel();
             itemsControlDnsRecords.Items.Add(dnsRecordPanel); // Add Grid instead of StackPanel
         }
+        #endregion
 
-
+        #region DNS Record Panel Creation
+        /// <summary>
+        /// Creates a new DNS record panel with input fields and controls.
+        /// </summary>
+        /// <returns>A Grid representing the DNS record panel.</returns>
         private Grid CreateDnsRecordPanel()
         {
             var dnsRecordGrid = new Grid
@@ -563,9 +586,10 @@ namespace DDNS_Cloudflare_API.Views.Pages
             return dnsRecordGrid;
         }
 
-
-
-
+        /// <summary>
+        /// Removes a DNS record panel from the UI, ensuring at least one remains.
+        /// </summary>
+        /// <param name="dnsRecordPanel">The DNS record panel to remove.</param>
         private void RemoveDnsRecord(Grid dnsRecordPanel)
         {
             // Ensure at least one DNS record remains
@@ -579,9 +603,15 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 _ = ShowErrorMessage("At least one DNS record must remain.");
             }
         }
+        #endregion
 
-
-
+        #region UI Element Creation
+        /// <summary>
+        /// Creates a Label control with the specified properties.
+        /// </summary>
+        /// <param name="name">The name of the Label control.</param>
+        /// <param name="text">The text content of the Label.</param>
+        /// <returns>A configured Label control.</returns>
         private Label CreateLabel(string name, string text) => new Label
         {
             Name = name,
@@ -589,6 +619,13 @@ namespace DDNS_Cloudflare_API.Views.Pages
             Content = text,
         };
 
+        /// <summary>
+        /// Creates a TextBox control with the specified properties.
+        /// </summary>
+        /// <param name="name">The name of the TextBox control.</param>
+        /// <param name="holderText">The placeholder text for the TextBox.</param>
+        /// <param name="text">The initial text content of the TextBox.</param>
+        /// <returns>A configured TextBox control.</returns>
         private TextBox CreateTextBox(string name, string holderText, string text = "") =>
             new TextBox
             {
@@ -596,10 +633,17 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 Margin = new Thickness(5),
                 Text = text,
                 PlaceholderText = holderText,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,  // Use the fully qualified type name
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
                 ToolTip = "hint"
             };
 
+        /// <summary>
+        /// Creates a ComboBox control with the specified items and selection.
+        /// </summary>
+        /// <param name="name">The name of the ComboBox control.</param>
+        /// <param name="items">An array of items to populate the ComboBox.</param>
+        /// <param name="selectedItem">The item to select initially.</param>
+        /// <returns>A configured ComboBox control.</returns>
         private ComboBox CreateComboBox(string name, string[] items, string selectedItem = null)
         {
             var comboBox = new ComboBox { Name = name, Margin = new Thickness(5), MinWidth = 80 };
@@ -621,7 +665,14 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             return comboBox;
         }
+        #endregion
 
+        #region Message Dialogs
+        /// <summary>
+        /// Displays an error message to the user.
+        /// </summary>
+        /// <param name="message">The error message content.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         private async Task ShowErrorMessage(string message)
         {
             var messageBox = new MessageBox
@@ -633,6 +684,11 @@ namespace DDNS_Cloudflare_API.Views.Pages
             await messageBox.ShowDialogAsync();
         }
 
+        /// <summary>
+        /// Displays a success message to the user.
+        /// </summary>
+        /// <param name="message">The success message content.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         private async Task ShowSuccessMessage(string message)
         {
             var dialog = new MessageBox
@@ -642,5 +698,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
             };
             await dialog.ShowDialogAsync();
         }
+        #endregion
+
     }
 }

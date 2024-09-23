@@ -1,4 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿/*
+ * Author: Hudaifa Abdullah
+ * @7odaifa_ab
+ * info@huimangtech.com
+ *
+ * This ViewModel manages the logic for the Home page in the DDNS Cloudflare API application.
+ * It handles updating the profile statuses, managing timers, and interacting with the UI to show profile-related information.
+ */
+
+using CommunityToolkit.Mvvm.ComponentModel;
 using DDNS_Cloudflare_API.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,7 +21,6 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
     {
         private readonly ProfileTimerService _profileTimerService;
         private bool _isInitialized;
-
         private LogEntry _lastLogEntry;
 
         [ObservableProperty]
@@ -21,6 +29,9 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
         public event EventHandler<string> ProfileTimerUpdated;
         public IRelayCommand RefreshCommand { get; }
 
+        #region Properties
+
+        // Tracks the last log entry for the UI
         public LogEntry LastLogEntry
         {
             get => _lastLogEntry;
@@ -31,24 +42,31 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
             }
         }
 
+        #endregion
+
+        #region Constructor
+
+        // Initializes the ViewModel, subscribes to events, and loads profile data
         public HomeViewModel(ProfileTimerService profileTimerService)
         {
             _profileTimerService = profileTimerService;
 
-            // Subscribe to events
+            // Subscribe to timer and status update events
             _profileTimerService.RemainingTimeUpdated += OnRemainingTimeUpdated;
             _profileTimerService.ProfileTimerUpdated += OnProfileTimerUpdated;
 
             ProfileStatuses = new ObservableCollection<ProfileStatus>();
-
-            // Command for refreshing statuses
             RefreshCommand = new RelayCommand(RefreshStatuses);
 
-            // Load profiles and mark initialization
-            LoadProfiles();
+            LoadProfiles(); // Load profiles on startup
             _isInitialized = true;
         }
 
+        #endregion
+
+        #region Methods
+
+        // Loads profiles from the ProfileTimerService and updates the UI
         private void LoadProfiles()
         {
             var profiles = _profileTimerService.GetProfileData();
@@ -61,6 +79,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
             }
         }
 
+        // Updates profile statuses based on timer states
         private void UpdateProfile(string profileName, string status)
         {
             var profileStatus = ProfileStatuses.FirstOrDefault(p => p.ProfileName == profileName);
@@ -88,6 +107,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
             OnPropertyChanged(nameof(ProfileStatuses));
         }
 
+        // Gets the remaining time before the next API call
         private string GetRemainingTime(DispatcherTimer timer)
         {
             if (timer.Tag is DateTime lastRunTime)
@@ -98,6 +118,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
             return "N/A";
         }
 
+        // Gets the next scheduled API call time
         private string GetNextApiCallTime(DispatcherTimer timer)
         {
             if (timer.Tag is DateTime lastRunTime)
@@ -108,6 +129,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
             return "N/A";
         }
 
+        // Handles updates when remaining time is updated for a profile
         private void OnRemainingTimeUpdated(object sender, (string profileName, TimeSpan remainingTime) e)
         {
             var profile = ProfileStatuses.FirstOrDefault(p => p.ProfileName == e.profileName);
@@ -118,6 +140,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
             }
         }
 
+        // Handles profile timer status updates
         private void OnProfileTimerUpdated(string profileName, string status)
         {
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
@@ -126,14 +149,18 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
             });
         }
 
+        // Refreshes the statuses in the ViewModel
         public void RefreshStatuses()
         {
             ProfileStatuses.Clear();
             LoadProfiles();
             Debug.WriteLine("Refreshing");
         }
+
+        #endregion
     }
 
+    // Model to hold individual profile statuses for display
     public class ProfileStatus : INotifyPropertyChanged
     {
         private string _remainingTime;
@@ -178,8 +205,9 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
+
+    // LogEntry model to track log details
     public class LogEntry
     {
         public string ProfileName { get; set; }
@@ -188,7 +216,5 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
         public string IpAddress { get; set; }
         public string Date { get; set; }
         public string RunningStatus { get; set; }
-
-
     }
 }

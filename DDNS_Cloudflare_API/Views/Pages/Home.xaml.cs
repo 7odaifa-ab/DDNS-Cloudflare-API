@@ -1,10 +1,18 @@
-﻿using System;
+﻿/*
+ * Author: Hudaifa Abdullah
+ * @7odaifa_ab
+ * info@huimangtech.com
+ *
+ * This class handles the logic for the Home Page of the DDNS Cloudflare API application.
+ * It manages profile information, displays status, and processes logs to show recent API activity.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
 using DDNS_Cloudflare_API.ViewModels.Pages;
 using System.Windows.Threading;
 using Wpf.Ui.Controls;
@@ -12,55 +20,70 @@ using System.Collections.ObjectModel;
 using DDNS_Cloudflare_API.Services;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {
     public partial class Home : INavigableView<HomeViewModel>
     {
-        // Observable collection to bind to the DataGrid
+        #region Fields
+
+        // Observable collection for DataGrid binding
         public ObservableCollection<ProfileInfo> Profiles { get; set; }
 
+        // ViewModel for the Home page
         public HomeViewModel ViewModel { get; }
 
+        // Timer service to manage profile timers
         private readonly ProfileTimerService timerService;
 
+        #endregion
+
+        #region Constructor
+
+        // Constructor initializes the ViewModel and binds data to the page
         public Home(HomeViewModel viewModel, ProfileTimerService timerService)
         {
             InitializeComponent();
-
             Profiles = new ObservableCollection<ProfileInfo>();
-            ViewModel = viewModel;  // Set ViewModel
-            DataContext = ViewModel;  // Bind DataContext to the ViewModel
-            this.timerService = timerService;  // Inject the timer service
-
-            // Assign the UpdateLastApiCallLog to the delegate in the timer service
-            timerService.UpdateLastApiCallLogAction = UpdateLastApiCallLog;
+            ViewModel = viewModel;
+            DataContext = ViewModel; // Bind ViewModel
+            this.timerService = timerService; // Inject the timer service
+            timerService.UpdateLastApiCallLogAction = UpdateLastApiCallLog; // Assign delegate
         }
 
+        #endregion
+
+        #region Event Handlers
+
+        // Triggered when the page is loaded to refresh the dashboard and load the last API call log
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             RefreshDashboard();
-            UpdateLastApiCallLog();  // Load the last API call on page load
+            UpdateLastApiCallLog();
         }
 
-        // Method to refresh the dashboard
+        #endregion
+
+        #region Methods
+
+        // Refresh the dashboard by calling the ViewModel method
         public void RefreshDashboard()
         {
             ViewModel.RefreshStatuses();
         }
 
-
+        // Update the dashboard with the most recent API call log
         private void UpdateLastApiCallLog()
         {
             string logFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API");
             string logFilePath = Path.Combine(logFolderPath, "Logs.txt");
 
-            var logEntry = GetLastApiCall(logFilePath);  // Parse log file
+            var logEntry = GetLastApiCall(logFilePath); // Parse log file
             if (logEntry != null)
             {
-                // Check if a timer is running for the profile
+                // Check if the profile timer is running
                 bool isRunning = timerService.IsProfileTimerRunning(logEntry.ProfileName);
 
                 // Bind log entry data to the ViewModel for the UI
@@ -71,7 +94,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                     Domain = logEntry.Domain,
                     IpAddress = logEntry.IpAddress,
                     Date = logEntry.Date,
-                    RunningStatus = isRunning ? "Running" : "Stopped"  // Set RunningStatus based on the timer
+                    RunningStatus = isRunning ? "Running" : "Stopped" // Set timer status
                 };
             }
             else
@@ -80,6 +103,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
         }
 
+        // Get the last API call entry from the log file
         public LogEntry GetLastApiCall(string logFilePath)
         {
             if (!File.Exists(logFilePath))
@@ -91,9 +115,9 @@ namespace DDNS_Cloudflare_API.Views.Pages
             var lines = File.ReadAllLines(logFilePath);
             LogEntry lastEntry = null;
 
-            foreach (var line in lines.Reverse())  // Read in reverse for the last entry
+            foreach (var line in lines.Reverse()) // Read in reverse to get the last entry
             {
-                if (line.Contains("Response: {"))  // Match specific log entries for API responses
+                if (line.Contains("Response: {"))
                 {
                     lastEntry = ParseLogEntry(line);
                     if (lastEntry != null)
@@ -107,42 +131,36 @@ namespace DDNS_Cloudflare_API.Views.Pages
             return lastEntry;
         }
 
+        // Parse a single log line to extract profile and API call details
         private LogEntry ParseLogEntry(string logLine)
         {
             try
             {
-                // Find where the "Response:" starts to extract the preceding info
                 int jsonStartIndex = logLine.IndexOf("Response:");
                 if (jsonStartIndex != -1)
                 {
-                    // Extract the header part before "Response:"
                     string headerPart = logLine.Substring(0, jsonStartIndex).Trim();
 
-                    // Extract profile name, domain, and IP from the header
+                    // Extract profile name, domain, and IP using regex
                     var profileNameMatch = Regex.Match(headerPart, @"Profile:\s([^,]+)");
                     var domainMatch = Regex.Match(headerPart, @"Domain:\s([^,]+)");
                     var ipMatch = Regex.Match(headerPart, @"IP:\s([^,]+)");
 
-                    // Extract the Date, capturing AM/PM or Arabic markers
+                    // Extract date from the header
                     string datePart = ExtractDatePart(headerPart);
 
-                    // Extract the JSON part after "Response:"
+                    // Extract JSON part after "Response:"
                     string jsonString = logLine.Substring(jsonStartIndex + 9).Trim();
                     var jsonElement = JsonSerializer.Deserialize<JsonElement>(jsonString);
 
                     var logEntry = new LogEntry
                     {
-                        // Use the extracted values from the header for Profile, Domain, and IP
                         ProfileName = profileNameMatch.Success ? profileNameMatch.Groups[1].Value : "Unknown",
                         Domain = domainMatch.Success ? domainMatch.Groups[1].Value : "Unknown",
                         IpAddress = ipMatch.Success ? ipMatch.Groups[1].Value : "Unknown",
-
-                        // Use the raw date part for On Date
-                        Date = datePart
+                        Date = datePart,
+                        CallStatus = jsonElement.GetProperty("success").GetBoolean() ? "Success" : "Failure"
                     };
-
-                    // Get the call status from the JSON response
-                    logEntry.CallStatus = jsonElement.GetProperty("success").GetBoolean() ? "Success" : "Failure";
 
                     return logEntry;
                 }
@@ -155,25 +173,23 @@ namespace DDNS_Cloudflare_API.Views.Pages
             return null;
         }
 
+        // Extract date part from the log header
         private string ExtractDatePart(string logHeader)
         {
-            // Capture full date and time with any markers (Arabic or English AM/PM)
             var datePattern = @"(\d{1,2}/\d{1,2}/\d{4}\s\d{1,2}:\d{2}:\d{2}\s?[صمAMPMampm]*)";
             var dateMatch = Regex.Match(logHeader, datePattern, RegexOptions.IgnoreCase);
-
             return dateMatch.Success ? dateMatch.Groups[1].Value.Trim() : "Unknown Date";
         }
 
-
-
+        #endregion
     }
 
+    // Data structure for holding profile info in the UI
     public class ProfileInfo
     {
-        public string ProfileName { get; set; }  // FullName (Name + Domain)
-        public string TimerStatus { get; set; }  // Running or Stopped
-        public string RemainingTime { get; set; }  // Timer remaining time
-        public string NextApiCallTime { get; set; }  // Next API call scheduled time
+        public string ProfileName { get; set; }
+        public string TimerStatus { get; set; } // Running or Stopped
+        public string RemainingTime { get; set; } // Time left for next API call
+        public string NextApiCallTime { get; set; } // When the next API call is scheduled
     }
-
 }
