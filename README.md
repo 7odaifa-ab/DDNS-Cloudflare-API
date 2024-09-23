@@ -5,7 +5,7 @@
   <a target="_blank" href="https://github.com/7odaifa-ab/DDNS-Cloudflare-API/releases/latest/download/DDNS.Cloudflare.API.exe">
       <img src="https://img.shields.io/badge/Download-V2.0-brightgreen"></a>
   <a target="_blank" href="https://github.com/7odaifa-ab/DDNS-Cloudflare-API/releases"><img src="https://img.shields.io/badge/Releases-Versions%20List-lightgrey"></a>
-  <a target="_blank" href="https://www.oracle.com/java/technologies/javase/18-0-2-relnotes.html"><img src="https://img.shields.io/badge/.NET-8.0-purple?logo=.NET"></a>
+  <a target="_blank" href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0"><img src="https://img.shields.io/badge/.NET-8.0-purple?logo=.NET"></a>
   <a target="_blank" href="https://github.com/lepoco/wpfui"><img src="https://img.shields.io/badge/Library-WPF UI-lightblue"></a>
   <a target="_blank" href="LICENSE"><img src="https://img.shields.io/badge/Licence-The%20Unlicens-blue"></a>
 </p>
