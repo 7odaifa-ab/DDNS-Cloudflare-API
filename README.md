@@ -103,11 +103,8 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 **`I Need Help Implementing:`**
 
-- Dashboard
-- Show the Timer Count for the next API call.
+- Rich Dashboard
 - Add custom profile naming.
-- Startup on logon.
-- Load Profiles on lunch.
 - Rich Tutorial
 - New UI and better UX
 - Portable version
