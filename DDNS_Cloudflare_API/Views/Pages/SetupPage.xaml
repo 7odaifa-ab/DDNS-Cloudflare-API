@@ -21,6 +21,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="10,10,10,10">
+            <Label Content="Select a Profile" />           
             <!-- Controls for Profiles -->
             <ComboBox Name="cmbProfiles"
                       SelectionChanged="CmbProfiles_SelectionChanged"
@@ -29,6 +30,7 @@
                 <ComboBoxItem Content="+ Add a New Profile" />
                 <!-- Profiles will be loaded here -->
             </ComboBox>
+            
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <ui:Button Name="btnSaveProfile"
                            Content="Save Profile"
@@ -51,6 +53,8 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1" Margin="10,10,10,10">
+            <Label Content="Enter API Profile" />
+
             <!-- Existing TextBoxes and ComboBoxes -->
             <ui:TextBox Name="txtApiKey"
                         PlaceholderText="API Key"

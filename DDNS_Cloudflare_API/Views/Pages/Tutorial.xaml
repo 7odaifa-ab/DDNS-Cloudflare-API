@@ -14,84 +14,98 @@
       Title="Tutorial">
 
     <Grid>
-            <StackPanel Margin="10">
+        <StackPanel Margin="10">
 
-                <!-- Title -->
-                <ui:TextBlock FontSize="24"
-                              FontWeight="Bold"
-                              Text="How to Use the Cloudflare API DNS Program"
-                              Margin="0,0,0,20" />
+            <!-- Title -->
+            <ui:TextBlock FontSize="24"
+                          FontWeight="Bold"
+                          Text="How to Use the Cloudflare API DNS Program"
+                          Margin="0,0,0,20" />
 
-                <!-- Section 1: Setup Page -->
-                <ui:TextBlock FontSize="18"
-                              FontWeight="Bold"
-                              Text="1. Setup Page"
-                              Margin="0,0,0,10" />
-                <ui:TextBlock Text="This page lets you input Cloudflare API credentials and DNS record details."
-                              TextWrapping="Wrap" />
-                <ui:TextBlock Text="• API Key: Enter the Cloudflare API key."
-                              TextWrapping="Wrap" />
-                <ui:TextBlock Text="• Zone ID: Enter the zone ID of your domain."
-                              TextWrapping="Wrap" />
-                <ui:TextBlock Text="• Main Domain/Website: Enter the main domain."
-                              TextWrapping="Wrap" />
-                <ui:TextBlock Text="You can add multiple DNS records with fields like Record ID, Name, Type, Proxied, and TTL."
-                              TextWrapping="Wrap" />
-                <ui:TextBlock Text="Use 'Add DNS Record' to add additional entries."
-                              TextWrapping="Wrap"
-                              Margin="0,0,0,20" />
+            <!-- Section 1: Cloudflare Account Setup -->
+            <ui:TextBlock FontSize="18"
+                          FontWeight="Bold"
+                          Text="1. Cloudflare Account Setup"
+                          Margin="0,0,0,10" />
+            <ui:TextBlock Text="To use this tool, you need an API key and Zone ID from your Cloudflare account."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="1. Log in to your Cloudflare account."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="2. Navigate to 'API Tokens' under your account settings to generate an API key."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="3. Get your Zone ID from the 'Overview' tab of the domain you manage."
+                          TextWrapping="Wrap"
+                          Margin="0,0,0,20" />
 
-                <!-- Section 2: Saving Profiles -->
-                <ui:TextBlock FontSize="18"
-                              FontWeight="Bold"
-                              Text="2. Saving Profiles"
-                              Margin="0,0,0,10" />
-                <ui:TextBlock Text="Press 'Save Profile' to save a new DNS profile configuration."
-                              TextWrapping="Wrap" />
-                <ui:TextBlock Text="If a profile with the same name exists, the program will create a numbered version."
-                              TextWrapping="Wrap"
-                              Margin="0,0,0,20" />
+            <!-- Section 2: Setting Up DNS Records -->
+            <ui:TextBlock FontSize="18"
+                          FontWeight="Bold"
+                          Text="2. Creating DNS Records"
+                          Margin="0,0,0,10" />
+            <ui:TextBlock Text="DNS records must be created in Cloudflare for the domain. Each DNS record has a unique Record ID that you can retrieve using the API."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="After setting up the API key and Zone ID, navigate to the 'Records' page in this program to fetch DNS records and their IDs."
+                          TextWrapping="Wrap"
+                          Margin="0,0,0,20" />
 
-                <!-- Section 3: Updating Profiles -->
-                <ui:TextBlock FontSize="18"
-                              FontWeight="Bold"
-                              Text="3. Updating Profiles"
-                              Margin="0,0,0,10" />
-                <ui:TextBlock Text="Select an existing profile from the dropdown list and click 'Update Profile' to modify DNS settings."
-                              TextWrapping="Wrap" />
-                <ui:TextBlock Text="Use 'Delete Profile' to remove the selected profile."
-                              TextWrapping="Wrap"
-                              Margin="0,0,0,20" />
+            <!-- Section 3: Setup Page - Creating an API Profile -->
+            <ui:TextBlock FontSize="18"
+                          FontWeight="Bold"
+                          Text="3. Setup Page - Creating an API Profile"
+                          Margin="0,0,0,10" />
+            <ui:TextBlock Text="The 'Setup' page is where you enter the API key, Zone ID, and DNS record details."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="• API Key: Your Cloudflare API key."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="• Zone ID: Your domain's unique Zone ID."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="• DNS Records: Include Record ID, Name, Type, Proxied, and TTL."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="Click 'Save Profile' to create an API profile, which can be used to dynamically update DNS records."
+                          TextWrapping="Wrap"
+                          Margin="0,0,0,20" />
 
-            <!-- Section 4: Home Page -->
-                <ui:TextBlock FontSize="18"
-                              FontWeight="Bold"
-                          Text="4. Home Page"
-                              Margin="0,0,0,10" />
-                <ui:TextBlock Text="The dashboard shows profiles, their status, and timing information."
-                              TextWrapping="Wrap" />
-                <ui:TextBlock Text="Use the 'Refresh' button to update the list of profiles."
-                              TextWrapping="Wrap"
-                              Margin="0,0,0,20" />
+            <!-- Section 4: Managing Profiles -->
+            <ui:TextBlock FontSize="18"
+                          FontWeight="Bold"
+                          Text="4. Managing Profiles"
+                          Margin="0,0,0,10" />
+            <ui:TextBlock Text="Use the 'Records' page to view and retrieve DNS Record IDs."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="On the 'Setup' page, select a profile from the dropdown to edit or delete it."
+                          TextWrapping="Wrap"
+                          Margin="0,0,0,20" />
 
-                <!-- Section 5: API Interaction -->
-                <ui:TextBlock FontSize="18"
-                              FontWeight="Bold"
-                              Text="5. API Interaction"
-                              Margin="0,0,0,10" />
-                <ui:TextBlock Text="The program interacts with Cloudflare's API for creating, updating, and managing DNS records."
-                              TextWrapping="Wrap" />
-                <ui:TextBlock Text="The program uses the PATCH request to modify DNS records for a given zone."
-                              TextWrapping="Wrap"
-                              Margin="0,0,0,20" />
+            <!-- Section 5: Log Page -->
+            <ui:TextBlock FontSize="18"
+                          FontWeight="Bold"
+                          Text="5. Log Page"
+                          Margin="0,0,0,10" />
+            <ui:TextBlock Text="The 'Log' page displays the history of API interactions, including details of DNS updates."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="You can view when DNS records were last updated and inspect the API responses."
+                          TextWrapping="Wrap"
+                          Margin="0,0,0,20" />
+
+            <!-- Section 6: Settings Page -->
+            <ui:TextBlock FontSize="18"
+                          FontWeight="Bold"
+                          Text="6. Settings Page"
+                          Margin="0,0,0,10" />
+            <ui:TextBlock Text="The 'Settings' page allows you to configure options like loading profiles at startup and running profiles automatically."
+                          TextWrapping="Wrap" />
+            <ui:TextBlock Text="Toggle the settings to control how the program behaves when it starts."
+                          TextWrapping="Wrap"
+                          Margin="0,0,0,20" />
 
             <!-- Hyperlink to Cloudflare API Documentation -->
             <ui:TextBlock FontSize="14"
                           FontStyle="Italic"
                           Margin="0,20,0,0">
                 <Hyperlink NavigateUri="https://developers.cloudflare.com/api/operations/dns-records-for-a-zone-patch-dns-record"
-                           RequestNavigate="Hyperlink_RequestNavigate">For more details, visit Cloudflare's API documentation.</Hyperlink>
+                           RequestNavigate="Hyperlink_RequestNavigate">Visit Cloudflare's API documentation for more information.</Hyperlink>
             </ui:TextBlock>
+
         </StackPanel>
     </Grid>
 </Page>

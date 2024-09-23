@@ -26,6 +26,8 @@
         <StackPanel Grid.Row="0"
                     Orientation="Vertical"
                     Margin="10">
+            <Label Content="Get the List of DNS Records and their IDs to Construct an API Call Profile"
+                   Margin="5" />
             <ui:TextBox x:Name="ApiKeyTextBox"
                      Margin="5"
                      PlaceholderText="Enter API Key" />
