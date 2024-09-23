@@ -27,7 +27,9 @@ namespace DDNS_Cloudflare_API.Services
 {
     public class ProfileTimerService
     {
-        private readonly Dictionary<string, DispatcherTimer> profileTimers;
+        private readonly Dictionary<string, DispatcherTimer> profileTimers = new Dictionary<string, DispatcherTimer>();
+        private readonly Dictionary<string, DispatcherTimer> uiTimers = new Dictionary<string, DispatcherTimer>(); // UI Timers
+
         private readonly Dictionary<string, Dictionary<string, object>> profileData;
         private readonly string profilesFolderPath;
         private readonly string logFilePath;
@@ -79,12 +81,21 @@ namespace DDNS_Cloudflare_API.Services
         {
             Debug.WriteLine($"Starting timer for {profileName}");
 
+            // Stop any existing DNS update timer for this profile
             if (profileTimers.ContainsKey(profileName))
             {
                 profileTimers[profileName].Stop();
                 profileTimers.Remove(profileName);
             }
 
+            // Stop any existing UI timer for this profile
+            if (uiTimers.ContainsKey(profileName))
+            {
+                uiTimers[profileName].Stop();
+                uiTimers.Remove(profileName);
+            }
+
+            // Start a new DNS update timer
             DispatcherTimer dnsTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMinutes(intervalMinutes)
@@ -102,23 +113,40 @@ namespace DDNS_Cloudflare_API.Services
             dnsTimer.Start();
             profileTimers[profileName] = dnsTimer;
 
+            // Start a new UI timer
             var uiTimer = CreateUiTimer(profileName, intervalMinutes);
             uiTimer.Start();
+            uiTimers[profileName] = uiTimer;
 
+            // Notify the UI about the timer status
             ProfileTimerUpdated?.Invoke(profileName, "Running");
+
+            // Save the profile's timer status
             await SaveProfileStatusToSettings(profileName, true, intervalMinutes);
         }
 
         // Stops the timer for a profile
         public async void StopTimer(string profileName)
         {
+            // Stop and remove the DNS update timer
             if (profileTimers.ContainsKey(profileName))
             {
                 profileTimers[profileName].Stop();
                 profileTimers.Remove(profileName);
-                ProfileTimerUpdated?.Invoke(profileName, "Stopped");
-                await SaveProfileStatusToSettings(profileName, false, 0);
             }
+
+            // Stop and remove the UI timer
+            if (uiTimers.ContainsKey(profileName))
+            {
+                uiTimers[profileName].Stop();
+                uiTimers.Remove(profileName);
+            }
+
+            // Notify the UI that the profile's timer has been stopped
+            ProfileTimerUpdated?.Invoke(profileName, "Stopped");
+
+            // Save the profile's timer status
+            await SaveProfileStatusToSettings(profileName, false, 0);
         }
 
         // Returns a dictionary of currently active profile timers
@@ -150,7 +178,6 @@ namespace DDNS_Cloudflare_API.Services
             return uiTimer;
         }
 
-        // Event to notify when remaining time is updated
         public event EventHandler<(string profileName, TimeSpan remainingTime)> RemainingTimeUpdated;
 
         #endregion

@@ -74,7 +74,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
             var profile = new Dictionary<string, object>
             {
-                { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
+                { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Password) },
                 { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
                 { "mainDomain", mainDomain },
                 { "DnsRecords", dnsRecords }
@@ -100,7 +100,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
                     var profile = new Dictionary<string, object>
                     {
-                        { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Text) },
+                        { "ApiKey", EncryptionHelper.EncryptString(txtApiKey.Password) },
                         { "ZoneId", EncryptionHelper.EncryptString(txtZoneId.Text) },
                         { "mainDomain", mainDomain },
                         { "DnsRecords", dnsRecords }
@@ -178,7 +178,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         #region Utility Methods
         private void ClearInputFields()
         {
-            txtApiKey.Text = string.Empty;
+            txtApiKey.Password = string.Empty;
             txtZoneId.Text = string.Empty;
             txtMainDomain.Text = string.Empty;
             itemsControlDnsRecords.Items.Clear();
@@ -306,7 +306,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
             var json = File.ReadAllText(profilePath);
             var profile = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
 
-            txtApiKey.Text = EncryptionHelper.DecryptString(profile["ApiKey"].ToString());
+            txtApiKey.Password = EncryptionHelper.DecryptString(profile["ApiKey"].ToString());
             txtZoneId.Text = EncryptionHelper.DecryptString(profile["ZoneId"].ToString());
             txtMainDomain.Text = profile["mainDomain"].ToString();  // Load main domain
 
@@ -368,7 +368,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                         {
                             // Call the method and get the response content
                             string response = await timerService.UpdateDnsRecordForProfile(
-                                txtApiKey.Text,
+                                txtApiKey.Password,
                                 txtZoneId.Text,
                                 record,
                                 dnsRecordId.Text,
