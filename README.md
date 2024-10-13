@@ -3,7 +3,7 @@
 <h1 align="center">DDNS Cloudflare API <a href="https://github.com/7odaifa-ab/DDNS-Cloudflare-API"></a></h1>
 <p align="center">
   <a target="_blank" href="https://github.com/7odaifa-ab/DDNS-Cloudflare-API/releases/latest/download/DDNS.Cloudflare.API.exe">
-      <img src="https://img.shields.io/badge/Download-V2.0-brightgreen"></a>
+      <img src="https://img.shields.io/badge/Download-V2.1-brightgreen"></a>
   <a target="_blank" href="https://github.com/7odaifa-ab/DDNS-Cloudflare-API/releases"><img src="https://img.shields.io/badge/Releases-Versions%20List-lightgrey"></a>
   <a target="_blank" href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0"><img src="https://img.shields.io/badge/.NET-8.0-purple?logo=.NET"></a>
   <a target="_blank" href="https://github.com/lepoco/wpfui"><img src="https://img.shields.io/badge/Library-WPF UI-lightblue"></a>
