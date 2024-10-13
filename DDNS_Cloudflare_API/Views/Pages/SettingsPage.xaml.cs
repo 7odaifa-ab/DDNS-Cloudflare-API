@@ -85,20 +85,25 @@ namespace DDNS_Cloudflare_API.Views.Pages
         private void SetStartup(bool enable)
         {
             string appName = "DDNS Cloudflare API";
-            string exePath = Assembly.GetExecutingAssembly().Location;
+
+            // Correct the executable path to ensure it's not pointing to a DLL
+            string exePath = Process.GetCurrentProcess().MainModule.FileName;
 
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
             {
                 if (enable)
                 {
+                    // Add the application path to the registry for startup
                     key.SetValue(appName, $"\"{exePath}\"");
                 }
                 else
                 {
+                    // Remove the application from the startup registry
                     key.DeleteValue(appName, false);
                 }
             }
         }
+
 
         #endregion
 
