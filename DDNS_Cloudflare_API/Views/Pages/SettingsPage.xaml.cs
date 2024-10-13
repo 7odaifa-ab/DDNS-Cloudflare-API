@@ -234,21 +234,39 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             try
             {
-                var downloadUrl = $"https://github.com/7odaifa-ab/DDNS-Cloudflare-API/releases/download/{version}/DDNS.Cloudflare.API-Win-x64.zip";
-                var tempPath = Path.GetTempPath();
-                var zipFilePath = Path.Combine(tempPath, "DDNS-Cloudflare-API.zip");
-                var extractPath = AppDomain.CurrentDomain.BaseDirectory;
+                // Construct the URL for the installer
+                var downloadUrl = $"https://github.com/7odaifa-ab/DDNS-Cloudflare-API/releases/download/v{version}/DDNS.Cloudflare.API.exe";
+
+                // Use a user-writable directory for the download
+                var tempPath = Path.GetTempPath(); // This is always writable
+                var installerFilePath = Path.Combine(tempPath, $"DDNS.Cloudflare.API-{version}.exe");
 
                 using HttpClient client = new HttpClient();
                 var data = await client.GetByteArrayAsync(downloadUrl);
-                await File.WriteAllBytesAsync(zipFilePath, data);
 
-                ZipFile.ExtractToDirectory(zipFilePath, extractPath, true);
+                // Write the installer to the temp folder
+                await File.WriteAllBytesAsync(installerFilePath, data);
 
-                MessageBox.Show("Update completed. The application will now restart.", "Update Completed");
+                // Once downloaded, launch the installer with administrative privileges
+                var processInfo = new ProcessStartInfo
+                {
+                    FileName = installerFilePath,  // Path to the downloaded installer
+                    UseShellExecute = true,        // Use the OS shell to execute
+                    Verb = "runas",                // Ensure the installer runs as an administrator
+                };
 
-                Process.Start(Application.ResourceAssembly.Location);
-                Application.Current.Shutdown();
+                try
+                {
+                    // Start the installer process
+                    Process.Start(processInfo);
+
+                    // Optionally shut down the current application after starting the installer
+                    Application.Current.Shutdown();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to start the installer with administrative privileges.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
