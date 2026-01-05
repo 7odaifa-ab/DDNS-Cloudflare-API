@@ -1,7 +1,7 @@
 ﻿/*
  * Author: Hudaifa Abdullah
  * @7odaifa_ab
- * info@huimangtech.com
+ * info@zakhm.sa
  *
  * This class handles the logic for the Home Page of the DDNS Cloudflare API application.
  * It manages profile information, displays status, and processes logs to show recent API activity.

@@ -1,7 +1,7 @@
 ﻿/*
  * Author: Hudaifa Abdullah
  * @7odaifa_ab
- * info@huimangtech.com
+ * info@zakhm.sa
  *
  * This class handles the logic for managing DNS profiles and timers in the DDNS Cloudflare API application.
  * It includes functions for starting/stopping timers, updating DNS records, fetching IP addresses, and managing profile status.

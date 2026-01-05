@@ -1,7 +1,7 @@
 ﻿/*
  * Author: Hudaifa Abdullah
  * @7odaifa_ab
- * info@huimangtech.com
+ * info@zakhm.sa
  *
  * This class defines the logic for managing the Setup Page of the DDNS Cloudflare API application.
  * It allows users to input Cloudflare API credentials, DNS record details, and manage profiles for DNS records.

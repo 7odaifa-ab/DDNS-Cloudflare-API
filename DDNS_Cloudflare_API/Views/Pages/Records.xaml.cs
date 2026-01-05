@@ -1,7 +1,7 @@
 ﻿/*
  * Author: Hudaifa Abdullah
  * @7odaifa_ab
- * info@huimangtech.com
+ * info@zakhm.sa
  *
  * This class manages the logic for retrieving and displaying DNS records using Cloudflare's API.
  * It interacts with the API, logs responses, and shows DNS records in the user interface.

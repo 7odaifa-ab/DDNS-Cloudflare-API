@@ -9,9 +9,9 @@
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings> 
-    <AssemblyName>DDNS Cloudflare API</AssemblyName>
-    <Version>2.1</Version>
-    <AssemblyVersion>2.0.0.1</AssemblyVersion>
+    <AssemblyName>Cloudflare DDNS Client</AssemblyName>
+    <Version>2.2</Version>
+    <AssemblyVersion>2.0.0.2</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

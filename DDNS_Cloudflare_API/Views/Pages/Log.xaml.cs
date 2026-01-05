@@ -1,7 +1,7 @@
 ﻿/*
  * Author: Hudaifa Abdullah
  * @7odaifa_ab
- * info@huimangtech.com
+ * info@zakhm.sa
  *
  * This class manages the Log page of the DDNS Cloudflare API application.
  * It displays log entries in reverse order and formats JSON responses for easy readability.

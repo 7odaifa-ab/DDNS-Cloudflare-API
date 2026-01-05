@@ -1,7 +1,7 @@
 ﻿/*
  * Author: Hudaifa Abdullah
  * @7odaifa_ab
- * info@huimangtech.com
+ * info@zakhm.sa
  *
  * This ViewModel manages the logic for the Home page in the DDNS Cloudflare API application.
  * It handles updating the profile statuses, managing timers, and interacting with the UI to show profile-related information.

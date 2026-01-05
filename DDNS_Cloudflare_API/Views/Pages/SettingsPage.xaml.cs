@@ -1,7 +1,7 @@
 ﻿/*
  * Author: Hudaifa Abdullah
  * @7odaifa_ab
- * info@huimangtech.com
+ * info@zakhm.sa
  *
  * This class defines the logic for managing the Settings Page of the DDNS Cloudflare API application.
  * It handles application startup settings, update checks, and allows users to configure the application behavior on startup.
@@ -325,11 +325,11 @@ namespace DDNS_Cloudflare_API.Views.Pages
             try
             {
                 // Construct the URL for the installer
-                var downloadUrl = $"https://github.com/7odaifa-ab/DDNS-Cloudflare-API/releases/download/v{version}/DDNS.Cloudflare.API.exe";
+                var downloadUrl = $"https://github.com/7odaifa-ab/DDNS-Cloudflare-API/releases/download/v{version}/Cloudflare.DDNS.Client.exe";
 
                 // Use a user-writable directory for the download
                 var tempPath = Path.GetTempPath(); // This is always writable
-                var installerFilePath = Path.Combine(tempPath, $"DDNS.Cloudflare.API-{version}.exe");
+                var installerFilePath = Path.Combine(tempPath, $"Cloudflare.DDNS.Client-{version}.exe");
 
                 using HttpClient client = new HttpClient();
                 var data = await client.GetByteArrayAsync(downloadUrl);

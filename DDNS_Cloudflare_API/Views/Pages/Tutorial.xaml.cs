@@ -1,7 +1,7 @@
 ﻿/*
  * Author: Hudaifa Abdullah
  * @7odaifa_ab
- * info@huimangtech.com
+ * info@zakhm.sa
  *
  * This class defines the logic for the Tutorial page of the DDNS Cloudflare API application.
  * It displays instructional content on how to use the application and handles hyperlink navigation to external resources.
