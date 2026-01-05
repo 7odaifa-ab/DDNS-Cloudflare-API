@@ -61,6 +61,8 @@ TestResult.xml
 *.dnxproj.user
 *.dnxproj.lock
 
+# .vscode
+!.vscode/
 
 # Local History for Visual Studio Code
 .history/
