@@ -21,7 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\HuimangTech.png">
+    <Content Include="Assets\logo-NoBox@4x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\logo-light-NoBox@4x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -34,12 +37,18 @@
 
   <ItemGroup>
     <None Remove="Assets\DDNS.png" />
-    <None Remove="Assets\HuimangTech.png" />
+    <None Remove="Assets\logo-NoBox@4x.png" />
+    <None Remove="Assets\logo-light-NoBox@4x.png" />
+    <None Remove="Assets\logo-icon.svg" />
+    <None Remove="Assets\logo-icon-light.svg" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\DDNS.png" />
-    <Resource Include="Assets\HuimangTech.png" />
+    <Resource Include="Assets\logo-NoBox@4x.png" />
+    <Resource Include="Assets\logo-light-NoBox@4x.png" />
+    <Resource Include="Assets\logo-icon.svg" />
+    <Resource Include="Assets\logo-icon-light.svg" />
   </ItemGroup>
 
 <Target Name="SpicNSpan" AfterTargets="Clean"> <!-- common vars https://msdn.microsoft.com/en-us/library/c02as0cs.aspx?f=255&MSPPError=-2147217396 -->
