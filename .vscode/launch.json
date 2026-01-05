@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-dotnet",
+            "program": "${workspaceFolder}/DDNS_Cloudflare_API/bin/Debug/net8.0-windows7.0/DDNS Cloudflare API.exe",
+            "cwd": "${workspaceFolder}/DDNS_Cloudflare_API",
+            "args": []
+        },
+        {
+            "name": "Mono Launch",
+            "type": "mono",
+            "request": "launch",
+            "preLaunchTask": "build-mono",
+            "program": "${workspaceFolder}/DDNS_Cloudflare_API/bin/Debug/net8.0-windows7.0/DDNS Cloudflare API.exe",
+            "cwd": "${workspaceFolder}/DDNS_Cloudflare_API"
+        }
+    ]
+}
