@@ -90,7 +90,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 string appName = "DDNS Cloudflare API";
 
                 // Correct the executable path to ensure it's not pointing to a DLL
-                string exePath = Process.GetCurrentProcess().MainModule?.FileName;
+                string? exePath = Process.GetCurrentProcess().MainModule?.FileName;
                 
                 if (string.IsNullOrEmpty(exePath))
                 {
@@ -98,7 +98,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
                     return;
                 }
 
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
                 {
                     if (key == null)
                     {

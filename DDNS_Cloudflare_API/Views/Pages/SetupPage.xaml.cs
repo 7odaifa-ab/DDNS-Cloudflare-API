@@ -215,14 +215,17 @@ namespace DDNS_Cloudflare_API.Views.Pages
         #endregion
 
         #region Timer Control Methods
-        private void BtnStart_Click(object sender, RoutedEventArgs e)
+        private async void BtnStart_Click(object sender, RoutedEventArgs e)
         {
             if (cmbProfiles.SelectedItem != null)
             {
-                UpdateDnsRecords();
-                string profileName = cmbProfiles.SelectedItem.ToString();
-                timerService.StartTimer(profileName, GetInterval());
-                txtStatus.Text = $"{profileName} Started";
+                await UpdateDnsRecords();
+                string? profileName = cmbProfiles.SelectedItem.ToString();
+                if (!string.IsNullOrEmpty(profileName))
+                {
+                    timerService.StartTimer(profileName, GetInterval());
+                    txtStatus.Text = $"{profileName} Started";
+                }
             }
         }
 
@@ -230,9 +233,12 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             if (cmbProfiles.SelectedItem != null)
             {
-                string profileName = cmbProfiles.SelectedItem.ToString();
-                timerService.StopTimer(profileName);
-                txtStatus.Text = $"{profileName} Stopped";
+                string? profileName = cmbProfiles.SelectedItem.ToString();
+                if (!string.IsNullOrEmpty(profileName))
+                {
+                    timerService.StopTimer(profileName);
+                    txtStatus.Text = $"{profileName} Stopped";
+                }
             }
         }
 
@@ -263,11 +269,11 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
                     dnsRecords.Add(new Dictionary<string, object>
                     {
-                        { "RecordID", dnsRecordId.Text },
-                        { "Name", name.Text },
-                        { "Content", ((ComboBoxItem)content.SelectedItem).Content.ToString() },
-                        { "Type", ((ComboBoxItem)type.SelectedItem).Content.ToString() },
-                        { "Proxied", ((ComboBoxItem)proxied.SelectedItem).Content.ToString() == "True" },
+                        { "RecordID", dnsRecordId.Text ?? string.Empty },
+                        { "Name", name.Text ?? string.Empty },
+                        { "Content", ((ComboBoxItem)content.SelectedItem)?.Content?.ToString() ?? string.Empty },
+                        { "Type", ((ComboBoxItem)type.SelectedItem)?.Content?.ToString() ?? string.Empty },
+                        { "Proxied", ((ComboBoxItem)proxied.SelectedItem)?.Content?.ToString() == "True" },
                         { "TTL", GetTtlInSeconds(ttl.SelectedIndex) }
                     });
                 }
@@ -281,12 +287,15 @@ namespace DDNS_Cloudflare_API.Views.Pages
             var dnsRecordsList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(dnsRecords);
             string profileName = mainDomain;
 
-            foreach (var record in dnsRecordsList)
+            if (dnsRecordsList != null)
             {
-                string recordType = record["Type"]?.ToString();
-                if (!string.IsNullOrEmpty(recordType))
+                foreach (var record in dnsRecordsList)
                 {
-                    profileName += "-" + recordType;
+                    string? recordType = record["Type"]?.ToString();
+                    if (!string.IsNullOrEmpty(recordType))
+                    {
+                        profileName += "-" + recordType;
+                    }
                 }
             }
 
@@ -391,19 +400,25 @@ namespace DDNS_Cloudflare_API.Views.Pages
             var json = File.ReadAllText(profilePath);
             var profile = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
 
-            txtApiKey.Password = EncryptionHelper.DecryptString(profile["ApiKey"].ToString());
-            txtZoneId.Text = EncryptionHelper.DecryptString(profile["ZoneId"].ToString());
-            txtMainDomain.Text = profile["mainDomain"].ToString();  // Load main domain
+            if (profile != null)
+            {
+                txtApiKey.Password = EncryptionHelper.DecryptString(profile["ApiKey"]?.ToString() ?? string.Empty);
+                txtZoneId.Text = EncryptionHelper.DecryptString(profile["ZoneId"]?.ToString() ?? string.Empty);
+                txtMainDomain.Text = profile["mainDomain"]?.ToString() ?? string.Empty;  // Load main domain
 
 
-            itemsControlDnsRecords.Items.Clear();
+                itemsControlDnsRecords.Items.Clear();
 
-            var dnsRecords = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(profile["DnsRecords"].ToString());
-            foreach (var record in dnsRecords)
+                var dnsRecords = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(profile["DnsRecords"]?.ToString() ?? "[]");
+                if (dnsRecords != null)
+                {
+                    foreach (var record in dnsRecords)
             {
                 var dnsRecordPanel = CreateDnsRecordPanel();
                 UpdateDnsRecordPanel(dnsRecordPanel, record);
-                itemsControlDnsRecords.Items.Add(dnsRecordPanel);
+                    itemsControlDnsRecords.Items.Add(dnsRecordPanel);
+                }
+                }
             }
         }
         private async Task UpdateDnsRecords()
@@ -554,12 +569,12 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             var (dnsRecordId, name, content, type, proxied, ttl) = GetDnsRecordFields(dnsRecordGrid);
 
-            dnsRecordId.Text = record["RecordID"]?.ToString();
-            name.Text = record["Name"]?.ToString();
-            content.SelectedItem = FindComboBoxItem(content, record["Content"]?.ToString());
-            type.SelectedItem = FindComboBoxItem(type, record["Type"]?.ToString());
-            proxied.SelectedItem = FindComboBoxItem(proxied, bool.Parse(record["Proxied"]?.ToString()) ? "True" : "False");
-            ttl.SelectedIndex = GetTtlIndex(int.Parse(record["TTL"]?.ToString()));
+            dnsRecordId.Text = record["RecordID"]?.ToString() ?? string.Empty;
+            name.Text = record["Name"]?.ToString() ?? string.Empty;
+            content.SelectedItem = FindComboBoxItem(content, record["Content"]?.ToString() ?? string.Empty);
+            type.SelectedItem = FindComboBoxItem(type, record["Type"]?.ToString() ?? string.Empty);
+            proxied.SelectedItem = FindComboBoxItem(proxied, bool.Parse(record["Proxied"]?.ToString() ?? "false") ? "True" : "False");
+            ttl.SelectedIndex = GetTtlIndex(int.Parse(record["TTL"]?.ToString() ?? "60"));
         }
 
         /// <summary>
@@ -568,8 +583,8 @@ namespace DDNS_Cloudflare_API.Views.Pages
         /// <param name="comboBox">The ComboBox to search.</param>
         /// <param name="content">The content to match.</param>
         /// <returns>The matching ComboBoxItem, or null if not found.</returns>
-        private ComboBoxItem FindComboBoxItem(ComboBox comboBox, string content) =>
-            comboBox.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Content.ToString() == content);
+        private ComboBoxItem? FindComboBoxItem(ComboBox comboBox, string content) =>
+            comboBox.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Content?.ToString() == content);
 
         /// <summary>
         /// Event handler for adding a new DNS record panel.
@@ -716,7 +731,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
             {
                 Name = name,
                 Margin = new Thickness(5),
-                Text = text,
+                Text = text ?? string.Empty,
                 PlaceholderText = holderText,
                 HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
                 ToolTip = "hint"
@@ -729,7 +744,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         /// <param name="items">An array of items to populate the ComboBox.</param>
         /// <param name="selectedItem">The item to select initially.</param>
         /// <returns>A configured ComboBox control.</returns>
-        private ComboBox CreateComboBox(string name, string[] items, string selectedItem = null)
+        private ComboBox CreateComboBox(string name, string[] items, string? selectedItem = null)
         {
             var comboBox = new ComboBox { Name = name, Margin = new Thickness(5), MinWidth = 80 };
 

@@ -35,10 +35,10 @@ namespace DDNS_Cloudflare_API.Services
         private readonly string logFilePath;
 
         // Event to notify when profile timer status changes
-        public event Action<string, string> ProfileTimerUpdated;
+        public event Action<string, string>? ProfileTimerUpdated;
 
         // Delegate to invoke the method that updates the last API call log
-        public Action UpdateLastApiCallLogAction { get; set; }
+        public Action? UpdateLastApiCallLogAction { get; set; }
 
         public ProfileTimerService()
         {
@@ -233,7 +233,7 @@ namespace DDNS_Cloudflare_API.Services
             return uiTimer;
         }
 
-        public event EventHandler<(string profileName, TimeSpan remainingTime)> RemainingTimeUpdated;
+        public event EventHandler<(string profileName, TimeSpan remainingTime)>? RemainingTimeUpdated;
 
         #endregion
 
@@ -258,9 +258,9 @@ namespace DDNS_Cloudflare_API.Services
                     return;
                 }
 
-                string apiKey = EncryptionHelper.DecryptString(profile["ApiKey"].ToString());
-                string zoneId = EncryptionHelper.DecryptString(profile["ZoneId"].ToString());
-                var dnsRecords = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(profile["DnsRecords"].ToString());
+                string apiKey = EncryptionHelper.DecryptString(profile["ApiKey"]?.ToString() ?? string.Empty);
+                string zoneId = EncryptionHelper.DecryptString(profile["ZoneId"]?.ToString() ?? string.Empty);
+                var dnsRecords = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(profile["DnsRecords"]?.ToString() ?? "[]");
 
                 if (dnsRecords == null || dnsRecords.Count == 0)
                 {
@@ -272,22 +272,22 @@ namespace DDNS_Cloudflare_API.Services
                 {
                     try
                     {
-                        string dnsRecordId = record["RecordID"]?.ToString();
-                        string mainDomain = profile["mainDomain"]?.ToString();
-                        string name = record["Name"]?.ToString() + "." + mainDomain;
+                        string? dnsRecordId = record["RecordID"]?.ToString();
+                        string? mainDomain = profile["mainDomain"]?.ToString();
+                        string name = (record["Name"]?.ToString() ?? string.Empty) + "." + (mainDomain ?? string.Empty);
                         string content = await GetIpContent(new ComboBoxItem { Content = record["Content"]?.ToString() });
 
                         var recordData = new
                         {
                             content,
                             name,
-                            proxied = bool.Parse(record["Proxied"]?.ToString()),
-                            type = record["Type"]?.ToString(),
-                            ttl = int.Parse(record["TTL"]?.ToString()),
+                            proxied = bool.Parse(record["Proxied"]?.ToString() ?? "false"),
+                            type = record["Type"]?.ToString() ?? string.Empty,
+                            ttl = int.Parse(record["TTL"]?.ToString() ?? "60"),
                             comment = "DDNS updated from WPF"
                         };
 
-                        await UpdateDnsRecordForProfile(apiKey, zoneId, recordData, dnsRecordId, profileName, mainDomain, content);
+                        await UpdateDnsRecordForProfile(apiKey, zoneId, recordData, dnsRecordId ?? string.Empty, profileName, mainDomain ?? string.Empty, content);
                     }
                     catch (Exception ex)
                     {

@@ -114,7 +114,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
 
             var lines = File.ReadAllLines(logFilePath);
-            LogEntry lastEntry = null;
+            LogEntry? lastEntry = null;
 
             foreach (var line in lines.Reverse()) // Read in reverse to get the last entry
             {

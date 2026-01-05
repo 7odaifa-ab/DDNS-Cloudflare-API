@@ -20,13 +20,11 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
     public partial class HomeViewModel : ObservableObject
     {
         private readonly ProfileTimerService _profileTimerService;
-        private bool _isInitialized;
         private LogEntry? _lastLogEntry;
 
         [ObservableProperty]
         private ObservableCollection<ProfileStatus> profileStatuses;
 
-        public event EventHandler<string>? ProfileTimerUpdated;
         public IRelayCommand RefreshCommand { get; }
 
         #region Properties
@@ -59,7 +57,6 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
             RefreshCommand = new RelayCommand(RefreshStatuses);
 
             LoadProfiles(); // Load profiles on startup
-            _isInitialized = true;
         }
 
         #endregion
@@ -130,7 +127,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
         }
 
         // Handles updates when remaining time is updated for a profile
-        private void OnRemainingTimeUpdated(object sender, (string profileName, TimeSpan remainingTime) e)
+        private void OnRemainingTimeUpdated(object? sender, (string profileName, TimeSpan remainingTime) e)
         {
             var profile = ProfileStatuses.FirstOrDefault(p => p.ProfileName == e.profileName);
             if (profile != null)
