@@ -21,18 +21,18 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
     {
         private readonly ProfileTimerService _profileTimerService;
         private bool _isInitialized;
-        private LogEntry _lastLogEntry;
+        private LogEntry? _lastLogEntry;
 
         [ObservableProperty]
         private ObservableCollection<ProfileStatus> profileStatuses;
 
-        public event EventHandler<string> ProfileTimerUpdated;
+        public event EventHandler<string>? ProfileTimerUpdated;
         public IRelayCommand RefreshCommand { get; }
 
         #region Properties
 
         // Tracks the last log entry for the UI
-        public LogEntry LastLogEntry
+        public LogEntry? LastLogEntry
         {
             get => _lastLogEntry;
             set
@@ -163,11 +163,11 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
     // Model to hold individual profile statuses for display
     public class ProfileStatus : INotifyPropertyChanged
     {
-        private string _remainingTime;
-        private string _status;
-        private string _nextApiCallTime;
+        private string _remainingTime = string.Empty;
+        private string _status = string.Empty;
+        private string _nextApiCallTime = string.Empty;
 
-        public string ProfileName { get; set; }
+        public string ProfileName { get; set; } = string.Empty;
 
         public string Status
         {
@@ -199,7 +199,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -210,11 +210,11 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
     // LogEntry model to track log details
     public class LogEntry
     {
-        public string ProfileName { get; set; }
-        public string CallStatus { get; set; }
-        public string Domain { get; set; }
-        public string IpAddress { get; set; }
-        public string Date { get; set; }
-        public string RunningStatus { get; set; }
+        public string ProfileName { get; set; } = string.Empty;
+        public string CallStatus { get; set; } = string.Empty;
+        public string Domain { get; set; } = string.Empty;
+        public string IpAddress { get; set; } = string.Empty;
+        public string Date { get; set; } = string.Empty;
+        public string RunningStatus { get; set; } = string.Empty;
     }
 }

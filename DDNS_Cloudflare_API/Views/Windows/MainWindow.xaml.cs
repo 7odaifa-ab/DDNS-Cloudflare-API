@@ -45,17 +45,35 @@ namespace DDNS_Cloudflare_API.Views.Windows
             string iconPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DDNS.ico");
 
             // Initialize system tray icon
-            trayIcon = new NotifyIcon
+            try
             {
-                Icon = new Icon(iconPath), // Use the full path to your icon file
-                Visible = true, // Initially visible
-                Text = "DDNS Cloudflare API"
-            };
+                if (File.Exists(iconPath))
+                {
+                    trayIcon = new NotifyIcon
+                    {
+                        Icon = new Icon(iconPath),
+                        Visible = false, // Initially hidden, shown only when minimized
+                        Text = "DDNS Cloudflare API"
+                    };
+                }
+                else
+                {
+                    Debug.WriteLine($"Icon file not found at: {iconPath}");
+                    trayIcon = new NotifyIcon
+                    {
+                        Icon = SystemIcons.Application,
+                        Visible = false,
+                        Text = "DDNS Cloudflare API"
+                    };
+                }
 
-            trayIcon.DoubleClick += TrayIcon_DoubleClick;
-
-
-            CreateContextMenu();
+                trayIcon.DoubleClick += TrayIcon_DoubleClick;
+                CreateContextMenu();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error initializing tray icon: {ex.Message}");
+            }
 
             _profileTimerService = timerService;
 
@@ -89,7 +107,14 @@ namespace DDNS_Cloudflare_API.Views.Windows
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            trayIcon.Dispose(); // Clean up tray icon resources
+            
+            // Clean up tray icon resources
+            if (trayIcon != null)
+            {
+                trayIcon.Visible = false;
+                trayIcon.Dispose();
+            }
+            
             // Make sure that closing this window will begin the process of closing the application.
             Application.Current.Shutdown();
         }
@@ -106,23 +131,9 @@ namespace DDNS_Cloudflare_API.Views.Windows
 
         private void CreateContextMenu()
         {
-            ContextMenu contextMenu = new ContextMenu();
+            if (trayIcon == null) return;
 
-            MenuItem showMenuItem = new MenuItem
-            {
-                Header = "Show"
-            };
-            showMenuItem.Click += (s, e) => ShowWindow();
-
-            MenuItem exitMenuItem = new MenuItem
-            {
-                Header = "Exit"
-            };
-            exitMenuItem.Click += (s, e) => Application.Current.Shutdown();
-
-            contextMenu.Items.Add(showMenuItem);
-            contextMenu.Items.Add(exitMenuItem);
-
+            // Create WinForms context menu for tray icon
             trayIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
             trayIcon.ContextMenuStrip.Items.Add("Show", null, (s, e) => ShowWindow());
             trayIcon.ContextMenuStrip.Items.Add("Exit", null, (s, e) => Application.Current.Shutdown());
@@ -133,6 +144,7 @@ namespace DDNS_Cloudflare_API.Views.Windows
             // Restore the window
             this.Show();
             this.WindowState = WindowState.Normal;
+            this.Activate(); // Bring window to front
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -142,11 +154,17 @@ namespace DDNS_Cloudflare_API.Views.Windows
             if (WindowState == WindowState.Minimized)
             {
                 this.Hide(); // Hide the window
-                trayIcon.Visible = true; // Show system tray icon
+                if (trayIcon != null)
+                {
+                    trayIcon.Visible = true; // Show system tray icon
+                }
             }
-            else if (WindowState == WindowState.Normal)
+            else if (WindowState == WindowState.Normal || WindowState == WindowState.Maximized)
             {
-                trayIcon.Visible = false; // Hide system tray icon
+                if (trayIcon != null)
+                {
+                    trayIcon.Visible = false; // Hide system tray icon when window is visible
+                }
             }
         }
 

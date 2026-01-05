@@ -104,7 +104,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         }
 
         // Get the last API call entry from the log file
-        public LogEntry GetLastApiCall(string logFilePath)
+        public LogEntry? GetLastApiCall(string logFilePath)
         {
             if (!File.Exists(logFilePath))
             {
@@ -132,7 +132,7 @@ namespace DDNS_Cloudflare_API.Views.Pages
         }
 
         // Parse a single log line to extract profile and API call details
-        private LogEntry ParseLogEntry(string logLine)
+        private LogEntry? ParseLogEntry(string logLine)
         {
             try
             {

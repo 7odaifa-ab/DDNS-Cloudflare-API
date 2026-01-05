@@ -84,23 +84,43 @@ namespace DDNS_Cloudflare_API.Views.Pages
         // Enables or disables the application to run at startup by modifying registry settings
         private void SetStartup(bool enable)
         {
-            string appName = "DDNS Cloudflare API";
-
-            // Correct the executable path to ensure it's not pointing to a DLL
-            string exePath = Process.GetCurrentProcess().MainModule.FileName;
-
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            try
             {
-                if (enable)
+                string appName = "DDNS Cloudflare API";
+
+                // Correct the executable path to ensure it's not pointing to a DLL
+                string exePath = Process.GetCurrentProcess().MainModule?.FileName;
+                
+                if (string.IsNullOrEmpty(exePath))
                 {
-                    // Add the application path to the registry for startup
-                    key.SetValue(appName, $"\"{exePath}\"");
+                    Debug.WriteLine("Failed to get executable path for startup registry");
+                    return;
                 }
-                else
+
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
                 {
-                    // Remove the application from the startup registry
-                    key.DeleteValue(appName, false);
+                    if (key == null)
+                    {
+                        Debug.WriteLine("Failed to open registry key for startup settings");
+                        return;
+                    }
+
+                    if (enable)
+                    {
+                        // Add the application path to the registry for startup
+                        key.SetValue(appName, $"\"{exePath}\"");
+                    }
+                    else
+                    {
+                        // Remove the application from the startup registry
+                        key.DeleteValue(appName, false);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error setting startup registry: {ex.Message}");
+                MessageBox.Show($"Failed to update startup settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -112,59 +132,109 @@ namespace DDNS_Cloudflare_API.Views.Pages
         // Saves the startup settings to a JSON file
         private void SaveStartupSetting(bool runOnStartup, bool loadProfilesOnStartup)
         {
-            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
-            Dictionary<string, object> startupSettings;
-
-            if (File.Exists(settingsFilePath))
+            try
             {
-                string existingJson = File.ReadAllText(settingsFilePath);
-                startupSettings = JsonSerializer.Deserialize<Dictionary<string, object>>(existingJson);
+                var settingsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API");
+                var settingsFilePath = Path.Combine(settingsDirectory, "startupSettings.json");
+                
+                // Ensure directory exists
+                Directory.CreateDirectory(settingsDirectory);
+                
+                Dictionary<string, object> startupSettings;
+
+                if (File.Exists(settingsFilePath))
+                {
+                    try
+                    {
+                        string existingJson = File.ReadAllText(settingsFilePath);
+                        startupSettings = JsonSerializer.Deserialize<Dictionary<string, object>>(existingJson) ?? new Dictionary<string, object>();
+                    }
+                    catch (JsonException ex)
+                    {
+                        Debug.WriteLine($"Error deserializing existing settings, creating new: {ex.Message}");
+                        startupSettings = new Dictionary<string, object>();
+                    }
+                }
+                else
+                {
+                    startupSettings = new Dictionary<string, object>();
+                }
+
+                startupSettings["RunOnStartup"] = runOnStartup;
+                startupSettings["LoadProfilesOnStartup"] = loadProfilesOnStartup;
+
+                string json = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(settingsFilePath, json);
             }
-            else
+            catch (Exception ex)
             {
-                startupSettings = new Dictionary<string, object>();
+                Debug.WriteLine($"Error saving startup settings: {ex.Message}");
+                MessageBox.Show($"Failed to save startup settings: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-
-            startupSettings["RunOnStartup"] = runOnStartup;
-            startupSettings["LoadProfilesOnStartup"] = loadProfilesOnStartup;
-
-            string json = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(settingsFilePath, json);
         }
 
         // Loads startup settings from a JSON file
         private (bool runOnStartup, bool loadProfilesOnStartup) LoadStartupSetting()
         {
-            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
-
-            if (File.Exists(settingsFilePath))
+            try
             {
-                string json = File.ReadAllText(settingsFilePath);
-                var startupSettings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+                var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
 
-                bool runOnStartup = startupSettings.ContainsKey("RunOnStartup") && startupSettings["RunOnStartup"].GetBoolean();
-                bool loadProfilesOnStartup = startupSettings.ContainsKey("LoadProfilesOnStartup") && startupSettings["LoadProfilesOnStartup"].GetBoolean();
-
-                foreach (var kvp in startupSettings)
+                if (File.Exists(settingsFilePath))
                 {
-                    if (kvp.Key == "RunOnStartup" || kvp.Key == "LoadProfilesOnStartup")
-                        continue;
-
-                    if (kvp.Value.ValueKind == JsonValueKind.Object)
+                    try
                     {
-                        var profileSettings = kvp.Value;
-                        bool isRunning = profileSettings.GetProperty("IsRunning").GetBoolean();
-                        int interval = profileSettings.GetProperty("Interval").GetInt32();
+                        string json = File.ReadAllText(settingsFilePath);
+                        var startupSettings = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
 
-                        Debug.WriteLine($"Profile: {kvp.Key}, IsRunning: {isRunning}, Interval: {interval}");
+                        if (startupSettings == null)
+                        {
+                            Debug.WriteLine("Failed to deserialize startup settings, using defaults");
+                            return (false, false);
+                        }
+
+                        bool runOnStartup = startupSettings.ContainsKey("RunOnStartup") && startupSettings["RunOnStartup"].GetBoolean();
+                        bool loadProfilesOnStartup = startupSettings.ContainsKey("LoadProfilesOnStartup") && startupSettings["LoadProfilesOnStartup"].GetBoolean();
+
+                        foreach (var kvp in startupSettings)
+                        {
+                            if (kvp.Key == "RunOnStartup" || kvp.Key == "LoadProfilesOnStartup")
+                                continue;
+
+                            if (kvp.Value.ValueKind == JsonValueKind.Object)
+                            {
+                                try
+                                {
+                                    var profileSettings = kvp.Value;
+                                    bool isRunning = profileSettings.GetProperty("IsRunning").GetBoolean();
+                                    int interval = profileSettings.GetProperty("Interval").GetInt32();
+
+                                    Debug.WriteLine($"Profile: {kvp.Key}, IsRunning: {isRunning}, Interval: {interval}");
+                                }
+                                catch (Exception ex)
+                                {
+                                    Debug.WriteLine($"Error reading profile settings for {kvp.Key}: {ex.Message}");
+                                }
+                            }
+                        }
+
+                        return (runOnStartup, loadProfilesOnStartup);
+                    }
+                    catch (JsonException ex)
+                    {
+                        Debug.WriteLine($"Error parsing startup settings JSON: {ex.Message}");
+                        CreateStartupSetting();
+                        return (false, false);
                     }
                 }
-
-                return (runOnStartup, loadProfilesOnStartup);
+                else
+                {
+                    CreateStartupSetting();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                CreateStartupSetting();
+                Debug.WriteLine($"Error loading startup settings: {ex.Message}");
             }
 
             return (false, false);
@@ -173,15 +243,27 @@ namespace DDNS_Cloudflare_API.Views.Pages
         // Creates default startup settings
         private void CreateStartupSetting()
         {
-            var settingsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API", "startupSettings.json");
-            Dictionary<string, object> startupSettings = new Dictionary<string, object>
+            try
             {
-                ["RunOnStartup"] = true,
-                ["LoadProfilesOnStartup"] = false
-            };
+                var settingsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DDNS_Cloudflare_API");
+                var settingsFilePath = Path.Combine(settingsDirectory, "startupSettings.json");
+                
+                // Ensure directory exists
+                Directory.CreateDirectory(settingsDirectory);
+                
+                Dictionary<string, object> startupSettings = new Dictionary<string, object>
+                {
+                    ["RunOnStartup"] = false,
+                    ["LoadProfilesOnStartup"] = false
+                };
 
-            string json = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(settingsFilePath, json);
+                string json = JsonSerializer.Serialize(startupSettings, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(settingsFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error creating default startup settings: {ex.Message}");
+            }
         }
 
         #endregion
@@ -223,10 +305,17 @@ namespace DDNS_Cloudflare_API.Views.Pages
         {
             using HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("DDNS-Cloudflare-API", "1.0"));
+            client.Timeout = TimeSpan.FromSeconds(10);
+            
             var response = await client.GetStringAsync("https://api.github.com/repos/7odaifa-ab/DDNS-Cloudflare-API/releases/latest");
-            var releaseInfo = JsonSerializer.Deserialize<Dictionary<string, object>>(response);
+            var releaseInfo = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(response);
 
-            return releaseInfo["tag_name"].ToString().TrimStart('v');
+            if (releaseInfo == null || !releaseInfo.ContainsKey("tag_name"))
+            {
+                throw new Exception("Invalid response from GitHub API");
+            }
+
+            return releaseInfo["tag_name"].GetString()?.TrimStart('v') ?? throw new Exception("Invalid version format");
         }
 
         // Downloads and updates the application
