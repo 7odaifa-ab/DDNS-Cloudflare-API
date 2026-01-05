@@ -1,21 +1,111 @@
-# Created by https://www.gitignore.io/api/visualstudiocode
-# Edit at https://www.gitignore.io/?templates=visualstudiocode
+# .NET build outputs
+**/bin/
+**/obj/
+**/out/
+**/[Bb]in/
+**/[Oo]bj/
 
-### VisualStudioCode ###
-.vscode/*      # Maybe .vscode/**/* instead - see comments
-.vs/*      # Maybe .vscode/**/* instead - see comments
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-**/.history
+# User-specific project files
+**/.vs/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
 
-# End of https://www.gitignore.io/api/visualstudiocode
-/.vs
-/DDNS_Cloudflare_API/bin
-exe script.iss
-DDNS Cloudflare AP-Win-x64.zip
-DDNS Cloudflare API.exe
+# NuGet packages
+**/packages/
+*.nupkg
+**/[Pp]ackages/
+
+# Visual Studio cache directories
+.vs/
+*.cache
+*.ilk
+*.log
+*.tlog
+*.lastbuildstate
+*.pidb
+*.svclog
+*.scc
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+build/
+bld/
+[Bb]uild/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NUnit
+*.VisualState.xml
+TestResult.xml
+
+# Build results of DNX
+*.dnxproj.user
+*.dnxproj.lock
+
+
+# Local History for Visual Studio Code
+.history/
+
+# Windows Image File caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Mac
+.DS_Store
+
+# Executables and archives
+*.exe
+*.zip
+*.tar.gz
+*.rar
+
+# Inno Setup scripts
+*.iss
+
+# Configuration files with sensitive data
+appsettings.json
+appsettings.*.json
+config.json
+secrets.json
+*.config
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# IDE files
+*.bak
+*.backup
+*.orig
