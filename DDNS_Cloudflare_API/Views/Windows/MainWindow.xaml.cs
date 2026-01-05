@@ -69,7 +69,7 @@ namespace DDNS_Cloudflare_API.Views.Windows
                     };
                 }
 
-                trayIcon.DoubleClick += TrayIcon_DoubleClick;
+                trayIcon.DoubleClick += TrayIcon_DoubleClick!;
                 CreateContextMenu();
             }
             catch (Exception ex)
@@ -138,7 +138,7 @@ namespace DDNS_Cloudflare_API.Views.Windows
             trayIcon.ContextMenuStrip.Items.Add("Exit", null, (s, e) => Application.Current.Shutdown());
         }
 
-        private void TrayIcon_DoubleClick(object sender, EventArgs e)
+        private void TrayIcon_DoubleClick(object? sender, EventArgs e)
         {
             // Restore the window
             this.Show();
@@ -170,7 +170,10 @@ namespace DDNS_Cloudflare_API.Views.Windows
         public void SetRunningStatus(bool running)
         {
             isRunning = running;
-            trayIcon.Visible = running;
+            if (trayIcon != null)
+            {
+                trayIcon.Visible = running;
+            }
         }
 
     }

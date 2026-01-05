@@ -20,6 +20,12 @@
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <ui:FluentWindow.Resources>
+        <ResourceDictionary>
+            <!-- Custom NavigationViewItem styling for better appearance -->
+            <Thickness x:Key="NavigationViewItemBorderThickness">2,0,0,0</Thickness>
+        </ResourceDictionary>
+    </ui:FluentWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -32,9 +38,11 @@
             BreadcrumbBar="{Binding ElementName=BreadcrumbBar}"
             FooterMenuItemsSource="{Binding ViewModel.FooterMenuItems, Mode=OneWay}"
             FrameMargin="0"
-                           OpenPaneLength="130"
-                           IsBackButtonVisible="Collapsed"
+            OpenPaneLength="130"
+            IsBackButtonVisible="Collapsed"
             IsPaneToggleVisible="True"
+            IsTopSeparatorVisible="True"
+            IsFooterSeparatorVisible="True"
             MenuItemsSource="{Binding ViewModel.MenuItems, Mode=OneWay}"
             >
             <ui:NavigationView.Header>
