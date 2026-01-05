@@ -17,6 +17,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 using TextBlock = Wpf.Ui.Controls.TextBlock;
 using TextBox = System.Windows.Controls.TextBox;
 using MessageBox = System.Windows.MessageBox;
@@ -107,13 +108,13 @@ namespace DDNS_Cloudflare_API.Views.Pages
                 };
                 recordPanel.Children.Add(header);
 
-                AddLabel(recordPanel, "ID", record.GetProperty("id").GetString());
-                AddLabel(recordPanel, "Content", record.GetProperty("content").GetString());
-                AddLabel(recordPanel, "Name", record.GetProperty("name").GetString());
-                AddLabel(recordPanel, "Type", record.GetProperty("type").GetString());
+                AddLabel(recordPanel, "ID", record.GetProperty("id").GetString() ?? string.Empty);
+                AddLabel(recordPanel, "Content", record.GetProperty("content").GetString() ?? string.Empty);
+                AddLabel(recordPanel, "Name", record.GetProperty("name").GetString() ?? string.Empty);
+                AddLabel(recordPanel, "Type", record.GetProperty("type").GetString() ?? string.Empty);
                 AddLabel(recordPanel, "Proxied", record.GetProperty("proxied").GetBoolean().ToString());
                 AddLabel(recordPanel, "TTL", record.GetProperty("ttl").GetInt32().ToString());
-                AddLabel(recordPanel, "Comment", record.GetProperty("comment").GetString());
+                AddLabel(recordPanel, "Comment", record.GetProperty("comment").GetString() ?? string.Empty);
 
                 ResultsPanel.Children.Add(recordPanel);
             }

@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Threading;
 using Wpf.Ui;
+using Wpf.Ui.Abstractions;
 using Application = System.Windows.Application;
 
 namespace DDNS_Cloudflare_API
@@ -27,13 +28,13 @@ namespace DDNS_Cloudflare_API
         // https://docs.microsoft.com/dotnet/core/extensions/logging
         private static readonly IHost _host = Host
             .CreateDefaultBuilder()
-            .ConfigureAppConfiguration(c => { c.SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)); })
+            .ConfigureAppConfiguration(c => { c.SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location) ?? AppContext.BaseDirectory); })
             .ConfigureServices((context, services) =>
             {
                 services.AddHostedService<ApplicationHostService>();
 
                 // Page resolver service
-                services.AddSingleton<IPageService, PageService>();
+                services.AddSingleton<INavigationViewPageProvider, PageService>();
 
                 // Theme manipulation
                 services.AddSingleton<IThemeService, ThemeService>();
@@ -133,7 +134,8 @@ namespace DDNS_Cloudflare_API
         private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             // Log the exception
-            LogException(e.ExceptionObject as Exception);
+            if (e.ExceptionObject is Exception ex)
+                LogException(ex);
 
             // For non-UI thread crashes, restart the application automatically
             RestartApplication();
@@ -199,7 +201,12 @@ namespace DDNS_Cloudflare_API
             try
             {
                 // Get the full path to the currently running executable (.exe)
-                string applicationPath = Process.GetCurrentProcess().MainModule.FileName;
+                string? applicationPath = Process.GetCurrentProcess().MainModule?.FileName;
+                if (string.IsNullOrEmpty(applicationPath))
+                {
+                    LogException(new Exception("Failed to get application path for restart"));
+                    return;
+                }
 
 
                 // Create a process start info to start the new instance

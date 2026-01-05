@@ -1,5 +1,6 @@
 ﻿using DDNS_Cloudflare_API.ViewModels.Windows;
 using Wpf.Ui;
+using Wpf.Ui.Abstractions;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using System;
@@ -19,7 +20,7 @@ namespace DDNS_Cloudflare_API.Views.Windows
     public partial class MainWindow : INavigationWindow
     {
         public MainWindowViewModel ViewModel { get; }
-        private NotifyIcon trayIcon;
+        private NotifyIcon? trayIcon;
         private bool isRunning = false; // To track if the timer is running
 
         private readonly ProfileTimerService _profileTimerService;
@@ -27,8 +28,9 @@ namespace DDNS_Cloudflare_API.Views.Windows
 
         public MainWindow(
             MainWindowViewModel viewModel,
-            IPageService pageService,
-            INavigationService navigationService, ProfileTimerService timerService
+            INavigationService navigationService,
+            IServiceProvider serviceProvider,
+            ProfileTimerService timerService
         )
         {
             ViewModel = viewModel;
@@ -37,7 +39,7 @@ namespace DDNS_Cloudflare_API.Views.Windows
             SystemThemeWatcher.Watch(this);
 
             InitializeComponent();
-            SetPageService(pageService);
+            RootNavigation.SetServiceProvider(serviceProvider);
 
             navigationService.SetNavigationControl(RootNavigation);
 
@@ -93,7 +95,7 @@ namespace DDNS_Cloudflare_API.Views.Windows
 
         public bool Navigate(Type pageType) => RootNavigation.Navigate(pageType);
 
-        public void SetPageService(IPageService pageService) => RootNavigation.SetPageService(pageService);
+        public void SetPageService(INavigationViewPageProvider pageProvider) => RootNavigation.SetServiceProvider(pageProvider as IServiceProvider ?? throw new ArgumentException("Page provider must be IServiceProvider"));
 
         public void ShowWindow() => Show();
 
@@ -124,10 +126,7 @@ namespace DDNS_Cloudflare_API.Views.Windows
             throw new NotImplementedException();
         }
 
-        public void SetServiceProvider(IServiceProvider serviceProvider)
-        {
-            throw new NotImplementedException();
-        }
+        public void SetServiceProvider(IServiceProvider serviceProvider) => RootNavigation.SetServiceProvider(serviceProvider);
 
         private void CreateContextMenu()
         {

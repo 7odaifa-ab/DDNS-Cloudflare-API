@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {

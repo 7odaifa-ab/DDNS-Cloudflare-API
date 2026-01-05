@@ -10,6 +10,7 @@
 using DDNS_Cloudflare_API.ViewModels.Pages;
 using System.Windows.Navigation;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace DDNS_Cloudflare_API.Views.Pages
 {

@@ -16,6 +16,7 @@ using System.Windows.Controls;
 using DDNS_Cloudflare_API.ViewModels.Pages;
 using System.Windows.Threading;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 using System.Collections.ObjectModel;
 using DDNS_Cloudflare_API.Services;
 using System.Diagnostics;
@@ -217,9 +218,9 @@ namespace DDNS_Cloudflare_API.Views.Pages
     // Data structure for holding profile info in the UI
     public class ProfileInfo
     {
-        public string ProfileName { get; set; }
-        public string TimerStatus { get; set; } // Running or Stopped
-        public string RemainingTime { get; set; } // Time left for next API call
-        public string NextApiCallTime { get; set; } // When the next API call is scheduled
+        public string ProfileName { get; set; } = string.Empty;
+        public string TimerStatus { get; set; } = string.Empty; // Running or Stopped
+        public string RemainingTime { get; set; } = string.Empty; // Time left for next API call
+        public string NextApiCallTime { get; set; } = string.Empty; // When the next API call is scheduled
     }
 }

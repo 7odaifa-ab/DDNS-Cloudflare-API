@@ -1,5 +1,8 @@
 ﻿using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace DDNS_Cloudflare_API.ViewModels.Pages
 {
@@ -13,13 +16,17 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
         [ObservableProperty]
         private ApplicationTheme _currentTheme = ApplicationTheme.Unknown;
 
-        public void OnNavigatedTo()
+        public Task OnNavigatedToAsync()
         {
             if (!_isInitialized)
                 InitializeViewModel();
+            return Task.CompletedTask;
         }
 
-        public void OnNavigatedFrom() { }
+        public Task OnNavigatedFromAsync()
+        {
+            return Task.CompletedTask;
+        }
 
         private void InitializeViewModel()
         {

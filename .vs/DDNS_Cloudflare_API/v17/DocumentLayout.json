@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\anaspc\\documents\\github\\ddns-cloudflare-api\\ddns_cloudflare_api\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\anaspc\\documents\\github\\ddns-cloudflare-api\\ddns_cloudflare_api\\views\\windows\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\windows\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\anaspc\\documents\\github\\ddns-cloudflare-api\\ddns_cloudflare_api\\views\\pages\\log.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\views\\pages\\log.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\anaspc\\documents\\github\\ddns-cloudflare-api\\ddns_cloudflare_api\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|solutionrelative:ddns_cloudflare_api\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{899F286C-2484-4FA5-A9B7-88C7BCD26162}|DDNS_Cloudflare_API\\DDNS_Cloudflare_API.csproj|c:\\users\\anaspc\\documents\\github\\ddns-cloudflare-api\\ddns_cloudflare_api\\views\\pages\\tutorial.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -26,17 +26,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "App.xaml.cs",
               "DocumentMoniker": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\App.xaml.cs",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\App.xaml.cs",
               "ToolTip": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\App.xaml.cs",
               "RelativeToolTip": "DDNS_Cloudflare_API\\App.xaml.cs",
-              "ViewState": "AgIAABQAAAAAAAAAAIA4wCMAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-29T06:18:52.125Z",
               "IsPinned": true,
@@ -48,13 +48,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml.cs",
               "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Windows\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAArAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-05T06:43:13.226Z",
               "EditorCaption": ""
@@ -67,23 +67,21 @@
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\Tutorial.xaml.cs",
               "ToolTip": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\Views\\Pages\\Tutorial.xaml.cs",
               "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Pages\\Tutorial.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAnwA8AAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAnwBAAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-05T06:42:17.943Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-05T06:42:17.943Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Log.xaml.cs",
               "DocumentMoniker": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\Views\\Pages\\Log.xaml.cs",
               "RelativeDocumentMoniker": "DDNS_Cloudflare_API\\Views\\Pages\\Log.xaml.cs",
               "ToolTip": "C:\\Users\\AnasPC\\Documents\\GitHub\\DDNS-Cloudflare-API\\DDNS_Cloudflare_API\\Views\\Pages\\Log.xaml.cs",
               "RelativeToolTip": "DDNS_Cloudflare_API\\Views\\Pages\\Log.xaml.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAewBQAAAAfAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAewBUAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-05T06:42:13.227Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-05T06:42:13.227Z"
             }
           ]
         }

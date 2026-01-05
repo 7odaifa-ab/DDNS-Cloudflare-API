@@ -1,6 +1,8 @@
 ﻿using DDNS_Cloudflare_API.Models;
 using System.Windows.Media;
 using Wpf.Ui.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace DDNS_Cloudflare_API.ViewModels.Pages
 {
@@ -9,15 +11,19 @@ namespace DDNS_Cloudflare_API.ViewModels.Pages
         private bool _isInitialized = false;
 
         [ObservableProperty]
-        private IEnumerable<DataColor> _colors;
+        private IEnumerable<DataColor> _colors = Enumerable.Empty<DataColor>();
 
-        public void OnNavigatedTo()
+        public Task OnNavigatedToAsync()
         {
             if (!_isInitialized)
                 InitializeViewModel();
+            return Task.CompletedTask;
         }
 
-        public void OnNavigatedFrom() { }
+        public Task OnNavigatedFromAsync()
+        {
+            return Task.CompletedTask;
+        }
 
         private void InitializeViewModel()
         {
