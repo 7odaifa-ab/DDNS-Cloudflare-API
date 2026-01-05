@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Threading;
 using Wpf.Ui;
+using Application = System.Windows.Application;
 
 namespace DDNS_Cloudflare_API
 {
@@ -106,7 +107,7 @@ namespace DDNS_Cloudflare_API
 
 
             // Show a user-friendly message
-            var result = MessageBox.Show(
+            var result = System.Windows.MessageBox.Show(
                 "An unexpected error occurred. Would you like to restart the application?\n\n" +
                 "Click 'Yes' to restart or 'No' to close the application.",
                 "Error",
@@ -187,7 +188,7 @@ namespace DDNS_Cloudflare_API
                                     "Please contact support with the error log at:\n" +
                                     $"{Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DDNS_Cloudflare_API", LogFileName)}";
 
-                MessageBox.Show(errorMessage, "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show(errorMessage, "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 if (Application.Current != null)
                     Application.Current.Shutdown(1);
@@ -234,7 +235,7 @@ namespace DDNS_Cloudflare_API
                                     $"Attempt {_restartAttempts}/{MaxRestartAttempts}.\n\n" +
                                     "Error: " + ex.Message;
 
-                MessageBox.Show(errorMessage, "Restart Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show(errorMessage, "Restart Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 if (Application.Current != null)
                     Application.Current.Shutdown(1);

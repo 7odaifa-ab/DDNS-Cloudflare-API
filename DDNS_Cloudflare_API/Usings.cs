@@ -2,3 +2,8 @@
 global using CommunityToolkit.Mvvm.Input;
 global using System;
 global using System.Windows;
+global using Wpf.Ui;
+global using Wpf.Ui.Controls;
+global using Wpf.Ui.Abstractions;
+global using Wpf.Ui.Abstractions.Controls;
+global using Wpf.Ui.Abstractions.Services;
