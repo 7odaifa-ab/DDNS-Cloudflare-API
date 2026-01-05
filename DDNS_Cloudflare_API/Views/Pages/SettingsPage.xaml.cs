@@ -352,9 +352,9 @@ namespace DDNS_Cloudflare_API.Views.Pages
                     // Optionally shut down the current application after starting the installer
                     Application.Current.Shutdown();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    MessageBox.Show("Failed to start the installer with administrative privileges.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Debug.WriteLine("Failed to start the installer with administrative privileges.");
                 }
             }
             catch (Exception ex)

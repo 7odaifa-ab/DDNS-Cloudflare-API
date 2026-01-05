@@ -176,8 +176,38 @@ namespace DDNS_Cloudflare_API.Views.Pages
         // Extract date part from the log header
         private string ExtractDatePart(string logHeader)
         {
-            var datePattern = @"(\d{1,2}/\d{1,2}/\d{4}\s\d{1,2}:\d{2}:\d{2}\s?[صمAMPMampm]*)";
-            var dateMatch = Regex.Match(logHeader, datePattern, RegexOptions.IgnoreCase);
+            // Try multiple date patterns to handle different formats
+            // Pattern 1: ISO format with AM/PM (e.g., "2026-01-05 1:38:09 PM")
+            var datePattern1 = @"(\d{4}-\d{2}-\d{2}\s+\d{1,2}:\d{2}:\d{2}\s+[APap][Mm])";
+            var dateMatch = Regex.Match(logHeader, datePattern1, RegexOptions.IgnoreCase);
+            
+            if (dateMatch.Success)
+            {
+                return dateMatch.Groups[1].Value.Trim();
+            }
+            
+            // Pattern 2: ISO format 24-hour (e.g., "2026-01-05 13:38:09")
+            var datePattern2 = @"(\d{4}-\d{2}-\d{2}\s+\d{1,2}:\d{2}:\d{2})";
+            dateMatch = Regex.Match(logHeader, datePattern2);
+            
+            if (dateMatch.Success)
+            {
+                return dateMatch.Groups[1].Value.Trim();
+            }
+            
+            // Pattern 3: US format with slashes and AM/PM (e.g., "1/5/2026 1:35:42 PM")
+            var datePattern3 = @"(\d{1,2}/\d{1,2}/\d{4}\s+\d{1,2}:\d{2}:\d{2}\s+[APap][Mm])";
+            dateMatch = Regex.Match(logHeader, datePattern3, RegexOptions.IgnoreCase);
+            
+            if (dateMatch.Success)
+            {
+                return dateMatch.Groups[1].Value.Trim();
+            }
+            
+            // Pattern 4: US format with slashes 24-hour (e.g., "1/5/2026 13:35:42")
+            var datePattern4 = @"(\d{1,2}/\d{1,2}/\d{4}\s+\d{1,2}:\d{2}:\d{2})";
+            dateMatch = Regex.Match(logHeader, datePattern4);
+            
             return dateMatch.Success ? dateMatch.Groups[1].Value.Trim() : "Unknown Date";
         }
 

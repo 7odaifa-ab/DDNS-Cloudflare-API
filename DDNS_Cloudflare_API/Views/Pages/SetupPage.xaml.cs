@@ -64,6 +64,39 @@ namespace DDNS_Cloudflare_API.Views.Pages
         #region Profile Management
         private void BtnSaveProfile_Click(object sender, RoutedEventArgs e)
         {
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(txtApiKey.Password))
+            {
+                _ = ShowErrorMessage("API Key is required.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtZoneId.Text))
+            {
+                _ = ShowErrorMessage("Zone ID is required.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtMainDomain.Text))
+            {
+                _ = ShowErrorMessage("Main Domain is required.");
+                return;
+            }
+
+            // Check if at least one DNS record exists
+            if (itemsControlDnsRecords.Items.Count == 0)
+            {
+                _ = ShowErrorMessage("At least one DNS record is required.");
+                return;
+            }
+
+            // Validate DNS records have required fields
+            if (!ValidateDnsRecords())
+            {
+                _ = ShowErrorMessage("All DNS records must have a Record ID and Name.");
+                return;
+            }
+
             var mainDomain = txtMainDomain.Text;
             var dnsRecords = SerializeDnsRecords();
 
@@ -89,6 +122,39 @@ namespace DDNS_Cloudflare_API.Views.Pages
 
         private void BtnUpdateProfile_Click(object sender, RoutedEventArgs e)
         {
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(txtApiKey.Password))
+            {
+                _ = ShowErrorMessage("API Key is required.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtZoneId.Text))
+            {
+                _ = ShowErrorMessage("Zone ID is required.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtMainDomain.Text))
+            {
+                _ = ShowErrorMessage("Main Domain is required.");
+                return;
+            }
+
+            // Check if at least one DNS record exists
+            if (itemsControlDnsRecords.Items.Count == 0)
+            {
+                _ = ShowErrorMessage("At least one DNS record is required.");
+                return;
+            }
+
+            // Validate DNS records have required fields
+            if (!ValidateDnsRecords())
+            {
+                _ = ShowErrorMessage("All DNS records must have a Record ID and Name.");
+                return;
+            }
+
             if (cmbProfiles.SelectedItem is string profileName)
             {
                 var profilePath = Path.Combine(profilesFolderPath, $"{profileName}.json");
@@ -239,6 +305,24 @@ namespace DDNS_Cloudflare_API.Views.Pages
             }
 
             return Path.GetFileNameWithoutExtension(profilePath);
+        }
+
+        private bool ValidateDnsRecords()
+        {
+            foreach (var item in itemsControlDnsRecords.Items)
+            {
+                if (item is Grid dnsRecordPanel)
+                {
+                    var (dnsRecordId, name, _, _, _, _) = GetDnsRecordFields(dnsRecordPanel);
+                    
+                    // Check if Record ID and Name are not empty
+                    if (string.IsNullOrWhiteSpace(dnsRecordId.Text) || string.IsNullOrWhiteSpace(name.Text))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         private void LoadProfiles()

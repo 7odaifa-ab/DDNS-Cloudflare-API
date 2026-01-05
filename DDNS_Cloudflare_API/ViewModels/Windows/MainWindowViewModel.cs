@@ -6,7 +6,7 @@ namespace DDNS_Cloudflare_API.ViewModels.Windows
     public partial class MainWindowViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _applicationTitle = "DDNS - Cloudflare API Script";
+        private string _applicationTitle = "Cloudflare DDNS Client";
 
         [ObservableProperty]
         private ObservableCollection<object> _menuItems = new()
