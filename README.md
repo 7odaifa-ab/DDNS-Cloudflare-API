@@ -3,7 +3,7 @@
 <h1 align="center">Cloudflare DDNS Client <a href="https://github.com/7odaifa-ab/Cloudflare-DDNS-Client"></a></h1>
 <p align="center">
   <a target="_blank" href="https://github.com/7odaifa-ab/Cloudflare-DDNS-Client/releases/latest/download/Cloudflare.DDNS.Client.exe">
-      <img src="https://img.shields.io/badge/Download-V2.1-brightgreen"></a>
+      <img src="https://img.shields.io/badge/Download-V2.2-brightgreen"></a>
   <a target="_blank" href="https://github.com/7odaifa-ab/Cloudflare-DDNS-Client/releases"><img src="https://img.shields.io/badge/Releases-Versions%20List-lightgrey"></a>
   <a target="_blank" href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0"><img src="https://img.shields.io/badge/.NET-8.0-purple?logo=.NET"></a>
   <a target="_blank" href="https://github.com/lepoco/wpfui"><img src="https://img.shields.io/badge/Library-WPF UI-lightblue"></a>
